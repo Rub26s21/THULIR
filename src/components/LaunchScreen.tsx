@@ -12,22 +12,34 @@ export function LaunchScreen({ onComplete }: LaunchScreenProps) {
   const [fadeout, setFadeout] = useState(false);
 
   useEffect(() => {
-    // 1.1s smooth startup presentation
-    const timer = setTimeout(() => {
+    // Smooth 600ms startup presentation, then 300ms fadeout
+    const fadeTimer = setTimeout(() => {
       setFadeout(true);
-      setTimeout(onComplete, 350);
-    }, 1100);
+    }, 600);
 
-    return () => clearTimeout(timer);
-  }, [onComplete]);
+    const completeTimer = setTimeout(() => {
+      onComplete();
+    }, 900);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(completeTimer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount
+
+  const handleDismiss = () => {
+    setFadeout(true);
+    setTimeout(() => {
+      onComplete();
+    }, 50);
+  };
 
   return (
     <div
       className={`launch-screen-backdrop ${fadeout ? 'launch-fade-out' : ''}`}
-      onClick={() => {
-        setFadeout(true);
-        setTimeout(onComplete, 120);
-      }}
+      onClick={handleDismiss}
+      style={{ cursor: 'pointer' }}
       aria-hidden="true"
     >
       <div className="apple-launch-container">
