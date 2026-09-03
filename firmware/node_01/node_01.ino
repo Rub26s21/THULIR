@@ -15,11 +15,6 @@
 // Serial: 115200 baud
 // Transmission: Every 5 seconds → Supabase REST API
 //
-// IMPORTANT:
-//   - WiFi credentials are in the configuration section below
-//   - Supabase URL and key must be configured
-//   - HC-SR04 ECHO pin requires voltage divider protection
-//   - MQ-2 gas_raw is uncalibrated — do NOT claim ppm
 // ============================================================
 
 #include <ESP8266WiFi.h>
@@ -90,7 +85,6 @@ bool mpuReady   = false;
 bool bmpReady   = false;
 bool adxlReady  = false;
 bool dhtReady   = false;
-// MQ-2 and HC-SR04 don't need initialization flags
 
 // ============================================================
 //                    EVENT COUNTER
@@ -110,6 +104,10 @@ void setup() {
   Serial.println("================================================");
   Serial.println("              THULIR - NODE_01");
   Serial.println("================================================");
+  Serial.print("[SYSTEM] Reset reason: ");
+  Serial.println(ESP.getResetReason());
+  Serial.print("[MEMORY] Free heap at boot: ");
+  Serial.println(ESP.getFreeHeap());
   Serial.println();
 
   // --- I2C ---
@@ -151,24 +149,27 @@ void setup() {
   dhtReady = true;
   Serial.println("[DHT22] Initialized OK");
 
-  // --- MQ-2 ---
-  pinMode(MQ2_PIN, INPUT);
-  Serial.println("[MQ-2] Analog input ready on A0");
-
   // --- HC-SR04 ---
   pinMode(HCSR04_TRIG, OUTPUT);
   pinMode(HCSR04_ECHO, INPUT);
-  Serial.println("[HC-SR04] Trig=D5, Echo=D6");
+  digitalWrite(HCSR04_TRIG, LOW);
+  Serial.println("[HC-SR04] Initialized OK (TRIG=D5, ECHO=D6)");
 
-  // --- Wi-Fi ---
+  // --- MQ-2 ---
+  pinMode(MQ2_PIN, INPUT);
+  Serial.println("[MQ-2] Analog input configured on A0");
+
   Serial.println();
-  Serial.print("[WIFI] Connecting to ");
+  Serial.println("================================================");
+  Serial.println("Connecting to Wi-Fi...");
+  Serial.print("SSID: ");
   Serial.println(WIFI_SSID);
+
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   int attempts = 0;
-  while (WiFi.status() != WL_CONNECTED && attempts < 40) {
+  while (WiFi.status() != WL_CONNECTED && attempts < 30) {
     delay(500);
     Serial.print(".");
     attempts++;
@@ -176,17 +177,22 @@ void setup() {
 
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println();
-    Serial.print("[WIFI] Connected! IP: ");
+    Serial.println("[WIFI] Connected successfully!");
+    Serial.print("[WIFI] IP Address : ");
     Serial.println(WiFi.localIP());
+    Serial.print("[WIFI] RSSI       : ");
+    Serial.print(WiFi.RSSI());
+    Serial.println(" dBm");
   } else {
     Serial.println();
-    Serial.println("[WIFI] Failed to connect — will retry in loop");
+    Serial.println("[WIFI ERROR] Failed to connect — will retry in loop");
   }
 
-  Serial.println();
   Serial.println("================================================");
-  Serial.println("            INITIALIZATION COMPLETE");
-  Serial.println("================================================");
+  Serial.println("Sensor node initialization complete.");
+  Serial.print("[MEMORY] Free heap after setup: ");
+  Serial.println(ESP.getFreeHeap());
+  Serial.println("Starting transmission cycle (every 5s)...");
   Serial.println();
 }
 
@@ -194,70 +200,40 @@ void setup() {
 //                    SENSOR READING FUNCTIONS
 // ============================================================
 
-// --- Tilt from MPU6050 ---
+// --- MPU6050: Tilt X & Tilt Y (degrees) ---
 bool readTilt(float &tiltX, float &tiltY) {
   if (!mpuReady) return false;
 
   sensors_event_t a, g, temp;
-  mpu.getEvent(&a, &g, &temp);
+  if (!mpu.getEvent(&a, &g, &temp)) return false;
 
-  // Tilt calculation from accelerometer
-  // atan2 gives angle in radians, convert to degrees
-  tiltX = atan2(a.acceleration.y, a.acceleration.z) * 180.0 / PI;
-  tiltY = atan2(-a.acceleration.x,
-                sqrt(a.acceleration.y * a.acceleration.y +
-                     a.acceleration.z * a.acceleration.z)) * 180.0 / PI;
+  float ax = a.acceleration.x;
+  float ay = a.acceleration.y;
+  float az = a.acceleration.z;
 
+  float norm = sqrt(ax * ax + ay * ay + az * az);
+  if (norm < 0.001) return false;
+
+  tiltX = atan2(ay, sqrt(ax * ax + az * az)) * 180.0 / PI;
+  tiltY = atan2(-ax, sqrt(ay * ay + az * az)) * 180.0 / PI;
+
+  if (isnan(tiltX) || isnan(tiltY)) return false;
   return true;
 }
 
-// --- Pressure from BMP280 ---
+// --- BMP280: Pressure (hPa) ---
 bool readPressure(float &pressure) {
   if (!bmpReady) return false;
 
-  pressure = bmp.readPressure() / 100.0F;  // Pa to hPa
-  if (isnan(pressure) || pressure < 300 || pressure > 1200) return false;
+  pressure = bmp.readPressure() / 100.0F; // Pa → hPa
 
+  if (isnan(pressure) || pressure < 300.0 || pressure > 1100.0) {
+    return false;
+  }
   return true;
 }
 
-// --- Temperature & Humidity from DHT22 ---
-bool readDHT(float &temperature, float &humidity) {
-  if (!dhtReady) return false;
-
-  temperature = dht.readTemperature();
-  humidity = dht.readHumidity();
-
-  if (isnan(temperature) || isnan(humidity)) return false;
-
-  return true;
-}
-
-// --- Gas raw from MQ-2 ---
-int readGasRaw() {
-  return analogRead(MQ2_PIN);
-}
-
-// --- Distance from HC-SR04 ---
-bool readDistance(float &distance) {
-  digitalWrite(HCSR04_TRIG, LOW);
-  delayMicroseconds(2);
-  digitalWrite(HCSR04_TRIG, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(HCSR04_TRIG, LOW);
-
-  long duration = pulseIn(HCSR04_ECHO, HIGH, 30000);  // 30ms timeout
-
-  if (duration == 0) return false;  // Timeout — no echo
-
-  distance = duration * 0.0343 / 2.0;  // cm
-
-  if (distance < 2 || distance > 400) return false;  // Out of range
-
-  return true;
-}
-
-// --- Vibration RMS from ADXL345 ---
+// --- ADXL345: Vibration RMS (m/s²) ---
 bool readVibrationRMS(float &vibRms) {
   if (!adxlReady) return false;
 
@@ -266,24 +242,60 @@ bool readVibrationRMS(float &vibRms) {
 
   for (int i = 0; i < VIB_SAMPLE_COUNT; i++) {
     sensors_event_t event;
-    accel.getEvent(&event);
+    if (accel.getEvent(&event)) {
+      float ax = event.acceleration.x;
+      float ay = event.acceleration.y;
+      float az = event.acceleration.z - 9.81; // Subtract 1g gravity
 
-    // RMS of the acceleration magnitude minus gravity
-    float mag = sqrt(event.acceleration.x * event.acceleration.x +
-                     event.acceleration.y * event.acceleration.y +
-                     event.acceleration.z * event.acceleration.z);
-
-    // Subtract approximate gravity (9.81 m/s²)
-    float deviation = mag - 9.81;
-    sumSq += deviation * deviation;
-    validSamples++;
-
+      float mag = sqrt(ax * ax + ay * ay + az * az);
+      sumSq += mag * mag;
+      validSamples++;
+    }
     delay(VIB_SAMPLE_DELAY_MS);
   }
 
-  if (validSamples == 0) return false;
+  if (validSamples < VIB_SAMPLE_COUNT / 2) return false;
 
   vibRms = sqrt(sumSq / validSamples);
+  if (isnan(vibRms)) return false;
+  return true;
+}
+
+// --- DHT22: Temperature (°C) & Humidity (%) ---
+bool readDHT(float &temperature, float &humidity) {
+  if (!dhtReady) return false;
+
+  temperature = dht.readTemperature();
+  humidity = dht.readHumidity();
+
+  if (isnan(temperature) || isnan(humidity)) {
+    return false;
+  }
+  return true;
+}
+
+// --- MQ-2: Raw ADC value (0-1023) ---
+int readGasRaw() {
+  return analogRead(MQ2_PIN);
+}
+
+// --- HC-SR04: Distance (cm) ---
+bool readDistance(float &distanceCm) {
+  digitalWrite(HCSR04_TRIG, LOW);
+  delayMicroseconds(2);
+  digitalWrite(HCSR04_TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(HCSR04_TRIG, LOW);
+
+  long duration = pulseIn(HCSR04_ECHO, HIGH, 30000); // 30ms timeout (~5m)
+
+  if (duration == 0) return false;
+
+  distanceCm = (duration * 0.0343) / 2.0;
+
+  if (distanceCm < 2.0 || distanceCm > 400.0) {
+    return false;
+  }
   return true;
 }
 
@@ -322,35 +334,49 @@ void uploadToSupabase(String jsonPayload) {
 
   String endpoint = String(SUPABASE_URL) + "/rest/v1/sensor_data";
 
-  WiFiClientSecure client;
-  // Disable SSL certificate validation for NodeMCU runtime
-  client.setInsecure();
-  // Set explicit 10s connection/read timeout on secure socket
-  client.setTimeout(10000);
-  // Set memory buffer sizes (512 in / 512 out) to prevent BearSSL TLS buffer starvation/hangs on ESP8266
-  client.setBufferSizes(512, 512);
-
-  HTTPClient https;
-  // Initialize HTTPS connection with WiFiClientSecure
-  if (!https.begin(client, endpoint)) {
-    Serial.println("[SUPABASE] HTTP POST FAILED: Unable to begin HTTPS connection to endpoint");
-    return;
-  }
-
-  // Explicit 10-second HTTP timeout before POST
-  https.setTimeout(10000);
-
-  // Set Supabase REST API Headers
-  https.addHeader("Content-Type", "application/json");
-  https.addHeader("apikey", SUPABASE_KEY);
-  https.addHeader("Authorization", String("Bearer ") + SUPABASE_KEY);
-  https.addHeader("Prefer", "return=minimal");
-
   Serial.println("[SUPABASE] Uploading telemetry...");
   Serial.print("[SUPABASE] Endpoint: ");
   Serial.println(endpoint);
   Serial.println("[SUPABASE] JSON:");
   Serial.println(jsonPayload);
+
+  // Diagnostic heap inspection before creating secure client
+  Serial.print("[MEMORY] Free heap BEFORE TLS client: ");
+  Serial.println(ESP.getFreeHeap());
+
+  Serial.println("[HTTPS] Creating WiFiClientSecure...");
+  WiFiClientSecure client;
+  Serial.println("[HTTPS] Client created.");
+
+  client.setInsecure();
+  Serial.println("[HTTPS] setInsecure OK.");
+
+  client.setTimeout(10000);
+  Serial.println("[HTTPS] setTimeout OK.");
+
+  client.setBufferSizes(512, 512);
+  Serial.println("[HTTPS] setBufferSizes OK.");
+
+  Serial.println("[HTTPS] Creating HTTPClient...");
+  HTTPClient https;
+  Serial.println("[HTTPS] HTTPClient created.");
+
+  Serial.println("[HTTPS] Calling https.begin()...");
+  if (!https.begin(client, endpoint)) {
+    Serial.println("[SUPABASE] HTTP POST FAILED: Unable to begin HTTPS connection to endpoint");
+    return;
+  }
+  Serial.println("[HTTPS] https.begin() OK.");
+
+  https.setTimeout(10000);
+
+  https.addHeader("Content-Type", "application/json");
+  https.addHeader("apikey", SUPABASE_KEY);
+  https.addHeader("Authorization", String("Bearer ") + SUPABASE_KEY);
+  https.addHeader("Prefer", "return=minimal");
+
+  Serial.print("[MEMORY] Free heap BEFORE POST: ");
+  Serial.println(ESP.getFreeHeap());
 
   Serial.println("[SUPABASE] Starting HTTPS POST...");
   int httpCode = https.POST(jsonPayload);
@@ -484,16 +510,6 @@ void loop() {
     Serial.print("Vibration RMS : "); Serial.print(vibRms, 4); Serial.println(" m/s2");
   } else {
     Serial.println("[SENSOR ERROR] ADXL345 - Vibration unavailable");
-  }
-  Serial.println();
-
-  // --- Network status ---
-  Serial.println("[NETWORK]");
-  Serial.print("WiFi Status   : ");
-  Serial.println(WiFi.status() == WL_CONNECTED ? "CONNECTED" : "DISCONNECTED");
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.print("IP            : ");
-    Serial.println(WiFi.localIP());
   }
   Serial.println();
 
