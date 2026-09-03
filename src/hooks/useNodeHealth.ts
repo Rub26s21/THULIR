@@ -2,7 +2,7 @@
 // THULIR - Node Health Hook
 // ============================================================
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { getNodeStatusFromData } from '../services/nodeService';
 import { NODE_ID } from '../config/thresholds';
 import type { SensorData, NodeStatus } from '../types';
@@ -18,7 +18,5 @@ export function useNodeHealth(latestData: SensorData | null): NodeStatus {
     return () => clearInterval(interval);
   }, []);
 
-  return useMemo(() => {
-    return getNodeStatusFromData(latestData, NODE_ID);
-  }, [latestData]);
+  return getNodeStatusFromData(latestData, NODE_ID);
 }
