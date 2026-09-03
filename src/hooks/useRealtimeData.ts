@@ -34,19 +34,18 @@ export function useRealtimeData(nodeId: string) {
           .select('*')
           .eq('node_id', nodeId)
           .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
+          .limit(1);
 
         if (fetchError) {
-          if (fetchError.code !== 'PGRST116') {
-            console.error('[REALTIME] Polling error:', fetchError.message);
-          }
+          console.error('[REALTIME] Polling error:', fetchError.message);
           return;
         }
 
-        if (data) {
-          const mapped = mapRowToSensorData(data);
+        const row = Array.isArray(data) ? data[0] : data;
+        if (row) {
+          const mapped = mapRowToSensorData(row);
           setLatestData(mapped);
+          setError(null);
         }
       } catch (err) {
         console.error('[REALTIME] Polling exception:', err);
@@ -83,15 +82,16 @@ export function useRealtimeData(nodeId: string) {
           .select('*')
           .eq('node_id', nodeId)
           .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
+          .limit(1);
 
-        if (fetchError && fetchError.code !== 'PGRST116') {
+        if (fetchError) {
           throw fetchError;
         }
 
-        if (data) {
-          setLatestData(mapRowToSensorData(data));
+        const row = Array.isArray(data) ? data[0] : data;
+        if (row) {
+          setLatestData(mapRowToSensorData(row));
+          setError(null);
         }
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -118,6 +118,7 @@ export function useRealtimeData(nodeId: string) {
             if (payload.new) {
               const mapped = mapRowToSensorData(payload.new as Record<string, unknown>);
               setLatestData(mapped);
+              setError(null);
             }
           }
         )
@@ -131,7 +132,7 @@ export function useRealtimeData(nodeId: string) {
           } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
             isConnectedRef.current = false;
             console.warn('[REALTIME] Subscription failed, falling back to polling');
-            setError('Realtime subscription failed — using polling fallback');
+            setError('Realtime subscription fallback active');
             startPolling();
           }
         });
@@ -143,7 +144,7 @@ export function useRealtimeData(nodeId: string) {
           console.warn('[REALTIME] Connection timeout, starting polling');
           startPolling();
         }
-      }, 10000);
+      }, 5000);
 
       return () => {
         clearTimeout(fallbackTimeout);

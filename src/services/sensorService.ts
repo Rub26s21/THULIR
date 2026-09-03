@@ -19,20 +19,15 @@ export async function getLatestReading(nodeId: string = NODE_ID): Promise<Sensor
     .select('*')
     .eq('node_id', nodeId)
     .order('created_at', { ascending: false })
-    .limit(1)
-    .single();
+    .limit(1);
 
   if (error) {
-    if (error.code === 'PGRST116') {
-      // No rows found
-      console.log('[SENSOR] No data found for node:', nodeId);
-      return null;
-    }
     console.error('[SENSOR] Error fetching latest reading:', error.message);
     throw error;
   }
 
-  return data ? mapRowToSensorData(data) : null;
+  const row = Array.isArray(data) ? data[0] : data;
+  return row ? mapRowToSensorData(row) : null;
 }
 
 /**
