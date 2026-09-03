@@ -1,6 +1,6 @@
 // ============================================================
 //              THULIR - NODE_01 FIRMWARE
-//       ESP8266 NodeMCU IoT Sensor Node
+//       ESP8266 NodeMCU IoT Sensor Node (PRODUCTION BUILD)
 // ============================================================
 //
 // Sensors:
@@ -28,15 +28,14 @@
 #include <ArduinoJson.h>
 
 // ============================================================
-//              CONFIGURATION — MODIFY HERE
+//              CONFIGURATION
 // ============================================================
 
 // --- Wi-Fi ---
-const char* WIFI_SSID     = "Rubss";
+const char* WIFI_SSID     = "Rubs";
 const char* WIFI_PASSWORD  = "1234567890";
 
 // --- Supabase ---
-// IMPORTANT: Use the anon/public key. NEVER use service-role key.
 const char* SUPABASE_URL   = "https://cdsjgvpjvyewepgalset.supabase.co";
 const char* SUPABASE_KEY   = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc2pndnBqdnlld2VwZ2Fsc2V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5ODczMTEsImV4cCI6MjEwMzU2MzMxMX0._1rsBzlWEl5GcO701B-KMvhyLoNeMN69P5-woTFFtLc";
 
@@ -61,8 +60,6 @@ const unsigned long TRANSMIT_INTERVAL_MS = 5000;
 // HC-SR04
 #define HCSR04_TRIG D5  // GPIO14
 #define HCSR04_ECHO D6  // GPIO12
-// NOTE: ECHO must be voltage-protected (voltage divider)
-//       before connecting to ESP8266 GPIO12.
 
 // --- Vibration RMS Config ---
 #define VIB_SAMPLE_COUNT 50
@@ -86,10 +83,6 @@ bool bmpReady   = false;
 bool adxlReady  = false;
 bool dhtReady   = false;
 
-// ============================================================
-//                    EVENT COUNTER
-// ============================================================
-
 unsigned long eventCounter = 0;
 
 // ============================================================
@@ -102,13 +95,8 @@ void setup() {
 
   Serial.println();
   Serial.println("================================================");
-  Serial.println("              THULIR - NODE_01");
+  Serial.println("         THULIR - NODE_01 (PRODUCTION)          ");
   Serial.println("================================================");
-  Serial.print("[SYSTEM] Reset reason: ");
-  Serial.println(ESP.getResetReason());
-  Serial.print("[MEMORY] Free heap at boot: ");
-  Serial.println(ESP.getFreeHeap());
-  Serial.println();
 
   // --- I2C ---
   Wire.begin(SDA_PIN, SCL_PIN);
@@ -127,7 +115,7 @@ void setup() {
   // --- BMP280 ---
   if (bmp.begin(0x76)) {
     bmpReady = true;
-    Serial.println("[BMP280] Initialized OK");
+    Serial.println("[BMP280] Initialized OK (addr 0x76)");
   } else if (bmp.begin(0x77)) {
     bmpReady = true;
     Serial.println("[BMP280] Initialized OK (addr 0x77)");
@@ -159,10 +147,10 @@ void setup() {
   pinMode(MQ2_PIN, INPUT);
   Serial.println("[MQ-2] Analog input configured on A0");
 
+  // --- Wi-Fi ---
   Serial.println();
   Serial.println("================================================");
-  Serial.println("Connecting to Wi-Fi...");
-  Serial.print("SSID: ");
+  Serial.print("Connecting to Wi-Fi: ");
   Serial.println(WIFI_SSID);
 
   WiFi.mode(WIFI_STA);
@@ -190,8 +178,6 @@ void setup() {
 
   Serial.println("================================================");
   Serial.println("Sensor node initialization complete.");
-  Serial.print("[MEMORY] Free heap after setup: ");
-  Serial.println(ESP.getFreeHeap());
   Serial.println("Starting transmission cycle (every 5s)...");
   Serial.println();
 }
@@ -323,64 +309,31 @@ void uploadToSupabase(String jsonPayload) {
     return;
   }
 
-  // --- Network Pre-POST Diagnostics ---
-  Serial.print("[NETWORK] WiFi Status   : ");
-  Serial.println(WiFi.status() == WL_CONNECTED ? "CONNECTED" : "DISCONNECTED");
-  Serial.print("[NETWORK] Local IP      : ");
-  Serial.println(WiFi.localIP());
-  Serial.print("[NETWORK] RSSI          : ");
-  Serial.print(WiFi.RSSI());
-  Serial.println(" dBm");
-
   String endpoint = String(SUPABASE_URL) + "/rest/v1/sensor_data";
 
-  Serial.println("[SUPABASE] Uploading telemetry...");
-  Serial.print("[SUPABASE] Endpoint: ");
-  Serial.println(endpoint);
-  Serial.println("[SUPABASE] JSON:");
-  Serial.println(jsonPayload);
-
-  // Diagnostic heap inspection before creating secure client
-  Serial.print("[MEMORY] Free heap BEFORE TLS client: ");
-  Serial.println(ESP.getFreeHeap());
-
-  Serial.println("[HTTPS] Creating WiFiClientSecure...");
   WiFiClientSecure client;
-  Serial.println("[HTTPS] Client created.");
-
   client.setInsecure();
-  Serial.println("[HTTPS] setInsecure OK.");
-
   client.setTimeout(10000);
-  Serial.println("[HTTPS] setTimeout OK.");
 
-  client.setBufferSizes(512, 512);
-  Serial.println("[HTTPS] setBufferSizes OK.");
-
-  Serial.println("[HTTPS] Creating HTTPClient...");
   HTTPClient https;
-  Serial.println("[HTTPS] HTTPClient created.");
-
-  Serial.println("[HTTPS] Calling https.begin()...");
   if (!https.begin(client, endpoint)) {
-    Serial.println("[SUPABASE] HTTP POST FAILED: Unable to begin HTTPS connection to endpoint");
+    Serial.println("[SUPABASE] HTTP POST FAILED: Unable to begin HTTPS connection");
     return;
   }
-  Serial.println("[HTTPS] https.begin() OK.");
 
   https.setTimeout(10000);
-
   https.addHeader("Content-Type", "application/json");
   https.addHeader("apikey", SUPABASE_KEY);
   https.addHeader("Authorization", String("Bearer ") + SUPABASE_KEY);
   https.addHeader("Prefer", "return=minimal");
 
-  Serial.print("[MEMORY] Free heap BEFORE POST: ");
-  Serial.println(ESP.getFreeHeap());
+  Serial.println("[SUPABASE] Uploading telemetry...");
+  Serial.print("[SUPABASE] Endpoint: ");
+  Serial.println(endpoint);
+  Serial.println("[SUPABASE] JSON: ");
+  Serial.println(jsonPayload);
 
-  Serial.println("[SUPABASE] Starting HTTPS POST...");
   int httpCode = https.POST(jsonPayload);
-  Serial.println("[SUPABASE] HTTPS POST returned.");
 
   if (httpCode == 201) {
     Serial.println("[SUPABASE] HTTP STATUS: 201 (SUCCESS)");
@@ -388,16 +341,12 @@ void uploadToSupabase(String jsonPayload) {
   } else if (httpCode > 0) {
     Serial.print("[SUPABASE] HTTP STATUS: ");
     Serial.println(httpCode);
-    Serial.print("[SUPABASE] HTTP POST FAILED: Server returned HTTP ");
-    Serial.println(httpCode);
     String response = https.getString();
     if (response.length() > 0) {
-      Serial.print("[SUPABASE] Error Body    : ");
+      Serial.print("[SUPABASE] Response Body : ");
       Serial.println(response);
     }
   } else {
-    Serial.print("[SUPABASE] HTTP STATUS: ");
-    Serial.println(httpCode);
     Serial.print("[SUPABASE] HTTP POST FAILED: ");
     Serial.println(https.errorToString(httpCode));
   }
@@ -440,10 +389,10 @@ void ensureWiFi() {
 void loop() {
   Serial.println();
   Serial.println("================================================");
-  Serial.println("              THULIR - NODE_01");
+  Serial.println("              THULIR - NODE_01                  ");
   Serial.println("================================================");
 
-  // Ensure Wi-Fi
+  // Ensure Wi-Fi connection
   ensureWiFi();
 
   // --- Read all sensors ---
@@ -464,7 +413,7 @@ void loop() {
   float vibRms = 0;
   bool vibOk = readVibrationRMS(vibRms);
 
-  // --- Print readings ---
+  // --- Print telemetry summary ---
   Serial.println();
 
   if (tiltOk) {
@@ -513,7 +462,7 @@ void loop() {
   }
   Serial.println();
 
-  // --- Build JSON payload ---
+  // --- Build JSON payload (Strict Contract) ---
   StaticJsonDocument<512> doc;
   doc["node_id"] = NODE_ID;
   doc["event_id"] = generateEventId();
@@ -557,7 +506,7 @@ void loop() {
   String jsonPayload;
   serializeJson(doc, jsonPayload);
 
-  // --- Upload ---
+  // --- Upload to Supabase REST API ---
   Serial.println("[SUPABASE]");
   uploadToSupabase(jsonPayload);
 
