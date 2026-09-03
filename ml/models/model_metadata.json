@@ -1,0 +1,84 @@
+{
+  "model_name": "Random Forest Classifier",
+  "model_type": "RandomForestClassifier",
+  "model_version": "thulir-risk-rf-v1.0",
+  "training_date": "2026-09-02T08:32:55.177488Z",
+  "feature_names": [
+    "tilt_x",
+    "tilt_y",
+    "tilt_magnitude",
+    "pressure",
+    "gas_raw",
+    "temperature",
+    "humidity",
+    "distance_cm",
+    "vib_rms"
+  ],
+  "target_classes": [
+    "HIGH_RISK",
+    "LOW_RISK",
+    "MODERATE_RISK"
+  ],
+  "training_dataset": "thulir_sensor_dataset.csv (Development / Prototype)",
+  "dataset_disclaimer": "Trained on synthetic development dataset derived from engineering thresholds. Not field disaster data.",
+  "train_samples": 2400,
+  "test_samples": 600,
+  "hyperparameters": {
+    "n_estimators": 100,
+    "max_depth": 8,
+    "min_samples_split": 4,
+    "random_state": 42
+  },
+  "metrics": {
+    "training_samples": 2400,
+    "test_samples": 600,
+    "training_accuracy": 1.0,
+    "test_accuracy": 1.0,
+    "macro_precision": 1.0,
+    "weighted_precision": 1.0,
+    "macro_recall": 1.0,
+    "weighted_recall": 1.0,
+    "macro_f1": 1.0,
+    "weighted_f1": 1.0,
+    "per_class_metrics": {
+      "HIGH_RISK": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "LOW_RISK": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "MODERATE_RISK": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        200,
+        0,
+        0
+      ],
+      [
+        0,
+        200,
+        0
+      ],
+      [
+        0,
+        0,
+        200
+      ]
+    ],
+    "classes": [
+      "HIGH_RISK",
+      "LOW_RISK",
+      "MODERATE_RISK"
+    ]
+  },
+  "random_seed": 42
+}
