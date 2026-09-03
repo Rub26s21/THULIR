@@ -43,7 +43,7 @@ const char* WIFI_PASSWORD  = "1234567890";
 // --- Supabase ---
 // IMPORTANT: Use the anon/public key. NEVER use service-role key.
 const char* SUPABASE_URL   = "https://cdsjgvpjvyewepgalset.supabase.co";
-const char* SUPABASE_KEY   = "";  // <-- Paste your anon key here
+const char* SUPABASE_KEY   = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc2pndnBqdnlld2VwZ2Fsc2V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5ODczMTEsImV4cCI6MjEwMzU2MzMxMX0._1rsBzlWEl5GcO701B-KMvhyLoNeMN69P5-woTFFtLc";
 
 // --- Node ---
 const char* NODE_ID = "NODE_01";
@@ -311,39 +311,72 @@ void uploadToSupabase(String jsonPayload) {
     return;
   }
 
+  // --- Network Pre-POST Diagnostics ---
+  Serial.print("[NETWORK] WiFi Status   : ");
+  Serial.println(WiFi.status() == WL_CONNECTED ? "CONNECTED" : "DISCONNECTED");
+  Serial.print("[NETWORK] Local IP      : ");
+  Serial.println(WiFi.localIP());
+  Serial.print("[NETWORK] RSSI          : ");
+  Serial.print(WiFi.RSSI());
+  Serial.println(" dBm");
+
   String endpoint = String(SUPABASE_URL) + "/rest/v1/sensor_data";
 
   WiFiClientSecure client;
-  // PROTOTYPE NOTE: Using setInsecure() for development.
-  // For production, implement proper certificate validation.
+  // Disable SSL certificate validation for NodeMCU runtime
   client.setInsecure();
+  // Set explicit 10s connection/read timeout on secure socket
+  client.setTimeout(10000);
+  // Set memory buffer sizes (512 in / 512 out) to prevent BearSSL TLS buffer starvation/hangs on ESP8266
+  client.setBufferSizes(512, 512);
 
-  HTTPClient http;
-  http.begin(client, endpoint);
-  http.addHeader("Content-Type", "application/json");
-  http.addHeader("apikey", SUPABASE_KEY);
-  http.addHeader("Authorization", String("Bearer ") + SUPABASE_KEY);
-  http.addHeader("Prefer", "return=minimal");
+  HTTPClient https;
+  // Initialize HTTPS connection with WiFiClientSecure
+  if (!https.begin(client, endpoint)) {
+    Serial.println("[SUPABASE] HTTP POST FAILED: Unable to begin HTTPS connection to endpoint");
+    return;
+  }
 
-  Serial.println("[SUPABASE] Uploading...");
+  // Explicit 10-second HTTP timeout before POST
+  https.setTimeout(10000);
 
-  int httpCode = http.POST(jsonPayload);
+  // Set Supabase REST API Headers
+  https.addHeader("Content-Type", "application/json");
+  https.addHeader("apikey", SUPABASE_KEY);
+  https.addHeader("Authorization", String("Bearer ") + SUPABASE_KEY);
+  https.addHeader("Prefer", "return=minimal");
 
-  Serial.print("[SUPABASE] HTTP Response : ");
-  Serial.println(httpCode);
+  Serial.println("[SUPABASE] Uploading telemetry...");
+  Serial.print("[SUPABASE] Endpoint: ");
+  Serial.println(endpoint);
+  Serial.println("[SUPABASE] JSON:");
+  Serial.println(jsonPayload);
+
+  Serial.println("[SUPABASE] Starting HTTPS POST...");
+  int httpCode = https.POST(jsonPayload);
+  Serial.println("[SUPABASE] HTTPS POST returned.");
 
   if (httpCode == 201) {
+    Serial.println("[SUPABASE] HTTP STATUS: 201 (SUCCESS)");
     Serial.println("[SUPABASE] Database      : SUCCESS");
-  } else {
-    Serial.println("[SUPABASE] Database      : FAILED");
-    String response = http.getString();
+  } else if (httpCode > 0) {
+    Serial.print("[SUPABASE] HTTP STATUS: ");
+    Serial.println(httpCode);
+    Serial.print("[SUPABASE] HTTP POST FAILED: Server returned HTTP ");
+    Serial.println(httpCode);
+    String response = https.getString();
     if (response.length() > 0) {
       Serial.print("[SUPABASE] Error Body    : ");
       Serial.println(response);
     }
+  } else {
+    Serial.print("[SUPABASE] HTTP STATUS: ");
+    Serial.println(httpCode);
+    Serial.print("[SUPABASE] HTTP POST FAILED: ");
+    Serial.println(https.errorToString(httpCode));
   }
 
-  http.end();
+  https.end();
 }
 
 // ============================================================
