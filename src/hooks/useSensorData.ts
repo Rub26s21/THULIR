@@ -3,7 +3,7 @@
 // ============================================================
 // Manages latest + historical sensor data, merging realtime/demo sources.
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { useRealtimeData } from './useRealtimeData';
 import { useDemoMode } from './useDemoMode';
@@ -23,20 +23,6 @@ export function useSensorData() {
 
   // Demo data
   const { demoData, demoHistory } = useDemoMode(demoMode);
-
-  // Determine which data to use
-  const latestData = demoMode ? demoData : realtimeData;
-  const history = demoMode ? demoHistory : liveHistory;
-
-  // Determine data source label
-  let dataSource: DataSource = 'NO_DATA';
-  if (demoMode) {
-    dataSource = 'DEMO';
-  } else if (realtimeError && !realtimeData) {
-    dataSource = 'ERROR';
-  } else if (realtimeData) {
-    dataSource = 'LIVE';
-  }
 
   // Fetch live historical data from Supabase
   useEffect(() => {
@@ -72,6 +58,27 @@ export function useSensorData() {
       };
     }
   }, [demoMode, timeRange]);
+
+  // Combine fetched history with latest live packet seamlessly
+  const combinedLiveHistory = useMemo(() => {
+    if (!realtimeData) return liveHistory;
+    if (liveHistory.some(r => r.id === realtimeData.id && r.id !== 0)) return liveHistory;
+    return [...liveHistory, realtimeData];
+  }, [liveHistory, realtimeData]);
+
+  // Determine which data to use
+  const latestData = demoMode ? demoData : realtimeData;
+  const history = demoMode ? demoHistory : combinedLiveHistory;
+
+  // Determine data source label
+  let dataSource: DataSource = 'NO_DATA';
+  if (demoMode) {
+    dataSource = 'DEMO';
+  } else if (realtimeError && !realtimeData) {
+    dataSource = 'ERROR';
+  } else if (realtimeData) {
+    dataSource = 'LIVE';
+  }
 
   const toggleDemoMode = useCallback(() => {
     setDemoMode(prev => !prev);
