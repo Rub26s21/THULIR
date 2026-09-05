@@ -1,7 +1,10 @@
 // ============================================================
-// THULIR - Realtime Data Hook
+// THULIR - Realtime Data Hook (PRODUCTION-HARDENED)
 // ============================================================
-// Supabase Realtime subscription with automatic 5s polling fallback.
+// Strategy: ALWAYS poll every 5s as baseline. Additionally subscribe
+// to Supabase Realtime for instant updates when available.
+// This dual approach ensures data ALWAYS flows to the dashboard
+// regardless of whether Realtime publication is configured.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { RealtimeChannel } from '@supabase/supabase-js';
@@ -18,93 +21,75 @@ export function useRealtimeData(nodeId: string) {
   );
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
-  const isConnectedRef = useRef(false);
+  const latestIdRef = useRef<number>(0);
+  const realtimeActiveRef = useRef(false);
 
-  // Polling fallback
-  const startPolling = useCallback(() => {
-    if (pollingRef.current) return;
+  // ── Poll Function (always active as baseline) ──────────────
+  const pollOnce = useCallback(async () => {
+    const supabase = getSupabase();
+    if (!supabase) return;
 
-    const poll = async () => {
-      const supabase = getSupabase();
-      if (!supabase) return;
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('sensor_data')
+        .select('*')
+        .eq('node_id', nodeId)
+        .order('created_at', { ascending: false })
+        .limit(1);
 
-      try {
-        const { data, error: fetchError } = await supabase
-          .from('sensor_data')
-          .select('*')
-          .eq('node_id', nodeId)
-          .order('created_at', { ascending: false })
-          .limit(1);
+      if (fetchError) {
+        console.error('[POLL] Error:', fetchError.message);
+        return;
+      }
 
-        if (fetchError) {
-          console.error('[REALTIME] Polling error:', fetchError.message);
-          return;
-        }
-
-        const row = Array.isArray(data) ? data[0] : data;
-        if (row) {
+      const row = Array.isArray(data) ? data[0] : data;
+      if (row) {
+        const rowId = Number(row.id) || 0;
+        // Only update if this is genuinely new data
+        if (rowId !== latestIdRef.current) {
+          latestIdRef.current = rowId;
           const mapped = mapRowToSensorData(row);
           setLatestData(mapped);
           setError(null);
+          console.log('[POLL] New data received — id:', rowId, 'ts:', mapped.created_at);
         }
-      } catch (err) {
-        console.error('[REALTIME] Polling exception:', err);
       }
-    };
-
-    poll();
-    pollingRef.current = setInterval(poll, POLLING_INTERVAL_MS);
-    setConnectionType('POLLING');
-    console.log('[REALTIME] Polling fallback active (5s interval)');
+    } catch (err) {
+      console.error('[POLL] Exception:', err);
+    }
   }, [nodeId]);
 
-  const stopPolling = useCallback(() => {
-    if (pollingRef.current) {
-      clearInterval(pollingRef.current);
-      pollingRef.current = null;
-    }
-  }, []);
-
-  // Realtime subscription
+  // ── Polling lifecycle ──────────────────────────────────────
   useEffect(() => {
-    if (!isSupabaseConfigured) {
-      return;
-    }
+    if (!isSupabaseConfigured) return;
+
+    // Immediately fetch latest data on mount
+    pollOnce();
+
+    // Start interval polling — runs regardless of Realtime status
+    const interval = setInterval(pollOnce, POLLING_INTERVAL_MS);
+    pollingRef.current = interval;
+    setConnectionType('POLLING');
+    console.log(`[POLL] Active for ${nodeId} (every ${POLLING_INTERVAL_MS}ms)`);
+
+    return () => {
+      clearInterval(interval);
+      pollingRef.current = null;
+    };
+  }, [nodeId, pollOnce]);
+
+  // ── Realtime subscription (bonus — instant updates) ────────
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
 
     const supabase = getSupabase();
     if (!supabase) return;
 
-    // Initial fetch
-    const fetchLatest = async () => {
-      try {
-        const { data, error: fetchError } = await supabase
-          .from('sensor_data')
-          .select('*')
-          .eq('node_id', nodeId)
-          .order('created_at', { ascending: false })
-          .limit(1);
-
-        if (fetchError) {
-          throw fetchError;
-        }
-
-        const row = Array.isArray(data) ? data[0] : data;
-        if (row) {
-          setLatestData(mapRowToSensorData(row));
-          setError(null);
-        }
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : String(err);
-        console.error('[REALTIME] Initial fetch error:', msg);
-        setError(msg);
-      }
-    };
-
-    fetchLatest();
-
     try {
+      const channelName = `sensor_realtime_${nodeId}_${Date.now()}`;
+
       const channel = supabase
-        .channel('sensor_data_realtime')
+        .channel(channelName)
         .on(
           'postgres_changes',
           {
@@ -114,55 +99,42 @@ export function useRealtimeData(nodeId: string) {
             filter: `node_id=eq.${nodeId}`,
           },
           (payload) => {
-            console.log('[REALTIME] New sensor data received');
             if (payload.new) {
               const mapped = mapRowToSensorData(payload.new as Record<string, unknown>);
+              const rowId = Number((payload.new as Record<string, unknown>).id) || 0;
+              latestIdRef.current = rowId;
               setLatestData(mapped);
               setError(null);
+              setConnectionType('REALTIME');
+              console.log('[REALTIME] Instant data received — id:', rowId);
             }
           }
         )
         .subscribe((status) => {
-          console.log('[REALTIME] Subscription status:', status);
+          console.log('[REALTIME] Status:', status);
           if (status === 'SUBSCRIBED') {
-            isConnectedRef.current = true;
-            setConnectionType('REALTIME');
-            setError(null);
-            stopPolling();
+            realtimeActiveRef.current = true;
+            // Don't stop polling — keep it as safety net
+            console.log('[REALTIME] Subscribed (polling still active as backup)');
           } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-            isConnectedRef.current = false;
-            console.warn('[REALTIME] Subscription failed, falling back to polling');
-            setError('Realtime subscription fallback active');
-            startPolling();
+            realtimeActiveRef.current = false;
+            console.warn('[REALTIME] Channel error — polling continues as primary');
           }
         });
 
       channelRef.current = channel;
 
-      const fallbackTimeout = setTimeout(() => {
-        if (!isConnectedRef.current) {
-          console.warn('[REALTIME] Connection timeout, starting polling');
-          startPolling();
-        }
-      }, 5000);
-
       return () => {
-        clearTimeout(fallbackTimeout);
-        stopPolling();
+        realtimeActiveRef.current = false;
         if (channelRef.current) {
           supabase.removeChannel(channelRef.current);
           channelRef.current = null;
         }
       };
     } catch (err) {
-      console.warn('[REALTIME] Failed to setup subscription:', err);
-      startPolling();
+      console.warn('[REALTIME] Setup failed:', err);
     }
-
-    return () => {
-      stopPolling();
-    };
-  }, [nodeId, startPolling, stopPolling]);
+  }, [nodeId]);
 
   return { latestData, connectionType, error };
 }
