@@ -10,7 +10,7 @@ import type { SensorData } from '../types';
 
 let demoCounter = 0;
 
-function generateDemoReading(): SensorData {
+function generateDemoReading(nodeId: string = 'NODE_01'): SensorData {
   demoCounter++;
   const noise = (range: number) => (Math.random() - 0.5) * range;
   const t = demoCounter * 0.1;
@@ -30,7 +30,7 @@ function generateDemoReading(): SensorData {
 
   return {
     id: demoCounter,
-    node_id: 'NODE_01',
+    node_id: nodeId,
     event_id: `demo-${Date.now()}-${demoCounter}`,
     tilt_x: Math.round((anomaly ? tiltX * 3 : tiltX) * 100) / 100,
     tilt_y: Math.round(tiltY * 100) / 100,
@@ -44,19 +44,19 @@ function generateDemoReading(): SensorData {
   };
 }
 
-export function useDemoMode(enabled: boolean) {
-  const [demoData, setDemoData] = useState<SensorData | null>(() => (enabled ? generateDemoReading() : null));
+export function useDemoMode(enabled: boolean, selectedNodeId: string = 'NODE_01') {
+  const [demoData, setDemoData] = useState<SensorData | null>(() => (enabled ? generateDemoReading(selectedNodeId) : null));
   const [demoHistory, setDemoHistory] = useState<SensorData[]>(() => (demoData ? [demoData] : []));
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const generateReading = useCallback(() => {
-    const reading = generateDemoReading();
+    const reading = generateDemoReading(selectedNodeId);
     setDemoData(reading);
     setDemoHistory(prev => {
       const next = [...prev, reading];
       return next.length > 500 ? next.slice(-500) : next;
     });
-  }, []);
+  }, [selectedNodeId]);
 
   useEffect(() => {
     if (!enabled) {

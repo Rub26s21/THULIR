@@ -61,10 +61,22 @@ export const SENSOR_META = [
   { key: 'vib_rms' as keyof SensorData, name: 'Vibration', unit: 'm/s²', hardware: 'ADXL345', icon: 'Activity', precision: 4 },
 ] as const;
 
-// --- Node Config ---
+// --- Node & Multi-Node Mesh Config ---
 
-export const NODE_ID = 'NODE_01';
+export const DEFAULT_NODE_ID = 'NODE_01';
+export const NODE_ID = 'NODE_01'; // Backward compatibility
+export const DEFAULT_NODE_IDS = ['NODE_01', 'NODE_02', 'NODE_03', 'NODE_04'] as const;
 export const TRANSMISSION_INTERVAL_S = 5;
+
+export const REALTIME_NODES_CHANNEL = 'nodes_changes';
+export const REALTIME_LINKS_CHANNEL = 'node_links_changes';
+export const REALTIME_PACKETS_CHANNEL = 'mesh_packets_changes';
+
+export const KNOWN_ZONES = [
+  { id: 'ZONE_A', name: 'Zone Alpha — Longwall Panel 4', criticalThresholdCount: 1 },
+  { id: 'ZONE_B', name: 'Zone Beta — Haulage Drift East', criticalThresholdCount: 1 },
+  { id: 'ZONE_C', name: 'Zone Gamma — Return Airway North', criticalThresholdCount: 1 },
+] as const;
 
 // --- Demo Mode ---
 
@@ -80,3 +92,4 @@ export const DEMO_BASE_VALUES: Record<string, number> = {
   distance_cm: 42.0,
   vib_rms: 0.08,
 };
+

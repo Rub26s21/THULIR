@@ -146,3 +146,79 @@ export interface SensorMeta {
   icon: string;
   precision: number;
 }
+
+// --- Multi-Node Registry & GPS ---
+
+export type GPSFixType = 'NONE' | '2D' | '3D' | 'DGPS' | 'RTK_FLOAT' | 'RTK_FIXED';
+export type RegistryNodeStatus = 'ONLINE' | 'DEGRADED' | 'OFFLINE' | 'NOT_DEPLOYED';
+
+export interface NodeRecord {
+  node_id: string;
+  node_name: string;
+  status: RegistryNodeStatus;
+  latitude: number | null;
+  longitude: number | null;
+  altitude: number | null;
+  gps_fix: GPSFixType;
+  gps_satellites: number;
+  battery_level: number;
+  firmware_version?: string;
+  zone_id?: string;
+  last_seen: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// --- Mesh Topology & Packets ---
+
+export interface NodeLink {
+  id: number;
+  node_id: string;
+  neighbor_id: string;
+  link_quality: number;
+  rssi: number;
+  hop_count: number;
+  last_seen: string;
+}
+
+export interface MeshPacket {
+  packet_id: string;
+  source_node: string;
+  next_hop: string | null;
+  gateway_id: string;
+  hop_count: number;
+  rssi: number;
+  snr?: number | null;
+  payload_size?: number | null;
+  sequence_number?: number | null;
+  created_at: string;
+}
+
+// --- Prototype Zone Risk Aggregation ---
+
+export interface ZoneRiskState {
+  zone_id: string;
+  zone_name: string;
+  aggregatedRisk: RiskLevel;
+  maxScore: number;
+  nodeCount: number;
+  onlineNodeCount: number;
+  contributingNodes: {
+    node_id: string;
+    level: RiskLevel;
+    score: number;
+  }[];
+  summary: string;
+  isPrototype: true;
+}
+
+// --- Offline Storage & Sync Contract ---
+
+export interface OfflineSyncContract {
+  localQueueLength: number;
+  lastSyncedAt: string | null;
+  isBuffering: boolean;
+  storageQuotaBytes: number;
+  usedBytes: number;
+}
+

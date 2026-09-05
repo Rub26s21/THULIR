@@ -11,20 +11,20 @@ import { getHistory } from '../services/sensorService';
 import { NODE_ID } from '../config/thresholds';
 import type { SensorData, TimeRange, DataSource } from '../types';
 
-export function useSensorData() {
+export function useSensorData(nodeId: string = NODE_ID) {
   const [demoMode, setDemoMode] = useState(!isSupabaseConfigured);
   const [liveHistory, setLiveHistory] = useState<SensorData[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<TimeRange>('1H');
 
-  // Realtime data from Supabase
-  const { latestData: realtimeData, connectionType, error: realtimeError } = useRealtimeData(NODE_ID);
+  // Realtime data from Supabase for selected node
+  const { latestData: realtimeData, connectionType, error: realtimeError } = useRealtimeData(nodeId);
 
   // Demo data
   const { demoData, demoHistory } = useDemoMode(demoMode);
 
-  // Fetch live historical data from Supabase
+  // Fetch live historical data from Supabase for selected node
   useEffect(() => {
     if (!demoMode && isSupabaseConfigured) {
       let isCancelled = false;
@@ -34,7 +34,7 @@ export function useSensorData() {
         setHistoryError(null);
 
         try {
-          const data = await getHistory(timeRange);
+          const data = await getHistory(timeRange, nodeId);
           if (!isCancelled) {
             setLiveHistory(data);
           }
@@ -57,7 +57,7 @@ export function useSensorData() {
         isCancelled = true;
       };
     }
-  }, [demoMode, timeRange]);
+  }, [demoMode, timeRange, nodeId]);
 
   // Combine fetched history with latest live packet seamlessly
   const combinedLiveHistory = useMemo(() => {

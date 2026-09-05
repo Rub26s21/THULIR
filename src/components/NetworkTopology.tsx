@@ -2,13 +2,15 @@
 // THULIR - Marketing-Grade Network Topology with Data Packet Pulses
 // ============================================================
 
-import { Network, Database, Cpu, Monitor } from 'lucide-react';
-import type { ConnectionType, FreshnessState } from '../types';
+import { Network, Database, Cpu, Monitor, Radio } from 'lucide-react';
+import type { ConnectionType, FreshnessState, NodeLink } from '../types';
 
 interface NetworkTopologyProps {
   connectionType: ConnectionType;
   freshness: FreshnessState;
   supabaseConnected: boolean;
+  activeNodeId?: string;
+  nodeLinks?: NodeLink[];
 }
 
 const HARDWARE_SENSORS = [
@@ -20,14 +22,20 @@ const HARDWARE_SENSORS = [
   { chip: 'ADXL345', role: 'Vibration', bus: 'I2C (0x53)', color: '#ec4899' },
 ];
 
-export function NetworkTopology({ connectionType, freshness, supabaseConnected }: NetworkTopologyProps) {
+export function NetworkTopology({
+  connectionType,
+  freshness,
+  supabaseConnected,
+  activeNodeId = 'NODE_01',
+  nodeLinks = [],
+}: NetworkTopologyProps) {
   const isOnline = freshness === 'LIVE' || freshness === 'RECENT';
   const isTransmitting = isOnline || connectionType === 'REALTIME';
 
   return (
     <div className="skeuo-card" role="region" aria-label="Network and Node Topology">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Network size={17} color="var(--accent-cyan)" />
           <span style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-mono)' }}>
@@ -35,7 +43,7 @@ export function NetworkTopology({ connectionType, freshness, supabaseConnected }
           </span>
         </div>
         <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          STRATA SENSORS → NODE_01 → SUPABASE → SOC CONSOLE
+          STRATA SENSORS → {activeNodeId} → SUPABASE → SOC CONSOLE
         </span>
       </div>
 
@@ -151,7 +159,7 @@ export function NetworkTopology({ connectionType, freshness, supabaseConnected }
             </svg>
           </div>
 
-          {/* ESP8266 NODE_01 */}
+          {/* Active Sensor Node */}
           <div
             className="skeuo-well"
             style={{
@@ -162,20 +170,49 @@ export function NetworkTopology({ connectionType, freshness, supabaseConnected }
             }}
           >
             <div style={{ fontSize: '0.76rem', color: '#a855f7', fontWeight: 800, fontFamily: 'var(--font-mono)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-              <Cpu size={14} /> NODE_01
+              <Cpu size={14} /> {activeNodeId}
             </div>
-            <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', marginTop: 2 }}>ESP8266 Wi-Fi HTTPS</div>
+            <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', marginTop: 2 }}>
+              {activeNodeId === 'NODE_01' ? 'ESP8266 Wi-Fi HTTPS' : 'Mesh Sensor Node'}
+            </div>
             <div style={{ fontSize: '0.66rem', color: isOnline ? 'var(--status-normal)' : 'var(--status-offline)', marginTop: 5, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
               {isOnline ? '● 5s TX ACTIVE' : '● OFFLINE'}
             </div>
           </div>
         </div>
 
+        {/* Mesh Links Status Sub-panel */}
+        <div
+          style={{
+            padding: '8px 12px',
+            borderRadius: 6,
+            backgroundColor: 'rgba(0,0,0,0.25)',
+            border: '1px solid var(--border-subtle)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontSize: '0.68rem',
+            fontFamily: 'var(--font-mono)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-muted)' }}>
+            <Radio size={13} color="var(--accent-cyan)" />
+            <span>WIRELESS MESH TOPOLOGY:</span>
+            <span style={{ color: nodeLinks.length > 0 ? 'var(--status-normal)' : 'var(--text-secondary)' }}>
+              {nodeLinks.length > 0 ? `${nodeLinks.length} Active Relay Links` : 'Direct Star / Gateway Uplink'}
+            </span>
+          </div>
+
+          <div style={{ color: 'var(--text-muted)' }}>
+            BACKHAUL: 2.4 GHz 802.11 b/g/n &bull; LORA EXTENSION READY
+          </div>
+        </div>
+
         {/* Connected Physical Sensors Matrix */}
-        <div style={{ marginTop: 4, paddingTop: 14, borderTop: '1px solid var(--border-subtle)' }}>
+        <div style={{ marginTop: 2, paddingTop: 12, borderTop: '1px solid var(--border-subtle)' }}>
           <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 800, marginBottom: 10, display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)' }}>
-            <span>Hardware Sensor Bus Array</span>
-            <span style={{ color: 'var(--accent-cyan)' }}>6 Physical Chips Online</span>
+            <span>Hardware Sensor Bus Array ({activeNodeId})</span>
+            <span style={{ color: 'var(--accent-cyan)' }}>6 Physical Chips Integrated</span>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>

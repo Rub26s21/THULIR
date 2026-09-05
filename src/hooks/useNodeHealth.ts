@@ -7,7 +7,7 @@ import { getNodeStatusFromData } from '../services/nodeService';
 import { NODE_ID } from '../config/thresholds';
 import type { SensorData, NodeStatus } from '../types';
 
-export function useNodeHealth(latestData: SensorData | null): NodeStatus {
+export function useNodeHealth(latestData: SensorData | null, nodeId: string = NODE_ID): NodeStatus {
   // Tick every second to update data freshness
   const [, setTick] = useState(0);
 
@@ -18,5 +18,6 @@ export function useNodeHealth(latestData: SensorData | null): NodeStatus {
     return () => clearInterval(interval);
   }, []);
 
-  return getNodeStatusFromData(latestData, NODE_ID);
+  return getNodeStatusFromData(latestData, nodeId);
 }
+

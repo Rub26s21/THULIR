@@ -2,11 +2,15 @@
 // THULIR - Master Unified Apple-Inspired IoT Monitoring System
 // ============================================================
 // ONE UI/UX System | ONE Information Architecture | FIVE Visual Themes
+// Multi-Node Wireless Mesh & Spatial Strata Risk Foundation
 
 import { useState, useMemo } from 'react';
 import { Header } from '../components/Header';
+import { NodeSelectorBar } from '../components/NodeSelectorBar';
 import { SensorGrid } from '../components/SensorGrid';
 import { RiskPanel } from '../components/RiskPanel';
+import { ZoneRiskPanel } from '../components/ZoneRiskPanel';
+import { GPSCard } from '../components/GPSCard';
 import { AlertPanel } from '../components/AlertPanel';
 import { MLPanel } from '../components/MLPanel';
 import { NodeHealth } from '../components/NodeHealth';
@@ -16,11 +20,14 @@ import { HistoricalCharts } from '../components/HistoricalCharts';
 import { GalaxyBackground } from '../components/GalaxyBackground';
 import { LaunchScreen } from '../components/LaunchScreen';
 import { useSensorData } from '../hooks/useSensorData';
+import { useMultiNode } from '../hooks/useMultiNode';
 import { useAlerts } from '../hooks/useAlerts';
 import { useNodeHealth } from '../hooks/useNodeHealth';
 import { useTheme } from '../hooks/useTheme';
 import { evaluateRisk } from '../utils/riskEngine';
 import { runMLInference } from '../utils/mlEngine';
+import { calculateZoneRisk } from '../utils/zoneRiskEngine';
+import { KNOWN_ZONES } from '../config/thresholds';
 import { isSupabaseConfigured } from '../lib/supabase';
 import {
   Activity, Shield, Brain, Network, Info
@@ -29,6 +36,9 @@ import {
 export function Dashboard() {
   const [showLaunch, setShowLaunch] = useState(true);
   const { theme, mode, setTheme, setCategoryMode } = useTheme();
+
+  // Multi-node state management
+  const [selectedNodeId, setSelectedNodeId] = useState<string>('NODE_01');
 
   const {
     latestData,
@@ -41,9 +51,20 @@ export function Dashboard() {
     demoMode,
     toggleDemoMode,
     supabaseConfigured,
-  } = useSensorData();
+  } = useSensorData(selectedNodeId);
 
-  // Compute ML prediction
+  // Derive node status & freshness
+  const nodeStatus = useNodeHealth(latestData, selectedNodeId);
+  const isTelemetryFresh = nodeStatus.freshness === 'LIVE' || nodeStatus.freshness === 'RECENT';
+
+  // Multi-node mesh tracking
+  const {
+    allNodesWithStatus,
+    activeNode,
+    nodeLinks,
+  } = useMultiNode(selectedNodeId, isTelemetryFresh);
+
+  // Compute ML prediction for active node
   const mlPrediction = useMemo(
     () => (latestData ? runMLInference(latestData) : null),
     [latestData]
@@ -55,13 +76,21 @@ export function Dashboard() {
     [latestData, mlPrediction]
   );
 
+  // Prototype Zone Risk Aggregation across zones
+  const zoneRisks = useMemo(() => {
+    const riskMap: Record<string, typeof risk> = {
+      [selectedNodeId]: risk,
+    };
+    return KNOWN_ZONES.map((zone) =>
+      calculateZoneRisk(zone.id, allNodesWithStatus, riskMap)
+    );
+  }, [allNodesWithStatus, selectedNodeId, risk]);
+
   // Central Alert Engine hook
   const { alerts, acknowledgeAlert } = useAlerts(
     latestData,
     mlPrediction
   );
-
-  const nodeStatus = useNodeHealth(latestData);
 
   return (
     <>
@@ -96,12 +125,22 @@ export function Dashboard() {
             onSelectMode={setCategoryMode}
           />
 
+          {/* Multi-Node Mesh Selector Bar */}
+          <NodeSelectorBar
+            nodes={allNodesWithStatus}
+            activeNodeId={selectedNodeId}
+            onSelectNode={setSelectedNodeId}
+            demoMode={demoMode}
+          />
+
           {/* Awaiting Telemetry Banner (when live without incoming packets) */}
           {!latestData && !demoMode && (
             <div className="skeuo-well" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                 <Info size={16} color="var(--accent)" />
-                <span><strong>Awaiting NODE_01 Live Telemetry:</strong> Listening for incoming sensor packets from Supabase...</span>
+                <span>
+                  <strong>Awaiting {selectedNodeId} Live Telemetry:</strong> Listening for incoming sensor packets from Supabase...
+                </span>
               </div>
               <button className="btn-liquid active-demo" onClick={toggleDemoMode} style={{ fontSize: '0.72rem' }}>
                 Enable Demo Simulation
@@ -109,15 +148,21 @@ export function Dashboard() {
             </div>
           )}
 
-          {/* 1. SYSTEM OVERVIEW: Overall Structural Risk + Node Health */}
+          {/* 1. SYSTEM OVERVIEW: Overall Structural Risk + Sector Zones + Node Health */}
           <section id="section-overview" className="section-wrapper">
             <div className="section-header-title">
               <Shield size={15} color="var(--accent)" />
               <span>System Overview &amp; Hardware Health</span>
             </div>
-            <div className="hero-overview-grid">
+            <div className="hero-overview-grid" style={{ marginBottom: 16 }}>
               <RiskPanel risk={risk} />
               <NodeHealth nodeStatus={nodeStatus} />
+            </div>
+
+            {/* Prototype Spatial Zone Risk & GNSS Location Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 16 }}>
+              <ZoneRiskPanel zones={zoneRisks} />
+              <GPSCard node={activeNode} />
             </div>
           </section>
 
@@ -125,7 +170,7 @@ export function Dashboard() {
           <section id="section-telemetry" className="section-wrapper">
             <div className="section-header-title">
               <Activity size={15} color="var(--accent)" />
-              <span>Live Multi-Sensor Telemetry (NODE_01 Array)</span>
+              <span>Live Multi-Sensor Telemetry ({selectedNodeId} Array)</span>
             </div>
             <SensorGrid data={latestData} />
           </section>
@@ -145,7 +190,7 @@ export function Dashboard() {
           <section id="section-ml" className="section-wrapper">
             <div className="section-header-title">
               <Brain size={15} color="var(--accent)" />
-              <span>AI Risk Analysis &amp; Inference</span>
+              <span>AI Risk Analysis &amp; Inference ({selectedNodeId})</span>
             </div>
             <div className="bottom-dual-grid">
               <MLPanel prediction={mlPrediction} />
@@ -169,6 +214,8 @@ export function Dashboard() {
                 connectionType={demoMode ? 'DISCONNECTED' : connectionType}
                 freshness={nodeStatus.freshness}
                 supabaseConnected={supabaseConfigured}
+                activeNodeId={selectedNodeId}
+                nodeLinks={nodeLinks}
               />
               <SystemActivity
                 latestData={latestData}
