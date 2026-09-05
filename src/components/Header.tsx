@@ -5,7 +5,8 @@
 import { useState, useEffect } from 'react';
 import {
   LayoutDashboard, Activity, BarChart2, Brain, Bell,
-  Network, Map, Settings, Play, Pause, Wifi, WifiOff, Radio, Palette, Menu
+  Network, Map, Settings, Play, Pause, Wifi, WifiOff, Radio, Palette, Menu,
+  Sun, Moon
 } from 'lucide-react';
 import { formatTimeAgo } from '../utils/timeUtils';
 import type { ConnectionType, FreshnessState } from '../types';
@@ -29,18 +30,25 @@ export function NeuralLeafLogo({ size = 32 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 36 36" fill="none" aria-hidden="true">
       <path
         d="M18 3C18 3 7 8 5.5 18C4 28 13 33 18 33C23 33 32 28 30.5 18C29 8 18 3 18 3Z"
-        fill="#0F6B57"
-        opacity="0.9"
+        fill="url(#leaf-gradient)"
+        opacity="0.95"
       />
-      <path d="M18 8 L18 30" stroke="white" strokeWidth="0.9" strokeOpacity="0.5" />
-      <path d="M18 16 C13.5 16 9.5 14.5 8 11" stroke="white" strokeWidth="0.7" strokeOpacity="0.4" />
-      <path d="M18 20 C13.5 20 10 22 8.5 25" stroke="white" strokeWidth="0.7" strokeOpacity="0.4" />
-      <path d="M18 16 C22.5 16 26.5 14.5 28 11" stroke="white" strokeWidth="0.7" strokeOpacity="0.4" />
-      <path d="M18 20 C22.5 20 26 22 27.5 25" stroke="white" strokeWidth="0.7" strokeOpacity="0.4" />
-      <circle cx="18" cy="16" r="1.8" fill="white" fillOpacity="0.7" />
-      <circle cx="18" cy="20" r="1.5" fill="white" fillOpacity="0.55" />
-      <circle cx="13" cy="16" r="1.2" fill="white" fillOpacity="0.4" />
-      <circle cx="23" cy="16" r="1.2" fill="white" fillOpacity="0.4" />
+      <defs>
+        <linearGradient id="leaf-gradient" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#10B981" />
+          <stop offset="50%" stopColor="#0F6B57" />
+          <stop offset="100%" stopColor="#087EA4" />
+        </linearGradient>
+      </defs>
+      <path d="M18 8 L18 30" stroke="white" strokeWidth="1" strokeOpacity="0.6" />
+      <path d="M18 16 C13.5 16 9.5 14.5 8 11" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
+      <path d="M18 20 C13.5 20 10 22 8.5 25" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
+      <path d="M18 16 C22.5 16 26.5 14.5 28 11" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
+      <path d="M18 20 C22.5 20 26 22 27.5 25" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
+      <circle cx="18" cy="16" r="2" fill="#34D399" />
+      <circle cx="18" cy="20" r="1.6" fill="#38BDF8" />
+      <circle cx="13" cy="16" r="1.3" fill="#A78BFA" />
+      <circle cx="23" cy="16" r="1.3" fill="#F43F5E" />
     </svg>
   );
 }
@@ -48,6 +56,8 @@ export function NeuralLeafLogo({ size = 32 }: { size?: number }) {
 interface SidebarProps {
   alertCount?: number;
   sidebarOpen: boolean;
+  mode: ColorMode;
+  onSelectMode: (mode: ColorMode) => void;
   onToggleSidebar: () => void;
   onCloseSidebar: () => void;
 }
@@ -55,6 +65,8 @@ interface SidebarProps {
 export function Sidebar({
   alertCount = 0,
   sidebarOpen,
+  mode,
+  onSelectMode,
   onCloseSidebar,
 }: SidebarProps) {
   const [activeSection, setActiveSection] = useState('section-overview');
@@ -95,9 +107,9 @@ export function Sidebar({
       {/* Brand */}
       <div className="sidebar-brand">
         <div className="sidebar-logo">
-          <NeuralLeafLogo size={36} />
+          <NeuralLeafLogo size={38} />
           <div className="sidebar-brand-name">
-            THULIR <span>AI</span>
+            THULIR <span className="gradient-text-vibrant">AI</span>
           </div>
         </div>
         <div className="sidebar-brand-sub">Intelligent Mine Safety</div>
@@ -126,6 +138,28 @@ export function Sidebar({
         })}
       </div>
 
+      {/* Theme Mode Quick Toggle in Sidebar */}
+      <div style={{ padding: '0 12px 14px' }}>
+        <div className="sidebar-mode-toggle">
+          <button
+            className={`sidebar-mode-btn ${mode === 'light' ? 'active' : ''}`}
+            onClick={() => onSelectMode('light')}
+            title="Switch to Light Theme"
+          >
+            <Sun size={13} />
+            <span>Light</span>
+          </button>
+          <button
+            className={`sidebar-mode-btn ${mode === 'dark' ? 'active' : ''}`}
+            onClick={() => onSelectMode('dark')}
+            title="Switch to Dark Theme"
+          >
+            <Moon size={13} />
+            <span>Dark</span>
+          </button>
+        </div>
+      </div>
+
       {/* Bottom tagline & botanical motif */}
       <div className="sidebar-bottom">
         <div className="sidebar-tagline">
@@ -143,7 +177,7 @@ export function Sidebar({
         >
           <path
             d="M30 5 C30 5 12 12 10 25 C8 38 20 42 30 42 C40 42 52 38 50 25 C48 12 30 5 30 5Z"
-            fill="#0F6B57"
+            fill="var(--brand-green)"
             opacity="0.6"
           />
           <path d="M30 10 L30 38" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
@@ -205,7 +239,7 @@ export function CommandBar({
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.35-4.35" />
           </svg>
-          <span>Search nodes, alerts, or insights…</span>
+          <span>Search nodes, alerts, or telemetry…</span>
           <span className="command-kbd">⌘ K</span>
         </div>
 
@@ -215,19 +249,19 @@ export function CommandBar({
           <div className="skeuo-pill" title="Telemetry channel">
             {connectionType === 'REALTIME' && (
               <>
-                <Wifi size={11} color="var(--status-normal)" />
-                <span style={{ color: 'var(--status-normal)' }}>REALTIME</span>
+                <Wifi size={12} color="var(--status-normal)" />
+                <span style={{ color: 'var(--status-normal)', fontWeight: 700 }}>REALTIME</span>
               </>
             )}
             {connectionType === 'POLLING' && (
               <>
-                <Radio size={11} color="var(--status-watch)" />
-                <span style={{ color: 'var(--status-watch)' }}>POLLING</span>
+                <Radio size={12} color="var(--status-watch)" />
+                <span style={{ color: 'var(--status-watch)', fontWeight: 700 }}>POLLING</span>
               </>
             )}
             {connectionType === 'DISCONNECTED' && (
               <>
-                <WifiOff size={11} color="var(--text-muted)" />
+                <WifiOff size={12} color="var(--text-muted)" />
                 <span>DISCONNECTED</span>
               </>
             )}
@@ -236,7 +270,7 @@ export function CommandBar({
           {/* Last Tx */}
           <div className="skeuo-pill" title="Last transmission">
             <span style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.68rem' }}>
-              Tx: <strong>{formattedTime}</strong>
+              Tx: <strong style={{ color: 'var(--text-primary)' }}>{formattedTime}</strong>
             </span>
           </div>
 
@@ -251,11 +285,31 @@ export function CommandBar({
             <span>{demoMode ? 'DEMO' : 'LIVE'}</span>
           </button>
 
-          {/* Theme */}
+          {/* One-Click Dark / Light Mode Switcher */}
+          <button
+            className="theme-quick-toggle-btn"
+            onClick={() => onSelectMode(mode === 'light' ? 'dark' : 'light')}
+            title={`Switch to ${mode === 'light' ? 'Dark' : 'Light'} Mode`}
+            aria-label="Toggle dark and light theme"
+          >
+            {mode === 'light' ? (
+              <>
+                <Sun size={14} className="theme-toggle-icon sun" />
+                <span className="theme-toggle-label">LIGHT</span>
+              </>
+            ) : (
+              <>
+                <Moon size={14} className="theme-toggle-icon moon" />
+                <span className="theme-toggle-label">DARK</span>
+              </>
+            )}
+          </button>
+
+          {/* Detailed Theme Palette Modal Trigger */}
           <button
             className="cmd-btn"
             onClick={() => setShowThemeModal(true)}
-            title="Change visual theme"
+            title="Custom theme appearances"
             aria-label="Appearance settings"
           >
             <Palette size={15} />
@@ -282,12 +336,13 @@ export function CommandBar({
                   borderRadius: '50%',
                   background: 'var(--status-critical)',
                   border: '1.5px solid var(--bg-app)',
+                  boxShadow: '0 0 8px var(--status-critical)',
                 }}
               />
             )}
           </button>
 
-          {/* Operator */}
+          {/* Operator Pill */}
           <div className="operator-pill">
             <div className="operator-avatar">NO</div>
             <div>
@@ -333,6 +388,8 @@ export function Header(props: HeaderProps) {
       <Sidebar
         alertCount={props.alertCount}
         sidebarOpen={sidebarOpen}
+        mode={props.mode}
+        onSelectMode={props.onSelectMode}
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         onCloseSidebar={() => setSidebarOpen(false)}
       />
