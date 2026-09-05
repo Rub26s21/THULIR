@@ -348,6 +348,8 @@ img, svg { display: block; }
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  width: calc(100% - var(--sidebar-width));
 }
 
 /* ── Command Bar ── */
@@ -355,11 +357,12 @@ img, svg { display: block; }
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(244, 241, 234, 0.88);
+  width: 100%;
+  background: rgba(244, 241, 234, 0.92);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--border-card);
-  padding: 12px 28px;
+  padding: 12px 32px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1028,10 +1031,9 @@ img, svg { display: block; }
 }
 
 .sensor-name-label {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-secondary);
-  padding-top: 8px;
 }
 
 .sensor-chip-badge {

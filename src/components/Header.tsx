@@ -1,29 +1,16 @@
 // ============================================================
-// THULIR AI — Premium Left Navigation Sidebar + Command Bar
+// THULIR AI — Premium Navigation Sidebar & Command Bar Components
 // ============================================================
 
 import { useState, useEffect } from 'react';
 import {
   LayoutDashboard, Activity, BarChart2, Brain, Bell,
-  Network, Map, Settings, Play, Pause, Wifi, WifiOff, Radio, Palette, Menu, X
+  Network, Map, Settings, Play, Pause, Wifi, WifiOff, Radio, Palette, Menu
 } from 'lucide-react';
 import { formatTimeAgo } from '../utils/timeUtils';
 import type { ConnectionType, FreshnessState } from '../types';
 import type { VisualTheme, ColorMode } from '../hooks/useTheme';
 import { ThemeSelector } from './ThemeSelector';
-
-interface HeaderProps {
-  connectionType: ConnectionType;
-  freshness: FreshnessState;
-  lastTimestamp: string | null;
-  demoMode: boolean;
-  onToggleDemo: () => void;
-  theme: VisualTheme;
-  mode: ColorMode;
-  onSelectTheme: (theme: VisualTheme) => void;
-  onSelectMode: (mode: ColorMode) => void;
-  alertCount?: number;
-}
 
 const NAV_ITEMS = [
   { id: 'section-overview',  label: 'Overview',   icon: LayoutDashboard },
@@ -37,7 +24,7 @@ const NAV_ITEMS = [
 ];
 
 // Neural-Leaf Logo SVG
-function NeuralLeafLogo({ size = 32 }: { size?: number }) {
+export function NeuralLeafLogo({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 36 36" fill="none" aria-hidden="true">
       <path
@@ -58,23 +45,19 @@ function NeuralLeafLogo({ size = 32 }: { size?: number }) {
   );
 }
 
-export function Header({
-  connectionType,
-  freshness: _freshness,
-  lastTimestamp,
-  demoMode,
-  onToggleDemo,
-  theme,
-  mode,
-  onSelectTheme,
-  onSelectMode,
-  alertCount = 0,
-}: HeaderProps) {
-  const [showThemeModal, setShowThemeModal] = useState(false);
-  const [activeSection, setActiveSection] = useState('section-overview');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+interface SidebarProps {
+  alertCount?: number;
+  sidebarOpen: boolean;
+  onToggleSidebar: () => void;
+  onCloseSidebar: () => void;
+}
 
-  const formattedTime = lastTimestamp ? formatTimeAgo(lastTimestamp) : 'No data';
+export function Sidebar({
+  alertCount = 0,
+  sidebarOpen,
+  onCloseSidebar,
+}: SidebarProps) {
+  const [activeSection, setActiveSection] = useState('section-overview');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,90 +84,120 @@ export function Header({
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
-    setSidebarOpen(false);
+    onCloseSidebar();
   };
 
+  return (
+    <nav
+      className={`ai-sidebar ${sidebarOpen ? 'open' : ''}`}
+      aria-label="Primary navigation"
+    >
+      {/* Brand */}
+      <div className="sidebar-brand">
+        <div className="sidebar-logo">
+          <NeuralLeafLogo size={36} />
+          <div className="sidebar-brand-name">
+            THULIR <span>AI</span>
+          </div>
+        </div>
+        <div className="sidebar-brand-sub">Intelligent Mine Safety</div>
+      </div>
+
+      {/* Navigation Items */}
+      <div className="sidebar-nav">
+        <div className="sidebar-section-label">Navigation</div>
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const isAlerts = item.id === 'section-alerts';
+          return (
+            <button
+              key={item.id}
+              className={`sidebar-nav-btn ${activeSection === item.id ? 'active' : ''}`}
+              onClick={() => scrollToSection(item.id)}
+              aria-current={activeSection === item.id ? 'page' : undefined}
+            >
+              <Icon size={17} strokeWidth={1.75} />
+              <span>{item.label}</span>
+              {isAlerts && alertCount > 0 && (
+                <span className="sidebar-badge">{alertCount}</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Bottom tagline & botanical motif */}
+      <div className="sidebar-bottom">
+        <div className="sidebar-tagline">
+          <strong>Safer Mines</strong>
+          Smarter Decisions.<br />
+          A Greener Tomorrow.
+        </div>
+        {/* Tiny neural-leaf motif */}
+        <svg
+          className="sidebar-leaf-motif"
+          width="60"
+          height="40"
+          viewBox="0 0 60 40"
+          fill="none"
+        >
+          <path
+            d="M30 5 C30 5 12 12 10 25 C8 38 20 42 30 42 C40 42 52 38 50 25 C48 12 30 5 30 5Z"
+            fill="#0F6B57"
+            opacity="0.6"
+          />
+          <path d="M30 10 L30 38" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
+          <path d="M30 22 C22 22 16 20 13 16" stroke="white" strokeWidth="0.6" strokeOpacity="0.4" />
+          <path d="M30 22 C38 22 44 20 47 16" stroke="white" strokeWidth="0.6" strokeOpacity="0.4" />
+        </svg>
+      </div>
+    </nav>
+  );
+}
+
+interface CommandBarProps {
+  connectionType: ConnectionType;
+  lastTimestamp: string | null;
+  demoMode: boolean;
+  onToggleDemo: () => void;
+  theme: VisualTheme;
+  mode: ColorMode;
+  onSelectTheme: (theme: VisualTheme) => void;
+  onSelectMode: (mode: ColorMode) => void;
+  alertCount?: number;
+  onToggleSidebar?: () => void;
+}
+
+export function CommandBar({
+  connectionType,
+  lastTimestamp,
+  demoMode,
+  onToggleDemo,
+  theme,
+  mode,
+  onSelectTheme,
+  onSelectMode,
+  alertCount = 0,
+  onToggleSidebar,
+}: CommandBarProps) {
+  const [showThemeModal, setShowThemeModal] = useState(false);
+  const formattedTime = lastTimestamp ? formatTimeAgo(lastTimestamp) : 'No data';
 
   return (
     <>
-      {/* ── Left Sidebar Navigation Rail ── */}
-      <nav
-        className={`ai-sidebar ${sidebarOpen ? 'open' : ''}`}
-        aria-label="Primary navigation"
-      >
-        {/* Brand */}
-        <div className="sidebar-brand">
-          <div className="sidebar-logo">
-            <NeuralLeafLogo size={36} />
-            <div className="sidebar-brand-name">
-              THULIR <span>AI</span>
-            </div>
-          </div>
-          <div className="sidebar-brand-sub">Intelligent Mine Safety</div>
-        </div>
-
-        {/* Navigation Items */}
-        <div className="sidebar-nav">
-          <div className="sidebar-section-label">Navigation</div>
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const isAlerts = item.id === 'section-alerts';
-            return (
-              <button
-                key={item.id}
-                className={`sidebar-nav-btn ${activeSection === item.id ? 'active' : ''}`}
-                onClick={() => scrollToSection(item.id)}
-                aria-current={activeSection === item.id ? 'page' : undefined}
-              >
-                <Icon size={17} strokeWidth={1.75} />
-                <span>{item.label}</span>
-                {isAlerts && alertCount > 0 && (
-                  <span className="sidebar-badge">{alertCount}</span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Bottom tagline & botanical motif */}
-        <div className="sidebar-bottom">
-          <div className="sidebar-tagline">
-            <strong>Safer Mines</strong>
-            Smarter Decisions.<br />
-            A Greener Tomorrow.
-          </div>
-          {/* Tiny neural-leaf motif */}
-          <svg
-            className="sidebar-leaf-motif"
-            width="60"
-            height="40"
-            viewBox="0 0 60 40"
-            fill="none"
-          >
-            <path
-              d="M30 5 C30 5 12 12 10 25 C8 38 20 42 30 42 C40 42 52 38 50 25 C48 12 30 5 30 5Z"
-              fill="#0F6B57"
-              opacity="0.6"
-            />
-            <path d="M30 10 L30 38" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
-            <path d="M30 22 C22 22 16 20 13 16" stroke="white" strokeWidth="0.6" strokeOpacity="0.4" />
-            <path d="M30 22 C38 22 44 20 47 16" stroke="white" strokeWidth="0.6" strokeOpacity="0.4" />
-          </svg>
-        </div>
-      </nav>
-
-      {/* ── Top Command Bar ── */}
       <header className="command-bar" role="banner">
         {/* Mobile Hamburger */}
-        <button
-          className="cmd-btn"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          style={{ display: 'none' }}
-          id="mobile-nav-toggle"
-          aria-label="Toggle navigation"
-        >
-          {sidebarOpen ? <X size={16} /> : <Menu size={16} />}
-        </button>
+        {onToggleSidebar && (
+          <button
+            className="cmd-btn"
+            onClick={onToggleSidebar}
+            id="mobile-nav-toggle"
+            aria-label="Toggle navigation"
+            style={{ display: 'none' }}
+          >
+            <Menu size={16} />
+          </button>
+        )}
 
         {/* Search */}
         <div className="command-search" role="search">
@@ -249,7 +262,14 @@ export function Header({
           </button>
 
           {/* Alert bell */}
-          <button className="cmd-btn" aria-label="Notifications">
+          <button
+            className="cmd-btn"
+            aria-label="Notifications"
+            onClick={() => {
+              const alertEl = document.getElementById('section-alerts');
+              if (alertEl) alertEl.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
             <Bell size={15} />
             {alertCount > 0 && (
               <span
@@ -288,6 +308,38 @@ export function Header({
           onClose={() => setShowThemeModal(false)}
         />
       )}
+    </>
+  );
+}
+
+// Backwards compatibility alias
+export interface HeaderProps {
+  connectionType: ConnectionType;
+  freshness?: FreshnessState;
+  lastTimestamp: string | null;
+  demoMode: boolean;
+  onToggleDemo: () => void;
+  theme: VisualTheme;
+  mode: ColorMode;
+  onSelectTheme: (theme: VisualTheme) => void;
+  onSelectMode: (mode: ColorMode) => void;
+  alertCount?: number;
+}
+
+export function Header(props: HeaderProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  return (
+    <>
+      <Sidebar
+        alertCount={props.alertCount}
+        sidebarOpen={sidebarOpen}
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        onCloseSidebar={() => setSidebarOpen(false)}
+      />
+      <CommandBar
+        {...props}
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+      />
     </>
   );
 }

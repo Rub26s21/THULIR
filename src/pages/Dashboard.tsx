@@ -5,7 +5,7 @@
 // All data hooks, ML inference, alerts, and Supabase integration preserved.
 
 import { useState, useMemo, useEffect } from 'react';
-import { Header } from '../components/Header';
+import { Sidebar, CommandBar } from '../components/Header';
 import { NodeSelectorBar } from '../components/NodeSelectorBar';
 import { SensorGrid } from '../components/SensorGrid';
 import { RiskPanel } from '../components/RiskPanel';
@@ -64,6 +64,7 @@ function HeroStatCard({
 
 export function Dashboard() {
   const [showLaunch, setShowLaunch] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { theme, mode, setTheme, setCategoryMode } = useTheme();
 
   const [selectedNodeId, setSelectedNodeId] = useState<string>('NODE_01');
@@ -108,22 +109,30 @@ export function Dashboard() {
 
       {/* App Shell */}
       <div className="app-layout" data-theme={theme}>
-        {/* Sidebar + Command Bar */}
-        <Header
-          connectionType={demoMode ? 'DISCONNECTED' : connectionType}
-          freshness={nodeStatus.freshness}
-          lastTimestamp={latestData?.created_at || null}
-          demoMode={demoMode}
-          onToggleDemo={toggleDemoMode}
-          theme={theme}
-          mode={mode}
-          onSelectTheme={setTheme}
-          onSelectMode={setCategoryMode}
+        {/* Left Sidebar Navigation */}
+        <Sidebar
           alertCount={activeAlertCount}
+          sidebarOpen={sidebarOpen}
+          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          onCloseSidebar={() => setSidebarOpen(false)}
         />
 
-        {/* Main Content */}
+        {/* Main Content Area */}
         <div className="main-content">
+          {/* Top Sticky Command Bar */}
+          <CommandBar
+            connectionType={demoMode ? 'DISCONNECTED' : connectionType}
+            lastTimestamp={latestData?.created_at || null}
+            demoMode={demoMode}
+            onToggleDemo={toggleDemoMode}
+            theme={theme}
+            mode={mode}
+            onSelectTheme={setTheme}
+            onSelectMode={setCategoryMode}
+            alertCount={activeAlertCount}
+            onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          />
+
           {/* Page Content */}
           <div className="page-content">
 

@@ -106,6 +106,16 @@ function getSensorTheme(sensorKey: string): SensorTheme {
   }
 }
 
+function getAxisBadge(sensorKey: string): string | null {
+  switch (sensorKey) {
+    case 'tilt_x':      return 'X-AXIS';
+    case 'tilt_y':      return 'Y-AXIS';
+    case 'distance_cm': return 'Z-DISP';
+    case 'vib_rms':     return '3D-RMS';
+    default:            return null;
+  }
+}
+
 function getStatus(key: string, value: number | null): RiskLevel | 'OFFLINE' {
   if (value === null || value === undefined || !Number.isFinite(value)) return 'OFFLINE';
   const threshold = SENSOR_THRESHOLDS[key];
@@ -125,6 +135,7 @@ function getStatus(key: string, value: number | null): RiskLevel | 'OFFLINE' {
 export function SensorCard({ name, value, unit, hardware, sensorKey, precision, timestamp }: SensorCardProps) {
   const status = getStatus(sensorKey, value);
   const theme = getSensorTheme(sensorKey);
+  const axisBadge = getAxisBadge(sensorKey);
   const [isFlashing, setIsFlashing] = useState(false);
   const prevValueRef = useRef<number | null>(value);
 
@@ -166,7 +177,23 @@ export function SensorCard({ name, value, unit, hardware, sensorKey, precision, 
           </div>
           <span className="sensor-name-label">{name}</span>
         </div>
-        <span className="sensor-chip-badge">{hardware}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          {axisBadge && (
+            <span style={{
+              fontSize: '0.58rem',
+              fontWeight: 800,
+              fontFamily: 'var(--font-mono)',
+              padding: '2px 5px',
+              borderRadius: 4,
+              background: 'rgba(15, 107, 87, 0.12)',
+              color: 'var(--brand-green)',
+              border: '1px solid rgba(15, 107, 87, 0.25)',
+            }}>
+              {axisBadge}
+            </span>
+          )}
+          <span className="sensor-chip-badge">{hardware}</span>
+        </div>
       </div>
 
       {/* Value Row */}
