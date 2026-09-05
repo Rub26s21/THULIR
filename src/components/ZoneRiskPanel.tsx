@@ -1,5 +1,5 @@
 // ============================================================
-// THULIR - Prototype Zone Risk Aggregation Panel
+// THULIR AI — Spatial Risk Intelligence
 // ============================================================
 // Displays spatial zone risk assessment aggregating node telemetry
 // across longwall panels and mine haulage drifts.
@@ -34,7 +34,7 @@ const LEVEL_COLORS: Record<RiskLevel, { text: string; bg: string; border: string
 
 export function ZoneRiskPanel({ zones }: ZoneRiskPanelProps) {
   return (
-    <div className="skeuo-card" role="region" aria-label="Prototype Zone Risk Aggregation">
+    <div className="clay-card" role="region" aria-label="Spatial Risk Intelligence">
       {/* Header */}
       <div
         style={{
@@ -47,32 +47,11 @@ export function ZoneRiskPanel({ zones }: ZoneRiskPanelProps) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Layers size={17} color="var(--accent-cyan)" />
-          <span
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              fontFamily: 'var(--font-mono)',
-            }}
-          >
-            Spatial Zone Risk Aggregation
-          </span>
-          <span
-            style={{
-              fontSize: '0.64rem',
-              padding: '2px 6px',
-              borderRadius: 3,
-              backgroundColor: 'rgba(124, 92, 255, 0.15)',
-              color: '#a855f7',
-              fontWeight: 800,
-              border: '1px solid rgba(124, 92, 255, 0.3)',
-              fontFamily: 'var(--font-mono)',
-            }}
-          >
-            PROTOTYPE
-          </span>
+          <Layers size={17} color="var(--brand-green)" strokeWidth={2} />
+          <div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>Spatial Risk Intelligence</div>
+            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>Multi-node fusion across mine zones</div>
+          </div>
         </div>
 
         <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>

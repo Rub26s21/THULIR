@@ -1,5 +1,5 @@
 // ============================================================
-// THULIR - Mission-Control High-Contrast Alert Center
+// THULIR AI — Safety Alert Dispatch Center
 // ============================================================
 
 import { formatTimeAgo } from '../utils/timeUtils';
@@ -22,23 +22,18 @@ export function AlertPanel({ alerts, onAcknowledge }: AlertPanelProps) {
 
   return (
     <div
-      className={`skeuo-card ${hasCritical ? 'alert-state-danger' : hasActiveAlerts ? 'alert-state-danger' : 'alert-state-nominal'}`}
+      className={`clay-card ${hasCritical ? 'alert-state-danger' : 'alert-state-nominal'}`}
       role="region"
-      aria-label="Alert Center"
+      aria-label="Safety Alert Dispatch"
     >
       {/* Top Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <Bell
-            size={16}
-            color={hasCritical ? 'var(--status-critical)' : hasActiveAlerts ? 'var(--status-watch)' : 'var(--status-normal)'}
-            style={{
-              animation: hasCritical ? 'pulse-glow-red 1.2s infinite ease-in-out' : undefined,
-            }}
-          />
-          <span style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-mono)' }}>
-            Alert Dispatch Center
-          </span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Bell size={16} color={hasCritical ? 'var(--status-critical)' : hasActiveAlerts ? 'var(--status-watch)' : 'var(--status-normal)'} strokeWidth={2} />
+          <div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>Safety Alert Dispatch</div>
+            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>Real-time structural & environmental monitoring</div>
+          </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

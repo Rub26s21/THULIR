@@ -1,5 +1,5 @@
 // ============================================================
-// THULIR - Mission-Control Live & Historical Telemetry Charts
+// THULIR AI — Historical Telemetry & Trend Analytics
 // ============================================================
 
 import { useState } from 'react';
@@ -36,14 +36,14 @@ const METRIC_TABS: { key: MetricTab; label: string; color: string }[] = [
 ];
 
 const CHART_COLORS: Record<string, string> = {
-  tilt_x: '#00d4ff',
-  tilt_y: '#8b5cf6',
-  pressure: '#3b82f6',
-  gas_raw: '#f59e0b',
-  temperature: '#ef4444',
-  humidity: '#10b981',
-  distance_cm: '#f97316',
-  vib_rms: '#ec4899',
+  tilt_x: '#087EA4',
+  tilt_y: '#0F6B57',
+  pressure: '#5C6BC0',
+  gas_raw: '#D4A017',
+  temperature: '#C62828',
+  humidity: '#1F9D7A',
+  distance_cm: '#5D4037',
+  vib_rms: '#7B3F9E',
 };
 
 function formatTimestamp(ts: string, range: TimeRange): string {

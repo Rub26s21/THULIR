@@ -1,5 +1,5 @@
 // ============================================================
-// THULIR - GNSS Node Location & Geospatial Metadata Card
+// THULIR AI — Node Location Intelligence (GNSS Metadata)
 // ============================================================
 // Displays geospatial telemetry from onboard GNSS receiver (GY-GPS6MV2)
 // with explicit precision disclaimers.
@@ -15,7 +15,7 @@ export function GPSCard({ node }: GPSCardProps) {
   const hasFix = node?.gps_fix && node.gps_fix !== 'NONE' && node.latitude !== null && node.longitude !== null;
 
   return (
-    <div className="skeuo-card" role="region" aria-label="GNSS Location Metadata">
+    <div className="clay-card" role="region" aria-label="Node Location Intelligence">
       {/* Header */}
       <div
         style={{
@@ -26,18 +26,11 @@ export function GPSCard({ node }: GPSCardProps) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Compass size={17} color="var(--accent-cyan)" />
-          <span
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              fontFamily: 'var(--font-mono)',
-            }}
-          >
-            GNSS Node Location ({node?.node_id || 'NODE_01'})
-          </span>
+          <Compass size={17} color="var(--brand-green)" strokeWidth={2} />
+          <div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>Node Location Intelligence</div>
+            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>GNSS · {node?.node_id || 'NODE_01'}</div>
+          </div>
         </div>
 
         <div

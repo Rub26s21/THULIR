@@ -1,5 +1,5 @@
 // ============================================================
-// THULIR - Mission-Control Terminal Event Log Feed
+// THULIR AI — System Activity & Ingestion Stream
 // ============================================================
 
 import { Terminal, Activity, Zap, CheckCircle, Radio } from 'lucide-react';
@@ -55,13 +55,14 @@ export function SystemActivity({ latestData, mlPrediction, risk, connectionType 
   ];
 
   return (
-    <div className="skeuo-card" role="region" aria-label="System activity feed">
+    <div className="clay-card" role="region" aria-label="System activity feed">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <Terminal size={16} color="var(--accent-cyan)" />
-          <span style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-mono)' }}>
-            Live SOC Console Terminal
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Terminal size={16} color="var(--brand-green)" strokeWidth={2} />
+          <div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>System Activity</div>
+            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>Live ingestion &amp; inference event stream</div>
+          </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <span className="pulse-dot dot-cyan" />

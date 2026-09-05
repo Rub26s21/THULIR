@@ -1,5 +1,5 @@
 // ============================================================
-// THULIR - Marketing-Grade Network Topology with Data Packet Pulses
+// THULIR AI — Intelligence Pipeline & Ingestion Architecture
 // ============================================================
 
 import { Network, Database, Cpu, Monitor, Radio } from 'lucide-react';
@@ -33,18 +33,16 @@ export function NetworkTopology({
   const isTransmitting = isOnline || connectionType === 'REALTIME';
 
   return (
-    <div className="skeuo-card" role="region" aria-label="Network and Node Topology">
+    <div className="clay-card" role="region" aria-label="Intelligence Pipeline and Ingestion Architecture">
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Network size={17} color="var(--accent-cyan)" />
-          <span style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-mono)' }}>
-            System Topology &amp; Ingestion Pipeline
-          </span>
+          <Network size={17} color="var(--brand-green)" strokeWidth={2} />
+          <div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>Intelligence Pipeline</div>
+            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>Sensor → {activeNodeId} → Supabase → THULIR AI</div>
+          </div>
         </div>
-        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          STRATA SENSORS → {activeNodeId} → SUPABASE → SOC CONSOLE
-        </span>
       </div>
 
       {/* Main Pipeline Flow with Traveling Light Pulses */}
