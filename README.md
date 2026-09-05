@@ -88,7 +88,7 @@ npm install
 ### 2. Configure Environment
 Create `.env.local` based on `.env.example`:
 ```env
-VITE_SUPABASE_URL=https://cdsjgvpjvyewepgalset.supabase.co
+VITE_SUPABASE_URL=https://qwertyuiopasdfghjkl.supabase.co
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_public_key_here
 ```
 
