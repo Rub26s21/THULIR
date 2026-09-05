@@ -1,8 +1,8 @@
 // ============================================================
-// THULIR - Ultra-Premium Chromatic Node & Network Topology
+// THULIR - Marketing-Grade Network Topology with Data Packet Pulses
 // ============================================================
 
-import { Network, Database, Cpu } from 'lucide-react';
+import { Network, Database, Cpu, Monitor } from 'lucide-react';
 import type { ConnectionType, FreshnessState } from '../types';
 
 interface NetworkTopologyProps {
@@ -12,95 +12,186 @@ interface NetworkTopologyProps {
 }
 
 const HARDWARE_SENSORS = [
-  { chip: 'MPU6050', role: 'Tilt X/Y', bus: 'I2C', color: '#06b6d4' },
-  { chip: 'BMP280', role: 'Pressure', bus: 'I2C', color: '#3b82f6' },
-  { chip: 'DHT22', role: 'Temp/Hum', bus: 'GPIO', color: '#10b981' },
-  { chip: 'MQ-2', role: 'Gas ADC', bus: 'A0', color: '#f59e0b' },
-  { chip: 'HC-SR04', role: 'Distance', bus: 'GPIO', color: '#f97316' },
-  { chip: 'ADXL345', role: 'Vibration', bus: 'I2C', color: '#ec4899' },
+  { chip: 'MPU6050', role: 'Tilt X/Y', bus: 'I2C (0x68)', color: '#00e5ff' },
+  { chip: 'BMP280', role: 'Pressure', bus: 'I2C (0x76)', color: '#3b82f6' },
+  { chip: 'DHT22', role: 'Temp/Hum', bus: 'GPIO D4', color: '#10b981' },
+  { chip: 'MQ-2', role: 'Gas ADC', bus: 'ADC A0', color: '#f59e0b' },
+  { chip: 'HC-SR04', role: 'Displacement', bus: 'GPIO D5/D6', color: '#f97316' },
+  { chip: 'ADXL345', role: 'Vibration', bus: 'I2C (0x53)', color: '#ec4899' },
 ];
 
 export function NetworkTopology({ connectionType, freshness, supabaseConnected }: NetworkTopologyProps) {
   const isOnline = freshness === 'LIVE' || freshness === 'RECENT';
+  const isTransmitting = isOnline || connectionType === 'REALTIME';
 
   return (
     <div className="skeuo-card" role="region" aria-label="Network and Node Topology">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Network size={16} color="var(--accent-cyan)" />
-          <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            System Topology &amp; Transport
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Network size={17} color="var(--accent-cyan)" />
+          <span style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-mono)' }}>
+            System Topology &amp; Ingestion Pipeline
           </span>
         </div>
-        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>
-          6 SENSORS → NODE_01 → SUPABASE → REACT
+        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          STRATA SENSORS → NODE_01 → SUPABASE → SOC CONSOLE
         </span>
       </div>
 
-      {/* Visual Pipeline Flow */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {/* Tier 1 & 2: Cloud & Node */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr auto 1fr', alignItems: 'center', gap: 8 }}>
+      {/* Main Pipeline Flow with Traveling Light Pulses */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* Tier 1 & 2 Architecture */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 70px 1fr 70px 1fr', alignItems: 'center', gap: 6 }}>
           {/* React Dashboard Node */}
-          <div className="skeuo-well" style={{ textAlign: 'center', borderTop: '2px solid #06b6d4' }}>
-            <div style={{ fontSize: '0.74rem', color: 'var(--accent-cyan)', fontWeight: 800 }}>THULIR DASHBOARD</div>
-            <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: 2 }}>macOS UI (React 19)</div>
-            <div style={{ fontSize: '0.65rem', color: 'var(--status-normal)', marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-              <span className="pulse-dot dot-green" /> Client Active
+          <div
+            className="skeuo-well"
+            style={{
+              textAlign: 'center',
+              borderTop: '2px solid #00e5ff',
+              boxShadow: '0 0 16px rgba(0, 229, 255, 0.15)',
+              padding: '12px 8px',
+            }}
+          >
+            <div style={{ fontSize: '0.76rem', color: 'var(--accent-cyan)', fontWeight: 800, fontFamily: 'var(--font-mono)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+              <Monitor size={14} /> SOC CONSOLE
+            </div>
+            <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', marginTop: 2 }}>React 19 Frontend</div>
+            <div style={{ fontSize: '0.66rem', color: 'var(--status-normal)', marginTop: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+              <span className="pulse-dot dot-cyan" /> CLIENT READY
             </div>
           </div>
 
-          <div style={{ color: 'var(--accent-cyan)', fontSize: '0.75rem', textAlign: 'center', fontWeight: 700 }}>◀───▶</div>
+          {/* SVG Animated Connector: Dashboard <-> Supabase */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <svg width="70" height="28" viewBox="0 0 70 28" fill="none">
+              <line
+                x1="4"
+                y1="14"
+                x2="66"
+                y2="14"
+                stroke={isTransmitting ? '#00e5ff' : 'rgba(107, 114, 128, 0.35)'}
+                strokeWidth="2"
+                strokeDasharray={isTransmitting ? '4, 4' : '3, 3'}
+                className={isTransmitting ? 'topology-flow-line' : ''}
+              />
+              {/* Traveling Packet Pulse */}
+              {isTransmitting && (
+                <circle cx="20" cy="14" r="3.5" fill="#00e5ff">
+                  <animate
+                    attributeName="cx"
+                    from="4"
+                    to="66"
+                    dur="1.8s"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0.2;1;0.2"
+                    dur="1.8s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+              )}
+            </svg>
+          </div>
 
           {/* Supabase Cloud */}
-          <div className="skeuo-well" style={{ textAlign: 'center', borderTop: '2px solid #10b981' }}>
-            <div style={{ fontSize: '0.74rem', color: 'var(--status-normal)', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-              <Database size={12} /> SUPABASE
+          <div
+            className="skeuo-well"
+            style={{
+              textAlign: 'center',
+              borderTop: '2px solid #10b981',
+              boxShadow: supabaseConnected ? '0 0 16px rgba(16, 185, 129, 0.15)' : undefined,
+              padding: '12px 8px',
+            }}
+          >
+            <div style={{ fontSize: '0.76rem', color: 'var(--status-normal)', fontWeight: 800, fontFamily: 'var(--font-mono)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+              <Database size={14} /> SUPABASE
             </div>
-            <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: 2 }}>
-              {connectionType === 'REALTIME' ? 'Postgres Realtime' : 'REST Polling (5s)'}
+            <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', marginTop: 2 }}>
+              {connectionType === 'REALTIME' ? 'Postgres Realtime' : 'REST Ingestion (5s)'}
             </div>
-            <div style={{ fontSize: '0.65rem', color: supabaseConnected ? 'var(--status-normal)' : 'var(--status-watch)', marginTop: 4, fontWeight: 600 }}>
-              {supabaseConnected ? '● Connected' : '● Standby'}
+            <div style={{ fontSize: '0.66rem', color: supabaseConnected ? 'var(--status-normal)' : 'var(--status-watch)', marginTop: 5, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+              {supabaseConnected ? '● CLOUD SYNCED' : '● STANDBY'}
             </div>
           </div>
 
-          <div style={{ color: 'var(--accent-cyan)', fontSize: '0.75rem', textAlign: 'center', fontWeight: 700 }}>◀───</div>
+          {/* SVG Animated Connector: Supabase <-> Node */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <svg width="70" height="28" viewBox="0 0 70 28" fill="none">
+              <line
+                x1="66"
+                y1="14"
+                x2="4"
+                y2="14"
+                stroke={isOnline ? '#7c5cff' : 'rgba(107, 114, 128, 0.35)'}
+                strokeWidth="2"
+                strokeDasharray={isOnline ? '4, 4' : '3, 3'}
+                className={isOnline ? 'topology-flow-line' : ''}
+              />
+              {/* Traveling Packet Pulse (Node -> Supabase) */}
+              {isOnline && (
+                <circle cx="50" cy="14" r="3.5" fill="#7c5cff">
+                  <animate
+                    attributeName="cx"
+                    from="66"
+                    to="4"
+                    dur="2.2s"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0.2;1;0.2"
+                    dur="2.2s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+              )}
+            </svg>
+          </div>
 
           {/* ESP8266 NODE_01 */}
-          <div className="skeuo-well" style={{ textAlign: 'center', borderTop: '2px solid #8b5cf6' }}>
-            <div style={{ fontSize: '0.74rem', color: '#a855f7', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-              <Cpu size={12} /> NODE_01
+          <div
+            className="skeuo-well"
+            style={{
+              textAlign: 'center',
+              borderTop: '2px solid #7c5cff',
+              boxShadow: isOnline ? '0 0 16px rgba(124, 92, 255, 0.2)' : undefined,
+              padding: '12px 8px',
+            }}
+          >
+            <div style={{ fontSize: '0.76rem', color: '#a855f7', fontWeight: 800, fontFamily: 'var(--font-mono)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+              <Cpu size={14} /> NODE_01
             </div>
-            <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: 2 }}>ESP8266 Wi-Fi HTTPS</div>
-            <div style={{ fontSize: '0.65rem', color: isOnline ? 'var(--status-normal)' : 'var(--status-offline)', marginTop: 4, fontWeight: 600 }}>
-              {isOnline ? '● Online (5s Tx)' : '● Offline'}
+            <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', marginTop: 2 }}>ESP8266 Wi-Fi HTTPS</div>
+            <div style={{ fontSize: '0.66rem', color: isOnline ? 'var(--status-normal)' : 'var(--status-offline)', marginTop: 5, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+              {isOnline ? '● 5s TX ACTIVE' : '● OFFLINE'}
             </div>
           </div>
         </div>
 
-        {/* Connected Physical Sensors */}
-        <div style={{ marginTop: 6, paddingTop: 10, borderTop: '1px solid var(--border-subtle)' }}>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8, display: 'flex', justifyContent: 'space-between' }}>
-            <span>Hardware Sensor Interfaces</span>
-            <span style={{ color: 'var(--text-dim)' }}>6 Physical Chips</span>
+        {/* Connected Physical Sensors Matrix */}
+        <div style={{ marginTop: 4, paddingTop: 14, borderTop: '1px solid var(--border-subtle)' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 800, marginBottom: 10, display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)' }}>
+            <span>Hardware Sensor Bus Array</span>
+            <span style={{ color: 'var(--accent-cyan)' }}>6 Physical Chips Online</span>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
             {HARDWARE_SENSORS.map(s => (
               <div
                 key={s.chip}
                 className="skeuo-well"
                 style={{
-                  padding: '7px 4px',
+                  padding: '9px 6px',
                   textAlign: 'center',
                   borderTop: `2px solid ${s.color}`,
                 }}
               >
-                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--text-primary)' }}>{s.chip}</div>
-                <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 2 }}>{s.role}</div>
-                <div style={{ fontSize: '0.6rem', color: s.color, marginTop: 2, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
+                <div style={{ fontSize: '0.76rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{s.chip}</div>
+                <div style={{ fontSize: '0.64rem', color: 'var(--text-muted)', marginTop: 2 }}>{s.role}</div>
+                <div style={{ fontSize: '0.6rem', color: s.color, marginTop: 3, fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
                   {s.bus}
                 </div>
               </div>

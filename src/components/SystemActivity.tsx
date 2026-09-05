@@ -1,8 +1,8 @@
 // ============================================================
-// THULIR - macOS Skeuomorphic Live System Activity Component
+// THULIR - Mission-Control Terminal Event Log Feed
 // ============================================================
 
-import { Terminal, Activity, Zap, CheckCircle } from 'lucide-react';
+import { Terminal, Activity, Zap, CheckCircle, Radio } from 'lucide-react';
 import type { SensorData, MLPrediction, RiskState } from '../types';
 
 interface SystemActivityProps {
@@ -16,69 +16,72 @@ export function SystemActivity({ latestData, mlPrediction, risk, connectionType 
   const now = new Date();
   const timeStr = (offsetSec: number = 0) => {
     const d = new Date(now.getTime() - offsetSec * 1000);
-    return d.toLocaleTimeString();
+    return d.toTimeString().split(' ')[0] + '.' + String(d.getMilliseconds()).padStart(3, '0').slice(0, 2);
   };
 
   const activities = [
     {
       time: timeStr(0),
-      msg: latestData ? `Telemetry frame ingested from ${latestData.node_id}` : 'Telemetry listener active...',
-      icon: <Activity size={12} color="var(--accent-cyan)" />
-    },
-    {
-      time: timeStr(0),
-      msg: mlPrediction
-        ? `ML Inference completed (${mlPrediction.prediction}, ${mlPrediction.inference_time_ms}ms)`
-        : 'ML inference engine initialized',
-      icon: <Zap size={12} color="#8b5cf6" />
+      tag: 'INGEST',
+      tagClass: 'tag-ingest',
+      msg: latestData
+        ? `Frame #${latestData.id || 'LIVE'} received: TiltX=${latestData.tilt_x !== null ? latestData.tilt_x.toFixed(1) : '—'}° Gas=${latestData.gas_raw ?? '—'} Vib=${latestData.vib_rms !== null ? latestData.vib_rms.toFixed(2) : '—'}`
+        : 'Awaiting incoming ESP8266 telemetry frame...',
+      icon: <Activity size={12} color="#00d4ff" />
     },
     {
       time: timeStr(1),
-      msg: `Risk state evaluated as ${risk.level} (Score: ${risk.score}/100)`,
-      icon: <CheckCircle size={12} color="var(--status-normal)" />
+      tag: 'AI_INFER',
+      tagClass: 'tag-ai',
+      msg: mlPrediction
+        ? `RF-Classifier inference: ${mlPrediction.prediction} (${(mlPrediction.confidence * 100).toFixed(1)}% conf, ${mlPrediction.inference_time_ms}ms)`
+        : 'Random Forest classifier listening for telemetry frame',
+      icon: <Zap size={12} color="#a855f7" />
     },
     {
-      time: timeStr(3),
-      msg: `Channel link verified: ${connectionType}`,
-      icon: <Terminal size={12} color="var(--text-muted)" />
+      time: timeStr(2),
+      tag: 'RISK_EVAL',
+      tagClass: 'tag-risk',
+      msg: `Integrity index computed: Score ${risk.score}/100 (${risk.level}) via ${risk.source}`,
+      icon: <CheckCircle size={12} color="#10b981" />
+    },
+    {
+      time: timeStr(4),
+      tag: 'LINK_OK',
+      tagClass: 'tag-ingest',
+      msg: `Channel link verified (${connectionType}) → SSL/TLS stream healthy`,
+      icon: <Radio size={12} color="#00d4ff" />
     },
   ];
 
   return (
     <div className="skeuo-card" role="region" aria-label="System activity feed">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
           <Terminal size={16} color="var(--accent-cyan)" />
-          <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Live System Activity
+          <span style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-mono)' }}>
+            Live SOC Console Terminal
           </span>
         </div>
-        <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>
-          EVENT LOG
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <span className="pulse-dot dot-cyan" />
+          <span style={{ fontSize: '0.66rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            STREAMING (TTY0)
+          </span>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div className="activity-terminal-feed">
         {activities.map((act, i) => (
-          <div
-            key={i}
-            className="skeuo-well"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '8px 12px',
-              fontSize: '0.74rem'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              {act.icon}
-              <span style={{ color: 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace' }}>
-                {act.msg}
-              </span>
-            </div>
-            <span style={{ color: 'var(--text-dim)', fontSize: '0.68rem', fontFamily: 'JetBrains Mono, monospace' }}>
-              {act.time}
+          <div key={i} className="terminal-line">
+            <span style={{ color: 'var(--text-dim)', fontSize: '0.66rem', flexShrink: 0 }}>
+              [{act.time}]
+            </span>
+            <span className={`terminal-tag ${act.tagClass}`}>
+              {act.tag}
+            </span>
+            <span style={{ color: 'var(--text-secondary)', wordBreak: 'break-all' }}>
+              {act.msg}
             </span>
           </div>
         ))}

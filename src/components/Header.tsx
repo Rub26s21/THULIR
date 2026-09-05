@@ -1,10 +1,10 @@
 // ============================================================
-// THULIR - Apple Compact Master Navigation Bar
+// THULIR - Mission-Control Master Navigation Bar
 // ============================================================
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Activity, Play, Pause, Wifi, WifiOff, Radio, Palette
+  Activity, Play, Pause, Wifi, WifiOff, Radio, Palette, ShieldAlert
 } from 'lucide-react';
 import { formatTimeAgo } from '../utils/timeUtils';
 import type { ConnectionType, FreshnessState } from '../types';
@@ -24,6 +24,15 @@ interface HeaderProps {
   onSelectMode: (mode: ColorMode) => void;
 }
 
+const NAV_ITEMS = [
+  { id: 'section-overview', label: 'Overview' },
+  { id: 'section-telemetry', label: 'Telemetry' },
+  { id: 'section-analytics', label: 'Analytics' },
+  { id: 'section-ml', label: 'AI / ML' },
+  { id: 'section-alerts', label: 'Alerts' },
+  { id: 'section-system', label: 'System' },
+];
+
 export function Header({
   connectionType,
   freshness,
@@ -36,12 +45,34 @@ export function Header({
   onSelectMode,
 }: HeaderProps) {
   const [showThemeModal, setShowThemeModal] = useState(false);
+  const [activeSection, setActiveSection] = useState('section-overview');
 
   const formattedTime = lastTimestamp ? formatTimeAgo(lastTimestamp) : 'No data';
   const isLive = freshness === 'LIVE' || freshness === 'RECENT';
   const currentThemeMeta = THEME_LIST.find(t => t.id === theme) || THEME_LIST[3];
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + 200;
+      for (const item of NAV_ITEMS) {
+        const el = document.getElementById(item.id);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            setActiveSection(item.id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const scrollToSection = (id: string) => {
+    setActiveSection(id);
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
@@ -51,7 +82,7 @@ export function Header({
   return (
     <>
       <header className="mac-header-bar" role="banner">
-        {/* Left: Traffic Lights & Brand */}
+        {/* Left: Brand Identity & Subsystem status */}
         <div className="header-brand-group">
           <div className="mac-traffic-lights" aria-hidden="true">
             <span className="traffic-light traffic-close" />
@@ -61,38 +92,45 @@ export function Header({
 
           <div>
             <div className="header-main-title">
-              <Activity size={20} color="var(--accent)" />
-              THULIR <span className="brand-cyan">IoT</span>
+              <Activity size={18} color="var(--accent-cyan)" />
+              <span>THULIR <span className="brand-cyan">IoT</span></span>
+              <span
+                style={{
+                  fontSize: '0.62rem',
+                  padding: '2px 6px',
+                  borderRadius: 4,
+                  background: 'rgba(0, 212, 255, 0.12)',
+                  border: '1px solid rgba(0, 212, 255, 0.3)',
+                  color: 'var(--accent-cyan)',
+                  fontFamily: 'var(--font-mono)',
+                  fontWeight: 700,
+                  marginLeft: 4,
+                }}
+              >
+                SOC-V1.0
+              </span>
             </div>
             <div className="header-sub-title">
-              Structural &amp; Environmental Intelligence
+              <ShieldAlert size={11} color="var(--status-normal)" />
+              Mine Subsidence Early Warning System
             </div>
           </div>
         </div>
 
-        {/* Center: Quick Section Navigation Anchors */}
+        {/* Center: Segmented Navigation Pill */}
         <nav className="header-nav-anchors" aria-label="Quick section navigation">
-          <button className="nav-anchor-btn" onClick={() => scrollToSection('section-overview')}>
-            Overview
-          </button>
-          <button className="nav-anchor-btn" onClick={() => scrollToSection('section-telemetry')}>
-            Telemetry
-          </button>
-          <button className="nav-anchor-btn" onClick={() => scrollToSection('section-analytics')}>
-            Analytics
-          </button>
-          <button className="nav-anchor-btn" onClick={() => scrollToSection('section-ml')}>
-            AI / ML
-          </button>
-          <button className="nav-anchor-btn" onClick={() => scrollToSection('section-alerts')}>
-            Alerts
-          </button>
-          <button className="nav-anchor-btn" onClick={() => scrollToSection('section-system')}>
-            System
-          </button>
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.id}
+              className={`nav-anchor-btn ${activeSection === item.id ? 'active' : ''}`}
+              onClick={() => scrollToSection(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
         </nav>
 
-        {/* Right Status & Controls */}
+        {/* Right: Live Telemetry Telemetry Status & Controls */}
         <div className="header-metrics-bar">
           {/* Node Identity Pill */}
           <div className="skeuo-pill pill-node" title="Hardware identity">
@@ -130,34 +168,33 @@ export function Header({
             )}
           </div>
 
-          {/* Relative Timestamp */}
+          {/* Timestamp in Monospace */}
           <div className="skeuo-pill" title="Last transmission timestamp">
-            <span style={{ color: 'var(--text-muted)' }}>Updated:</span>
-            <span style={{ fontWeight: 600 }}>{formattedTime}</span>
+            <span style={{ color: 'var(--text-muted)' }}>Tx:</span>
+            <span style={{ fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{formattedTime}</span>
           </div>
 
-          {/* Controls: Appearance / Theme Selector Button */}
+          {/* Controls: Theme & Tactile Demo Toggle */}
           <div className="header-actions-group">
             <button
               className="btn-liquid"
               onClick={() => setShowThemeModal(true)}
               title="Change Visual Theme"
               aria-label="Appearance settings"
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 11px' }}
             >
-              <Palette size={14} color="var(--accent)" />
-              <span style={{ fontSize: '0.74rem' }}>{currentThemeMeta.name}</span>
+              <Palette size={13} color="var(--accent-cyan)" />
+              <span style={{ fontSize: '0.72rem' }}>{currentThemeMeta.name}</span>
             </button>
 
-            {/* Tactile Demo Mode Toggle */}
             <button
               className={`btn-tactile ${demoMode ? 'active-demo' : ''}`}
               onClick={onToggleDemo}
               title={demoMode ? 'Exit simulation (Listen to live Supabase telemetry)' : 'Simulate live sensor telemetry'}
               aria-label="Toggle demo mode"
             >
-              {demoMode ? <Pause size={13} /> : <Play size={13} />}
-              <span>{demoMode ? 'DEMO: ON' : 'DEMO: OFF'}</span>
+              {demoMode ? <Pause size={12} /> : <Play size={12} />}
+              <span>{demoMode ? 'SIMULATING' : 'LIVE'}</span>
             </button>
           </div>
         </div>
