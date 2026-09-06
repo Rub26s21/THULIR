@@ -19,6 +19,7 @@ import { SystemActivity } from '../components/SystemActivity';
 import { HistoricalCharts } from '../components/HistoricalCharts';
 import { LaunchScreen } from '../components/LaunchScreen';
 import { LiquidBackground } from '../components/LiquidBackground';
+import { SmartMineControlDesk } from '../components/SmartMineControlDesk';
 import { useSensorData } from '../hooks/useSensorData';
 import { useMultiNode } from '../hooks/useMultiNode';
 import { useAlerts } from '../hooks/useAlerts';
@@ -70,6 +71,17 @@ export function Dashboard() {
   const { theme, mode, setTheme, setCategoryMode } = useTheme();
 
   const [selectedNodeId, setSelectedNodeId] = useState<string>('NODE_01');
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 40;
+      setIsScrolled(scrolled);
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const {
     latestData, history, historyLoading, historyError, timeRange, setTimeRange,
@@ -112,12 +124,12 @@ export function Dashboard() {
     <>
       {showLaunch && <LaunchScreen onComplete={() => setShowLaunch(false)} />}
 
-      {/* App Shell */}
-      <div className="app-layout" data-theme={theme} data-color-mode={mode}>
+      {/* App Shell with Landing vs Scrolled View States */}
+      <div className={`app-layout ${!isScrolled ? 'landing-desk-view' : 'scrolled-dashboard-view'}`} data-theme={theme} data-color-mode={mode}>
         {/* Ambient Fluid Aurora Background (Liquidmorphism) */}
         <LiquidBackground />
 
-        {/* Left Sidebar Navigation */}
+        {/* Left Sidebar Navigation (Hidden on landing, revealed when scrolling down) */}
         <Sidebar
           alertCount={activeAlertCount}
           sidebarOpen={sidebarOpen}
@@ -129,7 +141,7 @@ export function Dashboard() {
 
         {/* Main Content Area */}
         <div className="main-content">
-          {/* Top Sticky Command Bar */}
+          {/* Top Sticky Command Bar (Hidden on landing, revealed when scrolling down) */}
           <CommandBar
             connectionType={demoMode ? 'DISCONNECTED' : connectionType}
             lastTimestamp={latestData?.created_at || null}
@@ -146,11 +158,29 @@ export function Dashboard() {
           {/* Page Content */}
           <div className="page-content">
 
+            {/* ── 1. IMMERSIVE HERO: THULIR SMART MINE CONTROL DESK (Full 100vh Screen Landing) ── */}
+            <div id="section-desk" className="desk-hero-landing-section">
+              <SmartMineControlDesk
+                data={latestData}
+                risk={risk}
+                mlPrediction={mlPrediction}
+                nodeStatus={nodeStatus}
+                alerts={alerts}
+                nodeId={selectedNodeId}
+                demoMode={demoMode}
+                connectionType={connectionType}
+                onToggleDemo={toggleDemoMode}
+                onNavigateSection={(secId) => {
+                  document.getElementById(secId)?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+            </div>
+
             {/* ── Configuration Warning Banner ── */}
-            {!isSupabaseConfigured && (
+            {!isSupabaseConfigured && isScrolled && (
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 10,
-                padding: '12px 18px', marginBottom: 24,
+                padding: '12px 18px', margin: '16px 32px 24px 32px',
                 background: 'var(--status-watch-bg)',
                 border: '1px solid var(--status-watch-border)',
                 borderRadius: 16,
@@ -166,8 +196,10 @@ export function Dashboard() {
               </div>
             )}
 
-            {/* ── HERO SECTION ── */}
-            <div className="hero-section reveal" id="hero">
+            {/* ── 2. DETAILED MISSION CONTROL & ANALYTICS BELOW ── */}
+            <div className="desk-detailed-content-wrapper">
+                {/* ── HERO SECTION ── */}
+                <div className="hero-section reveal" id="hero">
               <div className="hero-content">
                 <div className="hero-eyebrow">
                   <span className="hero-live-dot" />
@@ -387,6 +419,7 @@ export function Dashboard() {
                 </div>
               </div>
             </section>
+            </div>
           </div>
 
           {/* ── Footer ── */}
