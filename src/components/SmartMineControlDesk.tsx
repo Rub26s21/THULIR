@@ -620,11 +620,11 @@ export function SmartMineControlDesk({
       </div>
 
       {/* ════════════════════════════════════════════════════════
-          BOTTOM ROW: 3 Modular Engineering Bays
+          BOTTOM ROW: 3 Modular Engineering Bays (Rich & Fully Packed)
          ════════════════════════════════════════════════════════ */}
       <div className="desk-bottom-row">
 
-        {/* Bay 1: THULIR AI Decision Pipeline */}
+        {/* Bay 1: THULIR AI Decision Pipeline & Feature Vector */}
         <div className="desk-bottom-bay bay-ai">
           <div className="bay-header-row">
             <div className="bay-title">THULIR AI · INTELLIGENCE ENGINE</div>
@@ -644,32 +644,72 @@ export function SmartMineControlDesk({
               <span className="ai-stat-lbl">LATENCY</span>
               <strong className="ai-stat-val">12 ms / EDGE</strong>
             </div>
+            <div className="ai-stat-chip">
+              <span className="ai-stat-lbl">SAMPLE RATE</span>
+              <strong className="ai-stat-val">50 Hz</strong>
+            </div>
+            <div className="ai-stat-chip">
+              <span className="ai-stat-lbl">FEATURE VEC</span>
+              <strong className="ai-stat-val">7-DIM MATRIX</strong>
+            </div>
+            <div className="ai-stat-chip">
+              <span className="ai-stat-lbl">DRIFT</span>
+              <strong className="ai-stat-val">0.02 (NOMINAL)</strong>
+            </div>
+          </div>
+
+          {/* Real-time 7-Channel Feature Vector Bars */}
+          <div className="ai-feature-vector-strip">
+            <div className="feature-bar-item">
+              <div className="feature-bar-header"><span>TILT_X</span><strong>{tiltX.toFixed(1)}°</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${Math.min(100, (Math.abs(tiltX) / 10) * 100)}%` }} /></div>
+            </div>
+            <div className="feature-bar-item">
+              <div className="feature-bar-header"><span>VIB_RMS</span><strong>{vibrationG.toFixed(2)}g</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill warning" style={{ width: `${Math.min(100, (vibrationG / 2.5) * 100)}%` }} /></div>
+            </div>
+            <div className="feature-bar-item">
+              <div className="feature-bar-header"><span>GAS_MQ2</span><strong>{gasPpm}</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill danger" style={{ width: `${Math.min(100, (gasPpm / 800) * 100)}%` }} /></div>
+            </div>
+            <div className="feature-bar-item">
+              <div className="feature-bar-header"><span>DIST_HC</span><strong>{distanceCm.toFixed(1)}cm</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${Math.min(100, (distanceCm / 60) * 100)}%` }} /></div>
+            </div>
+            <div className="feature-bar-item">
+              <div className="feature-bar-header"><span>TEMP_C</span><strong>{tempC.toFixed(1)}°C</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${Math.min(100, (tempC / 50) * 100)}%` }} /></div>
+            </div>
+            <div className="feature-bar-item">
+              <div className="feature-bar-header"><span>HUMID_RH</span><strong>{humidityRh}%</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${Math.min(100, humidityRh)}%` }} /></div>
+            </div>
           </div>
 
           <div className="bay-ai-pipeline">
             <div className="pipeline-chip">
-              <span className="pipeline-chip-title">STREAM</span>
-              <span className="pipeline-chip-sub">7 CHANNELS</span>
+              <span className="pipeline-chip-title">01 INGEST</span>
+              <span className="pipeline-chip-sub">7 CHANNELS / 50Hz</span>
             </div>
 
             <div className="pipeline-arrow">→</div>
 
             <div className="pipeline-chip">
-              <span className="pipeline-chip-title">EXTRACTION</span>
+              <span className="pipeline-chip-title">02 EXTRACTION</span>
               <span className="pipeline-chip-sub">RMS / P2P / FFT</span>
             </div>
 
             <div className="pipeline-arrow">→</div>
 
             <div className="pipeline-chip dual">
-              <span className="pipeline-chip-title">ISOLATION FOREST</span>
-              <span className="pipeline-chip-title">RANDOM FOREST</span>
+              <span className="pipeline-chip-title">03 ISOLATION FOREST</span>
+              <span className="pipeline-chip-title">RANDOM FOREST (100T)</span>
             </div>
 
             <div className="pipeline-arrow">→</div>
 
             <div className="pipeline-result-box">
-              <div className="result-label">FINAL RISK</div>
+              <div className="result-label">04 FINAL RISK</div>
               <div className={`result-score ${riskLevel.toLowerCase()}`}>
                 {riskScore} / 100
               </div>
@@ -678,23 +718,32 @@ export function SmartMineControlDesk({
               </div>
             </div>
           </div>
+
+          <div className="ai-diagnostic-strip">
+            <span className="diag-dot" />
+            <span className="diag-text">
+              {riskScore > 50
+                ? 'SUBSIDENCE PATTERN DETECTED: ADXL345 RMS + HC-SR04 DISPLACEMENT RATE EXCEEDED THRESHOLD'
+                : 'SURFACE KINEMATICS NOMINAL: ALL SENSOR VECTORS WITHIN SAFE ENVELOPE'}
+            </span>
+          </div>
         </div>
 
         {/* Bay 2: Power & Energy Subsystem */}
         <div className="desk-bottom-bay bay-power">
           <div className="bay-header-row">
             <div className="bay-title">POWER & ENERGY SUBSYSTEM</div>
-            <span className="bay-status-badge solar-active">SOLAR HARVESTING</span>
+            <span className="bay-status-badge solar-active">SOLAR HARVESTING (MPPT 94%)</span>
           </div>
 
           <div className="power-metrics-strip">
             <div className="power-metric-box">
               <span className="metric-lbl">BATTERY</span>
-              <span className="metric-val">{batteryPct}%</span>
+              <span className="metric-val">{batteryPct}% (4.08V)</span>
             </div>
             <div className="power-metric-box">
               <span className="metric-lbl">INPUT</span>
-              <span className="metric-val">6.8 V</span>
+              <span className="metric-val">6.8 V / 420mA</span>
             </div>
             <div className="power-metric-box">
               <span className="metric-lbl">LOAD</span>
@@ -704,28 +753,52 @@ export function SmartMineControlDesk({
               <span className="metric-lbl">CURRENT</span>
               <span className="metric-val">180 mA</span>
             </div>
+            <div className="power-metric-box">
+              <span className="metric-lbl">HEALTH</span>
+              <span className="metric-val">98% EXCELLENT</span>
+            </div>
+            <div className="power-metric-box">
+              <span className="metric-lbl">RAILS</span>
+              <span className="metric-val">5.02V · 3.3V</span>
+            </div>
           </div>
 
           <div className="power-flow-schematic">
             <div className="flow-step">
               <span className="flow-icon">☀️</span>
-              <span className="flow-text">SOLAR 12V</span>
+              <span className="flow-text">SOLAR 12W</span>
+              <span className="flow-sub">6.8V / 420mA</span>
             </div>
             <div className="flow-arrow">→</div>
             <div className="flow-step">
               <span className="flow-icon">⚡</span>
               <span className="flow-text">MPPT BUCK</span>
+              <span className="flow-sub">94% EFFICIENCY</span>
+            </div>
+            <div className="flow-arrow">→</div>
+            <div className="flow-step">
+              <span className="flow-icon">🔋</span>
+              <span className="flow-text">18650 Li-Po</span>
+              <span className="flow-sub">3200 mAh</span>
             </div>
             <div className="flow-arrow">→</div>
             <div className="flow-step highlight">
               <span className="flow-icon">🔲</span>
               <span className="flow-text">ESP32 5V</span>
+              <span className="flow-sub">DUAL CORE</span>
             </div>
             <div className="flow-arrow">→</div>
             <div className="flow-step">
               <span className="flow-icon">📡</span>
               <span className="flow-text">SENSORS + 4G</span>
+              <span className="flow-sub">6 SENSOR BUS</span>
             </div>
+          </div>
+
+          <div className="power-substatus-bar">
+            <div className="power-sub-item"><span>THERMALS</span> <strong>32.4°C NOMINAL</strong></div>
+            <div className="power-sub-item"><span>CHARGE CYCLES</span> <strong>142 CYCLES</strong></div>
+            <div className="power-sub-item"><span>BACKUP AUTO-SLEEP</span> <strong>STANDBY READY</strong></div>
           </div>
         </div>
 
@@ -734,7 +807,7 @@ export function SmartMineControlDesk({
           <div className="bay-header-row">
             <div className="bay-title">WARNING & ANNUNCIATOR MATRIX</div>
             <span className={`bay-status-badge ${isGasWarning || isVibWarning ? 'active-amber' : 'active-green'}`}>
-              {isGasWarning || isVibWarning ? 'ACTIVE ALERTS' : 'NOMINAL'}
+              {isGasWarning || isVibWarning ? 'MASTER CAUTION' : 'NOMINAL'}
             </span>
           </div>
 
@@ -742,26 +815,54 @@ export function SmartMineControlDesk({
             <div className={`annunciator-row ${isGasWarning ? 'active-critical' : ''}`}>
               <span className={`pilot-jewel red ${isGasWarning ? 'flash' : ''}`} />
               <span className="annunciator-text">CRITICAL GAS THRESHOLD EXCEEDED</span>
-              <span className="annunciator-tag">MQ-2</span>
+              <span className="annunciator-tag">MQ-2 ({gasPpm} PPM)</span>
             </div>
 
             <div className={`annunciator-row ${isVibWarning ? 'active-warning' : ''}`}>
               <span className={`pilot-jewel amber ${isVibWarning ? 'glow' : ''}`} />
               <span className="annunciator-text">WARNING VIBRATION ABOVE LIMIT</span>
-              <span className="annunciator-tag">ADXL345</span>
+              <span className="annunciator-tag">ADXL345 ({vibrationG.toFixed(2)}g)</span>
             </div>
 
             <div className={`annunciator-row ${isDistWarning ? 'active-warning' : ''}`}>
               <span className={`pilot-jewel amber ${isDistWarning ? 'glow' : ''}`} />
               <span className="annunciator-text">WARNING DISTANCE VARIATION</span>
-              <span className="annunciator-tag">HC-SR04</span>
+              <span className="annunciator-tag">HC-SR04 ({distanceCm.toFixed(1)}cm)</span>
+            </div>
+
+            <div className="annunciator-row active-normal">
+              <span className="pilot-jewel green glow" />
+              <span className="annunciator-text">TILT ENVELOPE STABLE WITHIN 5°</span>
+              <span className="annunciator-tag">MPU6050 ({tiltX.toFixed(1)}°)</span>
             </div>
 
             <div className={`annunciator-row ${isNormalTelemetry ? 'active-normal' : ''}`}>
               <span className={`pilot-jewel green ${isNormalTelemetry ? 'glow' : ''}`} />
-              <span className="annunciator-text">NORMAL NODE TELEMETRY RECEIVED</span>
-              <span className="annunciator-tag">SYSTEM</span>
+              <span className="annunciator-text">NORMAL NODE TELEMETRY HEARTBEAT</span>
+              <span className="annunciator-tag">ESP32 LTE</span>
             </div>
+          </div>
+
+          {/* Tactile Annunciator Buttons */}
+          <div className="annunciator-actions-bar">
+            <button
+              className="annunciator-btn"
+              onClick={() => playHapticClick(750, 0.05)}
+            >
+              LAMP TEST
+            </button>
+            <button
+              className="annunciator-btn"
+              onClick={() => playHapticClick(500, 0.04)}
+            >
+              MUTE BUZZER
+            </button>
+            <button
+              className="annunciator-btn highlight"
+              onClick={() => playHapticClick(900, 0.06)}
+            >
+              ACKNOWLEDGE
+            </button>
           </div>
         </div>
 
