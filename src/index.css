@@ -245,21 +245,24 @@ img, svg { display: block; }
 .app-layout {
   display: flex;
   min-height: 100vh;
+  position: relative;
+  width: 100%;
 }
 
 /* ── Sidebar ── */
 .ai-sidebar {
   width: var(--sidebar-width);
-  min-height: 100vh;
+  height: 100vh;
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border-card);
   box-shadow: var(--shadow-sidebar);
   display: flex;
   flex-direction: column;
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
   z-index: 50;
+  flex-shrink: 0;
+  overflow-y: auto;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -402,7 +405,7 @@ img, svg { display: block; }
 /* ── Main Content ── */
 .main-content {
   flex: 1;
-  margin-left: var(--sidebar-width);
+  margin-left: 0;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -2315,15 +2318,23 @@ img, svg { display: block; }
   :root { --sidebar-width: 0px; }
 
   .ai-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
     transform: translateX(-240px);
     width: 240px;
+    z-index: 100;
   }
 
   .ai-sidebar.open {
     transform: translateX(0);
   }
 
-  .main-content { margin-left: 0; }
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
 
   .page-content { padding: 20px 16px 60px; }
 
