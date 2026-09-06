@@ -1,9 +1,12 @@
 // ============================================================
-// THULIR AI — Safety Alert Dispatch Center
+// THULIR AI — 3D Skeuomorphic Safety Alert Dispatch Center
 // ============================================================
+// High-tactility emergency dispatch console with 4 corner metallic screws,
+// incident response annunciator rows, 3D mechanical acknowledge push-buttons,
+// and strata hazard beacons.
 
 import { formatTimeAgo } from '../utils/timeUtils';
-import { Bell, AlertTriangle, AlertCircle, CheckCircle2, ShieldCheck, Cpu } from 'lucide-react';
+import { Bell, AlertTriangle, AlertCircle, CheckCircle2, ShieldCheck, Cpu, Radio, ShieldAlert, Zap } from 'lucide-react';
 import type { Alert } from '../types';
 
 interface AlertPanelProps {
@@ -12,189 +15,214 @@ interface AlertPanelProps {
 }
 
 export function AlertPanel({ alerts, onAcknowledge }: AlertPanelProps) {
-  const activeAlerts = alerts.filter(a => a.status === 'ACTIVE');
-  const ackAlerts = alerts.filter(a => a.status === 'ACKNOWLEDGED');
+  const activeAlerts = alerts.filter((a) => a.status === 'ACTIVE');
+  const ackAlerts = alerts.filter((a) => a.status === 'ACKNOWLEDGED');
 
-  const criticalCount = alerts.filter(a => a.severity === 'CRITICAL' && a.status !== 'RESOLVED').length;
-  const watchCount = alerts.filter(a => a.severity === 'WATCH' && a.status !== 'RESOLVED').length;
+  const criticalCount = alerts.filter((a) => a.severity === 'CRITICAL' && a.status !== 'RESOLVED').length;
+  const watchCount = alerts.filter((a) => a.severity === 'WATCH' && a.status !== 'RESOLVED').length;
   const hasActiveAlerts = activeAlerts.length > 0;
   const hasCritical = criticalCount > 0;
 
+  const headerGradient = hasCritical
+    ? 'linear-gradient(135deg, #7F1D1D 0%, #991B1B 50%, #EF4444 100%)'
+    : hasActiveAlerts
+    ? 'linear-gradient(135deg, #78350F 0%, #B45309 50%, #F59E0B 100%)'
+    : 'linear-gradient(135deg, #064E3B 0%, #065F46 50%, #059669 100%)';
+
+  const themeColor = hasCritical ? '#EF4444' : hasActiveAlerts ? '#F59E0B' : '#10B981';
+
   return (
     <div
-      className={`clay-card ${hasCritical ? 'alert-state-danger' : 'alert-state-nominal'}`}
+      className={`individual-overview-3d-card alert-dispatch-chassis ${
+        hasCritical ? 'is-danger-state' : hasActiveAlerts ? 'is-watch-state' : 'is-nominal-state'
+      }`}
       role="region"
-      aria-label="Safety Alert Dispatch"
+      aria-label="Safety Alert Dispatch Console"
+      style={{ '--card-theme-color': themeColor } as React.CSSProperties}
     >
-      {/* Top Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Bell size={16} color={hasCritical ? 'var(--status-critical)' : hasActiveAlerts ? 'var(--status-watch)' : 'var(--status-normal)'} strokeWidth={2} />
-          <div>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>Safety Alert Dispatch</div>
-            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>Real-time structural & environmental monitoring</div>
+      {/* 4 Corner Metallic Machined Fasteners */}
+      <div className="corner-screw top-left" />
+      <div className="corner-screw top-right" />
+      <div className="corner-screw bottom-left" />
+      <div className="corner-screw bottom-right" />
+
+      {/* Top 3D Metallic Header Bezel */}
+      <div className="card-top-bezel" style={{ background: headerGradient }}>
+        <div className="bezel-left">
+          <div className="bezel-icon-orb">
+            {hasCritical ? (
+              <ShieldAlert size={17} color="#FFFFFF" className="pulse-fast" />
+            ) : hasActiveAlerts ? (
+              <Bell size={17} color="#FFFFFF" />
+            ) : (
+              <ShieldCheck size={17} color="#FFFFFF" />
+            )}
+          </div>
+          <div className="bezel-text">
+            <span className="card-sensor-title">SAFETY ALERT DISPATCH CONSOLE</span>
+            <span className="card-chip-sub">REAL-TIME STRATA INCIDENT RESPONSE DESK</span>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          {criticalCount > 0 && (
-            <span
-              className="skeuo-pill"
-              style={{
-                fontSize: '0.66rem',
-                padding: '2px 8px',
-                color: 'var(--status-critical)',
-                background: 'var(--status-critical-bg)',
-                fontWeight: 800,
-                border: '1px solid var(--status-critical-border)',
-                animation: 'pulse-glow-red 1s infinite ease-in-out',
-              }}
-            >
+        <div className="bezel-right">
+          {hasCritical && (
+            <span className="card-hw-badge" style={{ background: 'rgba(239, 68, 68, 0.35)', borderColor: '#EF4444' }}>
               {criticalCount} CRITICAL
             </span>
           )}
           {watchCount > 0 && (
-            <span
-              className="skeuo-pill"
-              style={{
-                fontSize: '0.66rem',
-                padding: '2px 8px',
-                color: 'var(--status-watch)',
-                background: 'var(--status-watch-bg)',
-                fontWeight: 800,
-                border: '1px solid var(--status-watch-border)',
-              }}
-            >
+            <span className="card-hw-badge" style={{ background: 'rgba(245, 158, 11, 0.35)', borderColor: '#F59E0B' }}>
               {watchCount} WATCH
             </span>
           )}
-          <span
-            className={`skeuo-pill ${activeAlerts.length + ackAlerts.length > 0 ? 'pill-offline' : 'pill-online'}`}
-            style={{
-              fontSize: '0.68rem',
-              padding: '2px 8px',
-              fontWeight: 700,
-              color: activeAlerts.length + ackAlerts.length > 0 ? 'var(--status-critical)' : 'var(--status-normal)',
-            }}
-          >
+          <span className="card-hw-badge">
             {activeAlerts.length + ackAlerts.length > 0
-              ? `${activeAlerts.length + ackAlerts.length} ACTIVE DISPATCHES`
-              : 'ALL CLEAR / NOMINAL'}
+              ? `${activeAlerts.length + ackAlerts.length} ACTIVE`
+              : 'STRATA SECURE'}
           </span>
         </div>
       </div>
 
-      {alerts.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '36px 14px', color: 'var(--text-muted)' }}>
-          <ShieldCheck size={32} color="var(--status-normal)" style={{ margin: '0 auto 8px', opacity: 0.95 }} />
-          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--status-normal)', fontFamily: 'var(--font-mono)' }}>
-            MINE STRATA STATUS: SECURE
+      {/* Main Body */}
+      <div className="overview-card-body">
+        {alerts.length === 0 ? (
+          <div className="alert-zero-state-well">
+            <div className="zero-state-radar-orb">
+              <ShieldCheck size={36} color="#10B981" />
+              <div className="radar-sonar-wave" />
+            </div>
+            <div className="zero-state-title">MINE STRATA ENVELOPE: 100% SECURE</div>
+            <p className="zero-state-desc">
+              All multi-axis inclination, barometric strata pressure, toxic gas concentration, acoustic micro-vibrations,
+              and roof displacement metrics are strictly nominal. Zero safety breaches detected across active sensor nodes.
+            </p>
+            <div className="zero-state-chips">
+              <span className="secure-tag"><CheckCircle2 size={11} color="#10B981" /> GAS &lt; 400 PPM</span>
+              <span className="secure-tag"><CheckCircle2 size={11} color="#10B981" /> VIBRATION &lt; 1.5 m/s²</span>
+              <span className="secure-tag"><CheckCircle2 size={11} color="#10B981" /> TILT &lt; 15.0°</span>
+            </div>
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 4 }}>
-            All multi-axis inclination, barometric pressure, toxic gas, acoustic vibration, and roof displacement metrics are strictly within safe operational parameters.
-          </div>
-        </div>
-      ) : (
-        <div className="alert-timeline-list" style={{ maxHeight: '340px', overflowY: 'auto' }}>
-          {alerts.map((alert) => {
-            const isCritical = alert.severity === 'CRITICAL';
-            const isResolved = alert.status === 'RESOLVED';
-            const isAcknowledged = alert.status === 'ACKNOWLEDGED' || alert.acknowledged;
-            const timeAgo = formatTimeAgo(alert.created_at);
+        ) : (
+          <div className="alert-3d-timeline-list">
+            {alerts.map((alert) => {
+              const isCritical = alert.severity === 'CRITICAL';
+              const isResolved = alert.status === 'RESOLVED';
+              const isAcknowledged = alert.status === 'ACKNOWLEDGED' || alert.acknowledged;
+              const timeAgo = formatTimeAgo(alert.created_at);
 
-            return (
-              <div
-                key={alert.id}
-                className={`alert-row-item ${isResolved ? 'sev-resolved' : isCritical ? 'sev-critical' : 'sev-watch'}`}
-                style={{ opacity: isResolved ? 0.65 : 1 }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              const rowBorderColor = isResolved ? '#10B981' : isCritical ? '#EF4444' : '#F59E0B';
+
+              return (
+                <div
+                  key={alert.id}
+                  className={`alert-3d-row-item ${
+                    isResolved ? 'is-resolved' : isCritical ? 'is-critical' : 'is-watch'
+                  }`}
+                  style={{ borderLeftColor: rowBorderColor }}
+                >
+                  {/* Left Severity Indicator Rail */}
+                  <div className="alert-row-icon-col">
                     {isResolved ? (
-                      <CheckCircle2 size={14} color="var(--status-normal)" />
+                      <div className="alert-icon-orb orb-resolved">
+                        <CheckCircle2 size={14} color="#10B981" />
+                      </div>
                     ) : isCritical ? (
-                      <AlertCircle size={14} color="var(--status-critical)" />
+                      <div className="alert-icon-orb orb-critical">
+                        <AlertCircle size={14} color="#EF4444" />
+                      </div>
                     ) : (
-                      <AlertTriangle size={14} color="var(--status-watch)" />
+                      <div className="alert-icon-orb orb-watch">
+                        <AlertTriangle size={14} color="#F59E0B" />
+                      </div>
                     )}
-                    <span style={{ fontSize: '0.82rem' }}>{alert.title || alert.sensor}</span>
-                    <span
-                      style={{
-                        fontSize: '0.62rem',
-                        padding: '1px 6px',
-                        borderRadius: 3,
-                        fontWeight: 800,
-                        fontFamily: 'var(--font-mono)',
-                        color: isResolved ? 'var(--status-normal)' : isCritical ? 'var(--status-critical)' : 'var(--status-watch)',
-                        background: isResolved ? 'var(--status-normal-bg)' : isCritical ? 'var(--status-critical-bg)' : 'var(--status-watch-bg)',
-                      }}
-                    >
-                      {alert.severity}
-                    </span>
-                    {alert.source && (
+                  </div>
+
+                  {/* Center Content */}
+                  <div className="alert-row-content">
+                    <div className="alert-title-row">
+                      <span className="alert-name-text">{alert.title || alert.sensor}</span>
                       <span
+                        className="alert-sev-tag"
                         style={{
-                          fontSize: '0.58rem',
-                          padding: '1px 5px',
-                          borderRadius: 3,
-                          fontWeight: 700,
-                          fontFamily: 'var(--font-mono)',
-                          color: 'var(--text-dim)',
-                          border: '1px solid var(--border-subtle)',
+                          color: isResolved ? '#10B981' : isCritical ? '#EF4444' : '#F59E0B',
+                          background: isResolved
+                            ? 'rgba(16, 185, 129, 0.12)'
+                            : isCritical
+                            ? 'rgba(239, 68, 68, 0.12)'
+                            : 'rgba(245, 158, 11, 0.12)',
+                          borderColor: `${rowBorderColor}40`,
                         }}
                       >
-                        {alert.source}
+                        {alert.severity}
                       </span>
-                    )}
+                      {alert.source && (
+                        <span className="alert-src-tag">
+                          <Zap size={9} /> {alert.source}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="alert-desc-text">{alert.message}</div>
+
+                    <div className="alert-telemetry-meta">
+                      <span className="meta-item">
+                        <Cpu size={10} color="#0284C7" /> {alert.node_id}
+                      </span>
+                      {alert.value !== null && Number.isFinite(alert.value) && (
+                        <span className="meta-item">
+                          VALUE: <strong style={{ color: 'var(--text-primary)' }}>{alert.value.toFixed(2)}</strong>
+                        </span>
+                      )}
+                      {isResolved && alert.resolved_at && (
+                        <span className="meta-item resolved-tag">
+                          RESOLVED AT: {new Date(alert.resolved_at).toLocaleTimeString()}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>{alert.message}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.66rem', color: 'var(--text-dim)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                      <Cpu size={10} /> {alert.node_id}
-                    </span>
-                    {alert.value !== null && Number.isFinite(alert.value) && (
-                      <span>Val: <strong style={{ color: 'var(--text-primary)' }}>{alert.value.toFixed(2)}</strong></span>
+
+                  {/* Right Action & Timestamp */}
+                  <div className="alert-row-action-col">
+                    <span className="alert-time-tag">{timeAgo}</span>
+
+                    {!isResolved && !isAcknowledged && (
+                      <button
+                        className="btn-ack-3d"
+                        onClick={() => onAcknowledge(alert.id)}
+                        title="Acknowledge safety incident dispatch"
+                      >
+                        <span>ACK</span>
+                      </button>
                     )}
-                    {isResolved && alert.resolved_at && (
-                      <span style={{ color: 'var(--status-normal)' }}>
-                        Resolved: {new Date(alert.resolved_at).toLocaleTimeString()}
-                      </span>
+
+                    {!isResolved && isAcknowledged && (
+                      <div className="ack-confirmed-badge">
+                        <CheckCircle2 size={11} color="#10B981" />
+                        <span>ACKNOWLEDGED</span>
+                      </div>
+                    )}
+
+                    {isResolved && (
+                      <div className="resolved-confirmed-badge">
+                        <span>RESOLVED</span>
+                      </div>
                     )}
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, marginLeft: 10 }}>
-                  <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                    {timeAgo}
-                  </span>
-
-                  {!isResolved && !isAcknowledged && (
-                    <button
-                      className="btn-ack"
-                      onClick={() => onAcknowledge(alert.id)}
-                      title="Acknowledge alert"
-                    >
-                      ACK
-                    </button>
-                  )}
-
-                  {!isResolved && isAcknowledged && (
-                    <span style={{ fontSize: '0.66rem', color: 'var(--status-normal)', display: 'flex', alignItems: 'center', gap: 3, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
-                      <CheckCircle2 size={12} /> ACK
-                    </span>
-                  )}
-
-                  {isResolved && (
-                    <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
-                      RESOLVED
-                    </span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+      {/* Card Footer */}
+      <div className="card-footer-strip">
+        <div className="footer-status-pill">
+          <Radio size={11} className="spin-slow" />
+          <span>INCIDENT DISPATCH QUEUE SYNCHRONIZED</span>
         </div>
-      )}
+        <span className="footer-clock-tag">ZERO-LATENCY SAFETY DISPATCH</span>
+      </div>
     </div>
   );
 }
