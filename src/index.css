@@ -615,60 +615,102 @@ img, svg { display: block; }
   .desk-detailed-content-wrapper { padding: 20px 20px 60px 20px; }
 }
 
-/* ── Landing Desk View (Full 100vw x 100vh Immersive Experience with Zero Gaps) ── */
-.app-layout.landing-desk-view .ai-sidebar,
-.app-layout.landing-desk-view .sidebar {
-  transform: translateX(-100%) !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  visibility: hidden !important;
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, visibility 0.45s ease;
+/* ── Master App Root Container ── */
+.app-root-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
 }
 
-.app-layout.landing-desk-view .command-bar {
-  transform: translateY(-100%) !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  visibility: hidden !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, height 0.45s ease;
+/* ── Transition Bridge Separator ── */
+.desk-analytics-transition-bridge {
+  width: 100%;
+  padding: 36px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+  z-index: 5;
+  box-sizing: border-box;
 }
 
-.app-layout.landing-desk-view .main-content {
-  margin-left: 0 !important;
-  width: 100vw !important;
-  max-width: 100vw !important;
-  padding-top: 0 !important;
-  overflow-x: hidden;
-  transition: margin-left 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+.bridge-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.4), transparent);
 }
 
-/* ── Scrolled Dashboard View (Smoothly Reveal Sidebar & Top Sticky Command Bar) ── */
-.app-layout.scrolled-dashboard-view .ai-sidebar,
-.app-layout.scrolled-dashboard-view .sidebar {
-  transform: translateX(0);
-  opacity: 1;
-  pointer-events: auto;
-  visibility: visible;
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, visibility 0.45s ease;
+.bridge-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 6px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.app-layout.scrolled-dashboard-view .command-bar {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-  visibility: visible;
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+[data-theme="dark-apple"] .bridge-badge,
+[data-theme="dark-space"] .bridge-badge {
+  background: rgba(20, 26, 36, 0.75);
+  color: #38bdf8;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
-.app-layout.scrolled-dashboard-view .main-content {
+.bridge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+  animation: jewelPulse 1.2s infinite alternate;
+}
+
+/* ── App Layout for Analytics Stage ── */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  width: 100%;
+  scroll-margin-top: 0;
+}
+
+.app-layout .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+.app-layout .main-content {
   margin-left: var(--sidebar-width);
   width: calc(100% - var(--sidebar-width));
-  max-width: calc(100% - var(--sidebar-width));
-  transition: margin-left 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app-layout .command-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
 }
 
 /* ============================================================

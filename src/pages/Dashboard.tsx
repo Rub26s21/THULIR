@@ -71,17 +71,6 @@ export function Dashboard() {
   const { theme, mode, setTheme, setCategoryMode } = useTheme();
 
   const [selectedNodeId, setSelectedNodeId] = useState<string>('NODE_01');
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrolled = window.scrollY > 40;
-      setIsScrolled(scrolled);
-    };
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const {
     latestData, history, historyLoading, historyError, timeRange, setTimeRange,
@@ -124,80 +113,98 @@ export function Dashboard() {
     <>
       {showLaunch && <LaunchScreen onComplete={() => setShowLaunch(false)} />}
 
-      {/* App Shell with Landing vs Scrolled View States */}
-      <div className={`app-layout ${!isScrolled ? 'landing-desk-view' : 'scrolled-dashboard-view'}`} data-theme={theme} data-color-mode={mode}>
+      {/* Master Application Shell */}
+      <div className="app-root-container" data-theme={theme} data-color-mode={mode}>
         {/* Ambient Fluid Aurora Background (Liquidmorphism) */}
         <LiquidBackground />
 
-        {/* Left Sidebar Navigation (Hidden on landing, revealed when scrolling down) */}
-        <Sidebar
-          alertCount={activeAlertCount}
-          sidebarOpen={sidebarOpen}
-          mode={mode}
-          onSelectMode={setCategoryMode}
-          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-          onCloseSidebar={() => setSidebarOpen(false)}
-        />
-
-        {/* Main Content Area */}
-        <div className="main-content">
-          {/* Top Sticky Command Bar (Hidden on landing, revealed when scrolling down) */}
-          <CommandBar
-            connectionType={demoMode ? 'DISCONNECTED' : connectionType}
-            lastTimestamp={latestData?.created_at || null}
+        {/* ══════════════════════════════════════════════════════════════════
+            STAGE 1: IMMERSIVE 100vh THULIR SMART MINE CONTROL DESK (Full Bleed)
+           ══════════════════════════════════════════════════════════════════ */}
+        <section id="section-desk" className="desk-hero-landing-section">
+          <SmartMineControlDesk
+            data={latestData}
+            risk={risk}
+            mlPrediction={mlPrediction}
+            nodeStatus={nodeStatus}
+            alerts={alerts}
+            nodeId={selectedNodeId}
             demoMode={demoMode}
+            connectionType={connectionType}
             onToggleDemo={toggleDemoMode}
-            theme={theme}
-            mode={mode}
-            onSelectTheme={setTheme}
-            onSelectMode={setCategoryMode}
+            onNavigateSection={(secId) => {
+              const target = document.getElementById(secId);
+              if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+          />
+        </section>
+
+        {/* ── Transition Bridge Separator ── */}
+        <div className="desk-analytics-transition-bridge">
+          <div className="bridge-line" />
+          <div className="bridge-badge">
+            <span className="bridge-dot" />
+            <span>DEEP AI TELEMETRY & MULTI-NODE ANALYTICS</span>
+          </div>
+          <div className="bridge-line" />
+        </div>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            STAGE 2: DETAILED ANALYTICS & MISSION CONTROL DASHBOARD APP SHELL
+           ══════════════════════════════════════════════════════════════════ */}
+        <div id="section-analytics" className="app-layout">
+          {/* Left Sidebar Navigation */}
+          <Sidebar
             alertCount={activeAlertCount}
+            sidebarOpen={sidebarOpen}
+            mode={mode}
+            onSelectMode={setCategoryMode}
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+            onCloseSidebar={() => setSidebarOpen(false)}
           />
 
-          {/* Page Content */}
-          <div className="page-content">
+          {/* Main Content Area */}
+          <div className="main-content">
+            {/* Top Sticky Command Bar */}
+            <CommandBar
+              connectionType={demoMode ? 'DISCONNECTED' : connectionType}
+              lastTimestamp={latestData?.created_at || null}
+              demoMode={demoMode}
+              onToggleDemo={toggleDemoMode}
+              theme={theme}
+              mode={mode}
+              onSelectTheme={setTheme}
+              onSelectMode={setCategoryMode}
+              alertCount={activeAlertCount}
+              onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+            />
 
-            {/* ── 1. IMMERSIVE HERO: THULIR SMART MINE CONTROL DESK (Full 100vh Screen Landing) ── */}
-            <div id="section-desk" className="desk-hero-landing-section">
-              <SmartMineControlDesk
-                data={latestData}
-                risk={risk}
-                mlPrediction={mlPrediction}
-                nodeStatus={nodeStatus}
-                alerts={alerts}
-                nodeId={selectedNodeId}
-                demoMode={demoMode}
-                connectionType={connectionType}
-                onToggleDemo={toggleDemoMode}
-                onNavigateSection={(secId) => {
-                  document.getElementById(secId)?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              />
-            </div>
-
-            {/* ── Configuration Warning Banner ── */}
-            {!isSupabaseConfigured && isScrolled && (
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '12px 18px', margin: '16px 32px 24px 32px',
-                background: 'var(--status-watch-bg)',
-                border: '1px solid var(--status-watch-border)',
-                borderRadius: 16,
-                fontSize: '0.8rem', color: 'var(--status-watch)',
-                boxShadow: '0 4px 16px rgba(245, 158, 11, 0.15)',
-              }}>
-                <AlertCircle size={16} />
-                <div>
-                  <strong>Supabase credentials not configured.</strong> Running in{' '}
-                  <strong>Simulated Demo Mode</strong>. Provide <code>VITE_SUPABASE_URL</code> and{' '}
-                  <code>VITE_SUPABASE_ANON_KEY</code> in <code>.env.local</code> to connect live.
+            {/* Page Content */}
+            <div className="page-content">
+              {/* Configuration Warning Banner */}
+              {!isSupabaseConfigured && (
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '12px 18px', margin: '16px 32px 24px 32px',
+                  background: 'var(--status-watch-bg)',
+                  border: '1px solid var(--status-watch-border)',
+                  borderRadius: 16,
+                  fontSize: '0.8rem', color: 'var(--status-watch)',
+                  boxShadow: '0 4px 16px rgba(245, 158, 11, 0.15)',
+                }}>
+                  <AlertCircle size={16} />
+                  <div>
+                    <strong>Supabase credentials not configured.</strong> Running in{' '}
+                    <strong>Simulated Demo Mode</strong>. Provide <code>VITE_SUPABASE_URL</code> and{' '}
+                    <code>VITE_SUPABASE_ANON_KEY</code> in <code>.env.local</code> to connect live.
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* ── 2. DETAILED MISSION CONTROL & ANALYTICS BELOW ── */}
-            <div className="desk-detailed-content-wrapper">
+              {/* Detailed Mission Control Content */}
+              <div className="desk-detailed-content-wrapper">
                 {/* ── HERO SECTION ── */}
                 <div className="hero-section reveal" id="hero">
               <div className="hero-content">
@@ -419,24 +426,25 @@ export function Dashboard() {
                 </div>
               </div>
             </section>
+          </div>
+        </div>
+
+        {/* ── Footer ── */}
+        <footer className="app-footer">
+          <div className="footer-brand">
+            <div className="footer-brand-name">THULIR <span className="gradient-text-vibrant">AI</span></div>
+            <div className="footer-tagline">Intelligent Mine Safety · Safer Mines. Smarter Decisions.</div>
+          </div>
+          <div className="footer-right">
+            <div>Node: <strong style={{ fontFamily: 'var(--font-mono)' }}>{selectedNodeId}</strong></div>
+            <div style={{ marginTop: 4 }}>
+              {demoMode ? 'Simulated Demo' : `${connectionType} · ${nodeStatus.freshness}`}
             </div>
           </div>
-
-          {/* ── Footer ── */}
-          <footer className="app-footer">
-            <div className="footer-brand">
-              <div className="footer-brand-name">THULIR <span className="gradient-text-vibrant">AI</span></div>
-              <div className="footer-tagline">Intelligent Mine Safety · Safer Mines. Smarter Decisions.</div>
-            </div>
-            <div className="footer-right">
-              <div>Node: <strong style={{ fontFamily: 'var(--font-mono)' }}>{selectedNodeId}</strong></div>
-              <div style={{ marginTop: 4 }}>
-                {demoMode ? 'Simulated Demo' : `${connectionType} · ${nodeStatus.freshness}`}
-              </div>
-            </div>
-          </footer>
-        </div>
+        </footer>
       </div>
-    </>
+    </div>
+  </div>
+  </>
   );
 }
