@@ -257,45 +257,45 @@ export function SmartMineControlDesk({
               </defs>
 
               {/* Trace 1: To MPU6050 (Top Left) */}
-              <path d="M 420 250 C 300 250, 220 70, 160 70" className="desk-bus-path bus-blue" />
+              <path d="M 423 270 C 300 270, 220 80, 160 80" className="desk-bus-path bus-blue" />
               <circle className="desk-bus-pulse pulse-blue" r="4">
-                <animateMotion path="M 420 250 C 300 250, 220 70, 160 70" dur="1.8s" repeatCount="indefinite" />
+                <animateMotion path="M 423 270 C 300 270, 220 80, 160 80" dur="1.8s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 2: To ADXL345 (Top Center) */}
-              <path d="M 500 200 L 500 70" className="desk-bus-path bus-red" />
+              <path d="M 500 215 L 500 80" className="desk-bus-path bus-red" />
               <circle className="desk-bus-pulse pulse-red" r="4">
-                <animateMotion path="M 500 200 L 500 70" dur="1.3s" repeatCount="indefinite" />
+                <animateMotion path="M 500 215 L 500 80" dur="1.3s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 3: To MQ-2 Gas Sensor (Top Right) */}
-              <path d="M 580 250 C 700 250, 780 70, 840 70" className="desk-bus-path bus-green" />
+              <path d="M 577 270 C 700 270, 780 80, 840 80" className="desk-bus-path bus-green" />
               <circle className="desk-bus-pulse pulse-green" r="4">
-                <animateMotion path="M 580 250 C 700 250, 780 70, 840 70" dur="2.0s" repeatCount="indefinite" />
+                <animateMotion path="M 577 270 C 700 270, 780 80, 840 80" dur="2.0s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 4: To APU6050 (Middle Left) */}
-              <path d="M 420 300 L 160 300" className="desk-bus-path bus-black" />
+              <path d="M 423 335 L 160 335" className="desk-bus-path bus-black" />
               <circle className="desk-bus-pulse pulse-amber" r="4">
-                <animateMotion path="M 420 300 L 160 300" dur="1.5s" repeatCount="indefinite" />
+                <animateMotion path="M 423 335 L 160 335" dur="1.5s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 5: To DHT22 (Middle Right) */}
-              <path d="M 580 300 L 840 300" className="desk-bus-path bus-blue" />
+              <path d="M 577 335 L 840 335" className="desk-bus-path bus-blue" />
               <circle className="desk-bus-pulse pulse-cyan" r="4">
-                <animateMotion path="M 580 300 L 840 300" dur="1.7s" repeatCount="indefinite" />
+                <animateMotion path="M 577 335 L 840 335" dur="1.7s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 6: To FLEX SENSOR (Bottom Left) */}
-              <path d="M 420 350 C 300 350, 220 530, 160 530" className="desk-bus-path bus-amber" />
+              <path d="M 423 400 C 300 400, 220 520, 160 520" className="desk-bus-path bus-amber" />
               <circle className="desk-bus-pulse pulse-gold" r="4">
-                <animateMotion path="M 420 350 C 300 350, 220 530, 160 530" dur="2.2s" repeatCount="indefinite" />
+                <animateMotion path="M 423 400 C 300 400, 220 520, 160 520" dur="2.2s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 7: To HC-SR04 (Bottom Right) */}
-              <path d="M 580 350 C 700 350, 780 530, 840 530" className="desk-bus-path bus-blue" />
+              <path d="M 577 400 C 700 400, 780 520, 840 520" className="desk-bus-path bus-blue" />
               <circle className="desk-bus-pulse pulse-blue" r="4">
-                <animateMotion path="M 580 350 C 700 350, 780 530, 840 530" dur="1.9s" repeatCount="indefinite" />
+                <animateMotion path="M 577 400 C 700 400, 780 520, 840 520" dur="1.9s" repeatCount="indefinite" />
               </circle>
             </svg>
 
@@ -559,8 +559,27 @@ export function SmartMineControlDesk({
                 <span className={`mod-pwr-led ${isDistWarning ? 'amber flash' : 'green'}`} />
               </div>
               <div className="desk-module-body hcsr04-body">
-                <div className="desk-ultrasonic-mesh">
-                  <div className="desk-mesh-ring" />
+                <div className="hcsr04-transducers-col">
+                  <div className="desk-ultrasonic-mesh" title="Transmitter (T)">
+                    <span className="tr-glyph">T</span>
+                    <div className="desk-mesh-ring" />
+                  </div>
+                  <div className="desk-ultrasonic-mesh" title="Receiver (R)">
+                    <span className="tr-glyph">R</span>
+                    <div className="desk-mesh-ring" />
+                  </div>
+                </div>
+                <div className="desk-module-readout">
+                  <div className="readout-primary">
+                    <span className="readout-title">GAP</span>
+                    <span className="desk-readout-val">{distanceCm.toFixed(1)} cm</span>
+                  </div>
+                  <div className="readout-sub-row">
+                    <span className="readout-meta">ROOF SUBS</span>
+                    <span className={`desk-mini-badge ${isDistWarning ? 'warning' : 'normal'}`}>
+                      {isDistWarning ? 'WARNING' : 'NORMAL'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
