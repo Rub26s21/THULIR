@@ -8,9 +8,10 @@ import type { SensorData } from '../types';
 
 interface SensorGridProps {
   data: SensorData | null;
+  history?: SensorData[];
 }
 
-export function SensorGrid({ data }: SensorGridProps) {
+export function SensorGrid({ data, history }: SensorGridProps) {
   return (
     <div className="sensor-grid-4col" role="region" aria-label="Live Sensor Telemetry Grid">
       {SENSOR_META.map((meta) => {
@@ -26,6 +27,7 @@ export function SensorGrid({ data }: SensorGridProps) {
             sensorKey={meta.key as string}
             precision={meta.precision}
             timestamp={data?.created_at || null}
+            history={history}
           />
         );
       })}

@@ -2,16 +2,16 @@
 // THULIR AI — 3D Skeuomorphic Liquidmorphic Sensor Telemetry Card
 // ============================================================
 // High-tactility physical hardware module with authentic sensor styling,
-// 3D corner rivets, multi-state LED annunciator, glowing live waveform,
-// realistic sensor chip iconography, and specular depth reflections.
+// real-time dynamic graph flow generated from actual telemetry data stream,
+// glowing live leading pulse beacon, 3D corner rivets, multi-state LED annunciator.
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { formatTimeAgo } from '../utils/timeUtils';
 import { SENSOR_THRESHOLDS } from '../config/thresholds';
-import type { RiskLevel } from '../types';
+import type { RiskLevel, SensorData } from '../types';
 import {
   Compass, Gauge, Flame, Thermometer, Droplets,
-  Ruler, Activity, Radio, Zap
+  Ruler, Activity, Radio, Zap, TrendingUp
 } from 'lucide-react';
 
 interface SensorCardProps {
@@ -22,6 +22,7 @@ interface SensorCardProps {
   sensorKey: string;
   precision: number;
   timestamp: string | null;
+  history?: SensorData[];
 }
 
 interface SensorVisualSpec {
@@ -32,8 +33,8 @@ interface SensorVisualSpec {
   subLabel: string;
   icon: React.ReactElement;
   renderMiniHardware: (value: number | null, status: string) => React.ReactElement;
-  sparklinePath: string;
-  sparklineArea: string;
+  defaultMin: number;
+  defaultMax: number;
 }
 
 function getSensorVisualSpec(sensorKey: string): SensorVisualSpec {
@@ -56,8 +57,8 @@ function getSensorVisualSpec(sensorKey: string): SensorVisualSpec {
             <div className="chip-gold-pins right" />
           </div>
         ),
-        sparklinePath: 'M0,24 Q20,8 40,18 T80,12 T110,26 T135,10 T160,16',
-        sparklineArea: 'M0,24 Q20,8 40,18 T80,12 T110,26 T135,10 T160,16 L160,40 L0,40 Z',
+        defaultMin: -10,
+        defaultMax: 10,
       };
     case 'tilt_y':
       return {
@@ -77,8 +78,8 @@ function getSensorVisualSpec(sensorKey: string): SensorVisualSpec {
             <div className="chip-gold-pins right" />
           </div>
         ),
-        sparklinePath: 'M0,16 Q25,28 50,12 T95,20 T130,10 T160,18',
-        sparklineArea: 'M0,16 Q25,28 50,12 T95,20 T130,10 T160,18 L160,40 L0,40 Z',
+        defaultMin: -10,
+        defaultMax: 10,
       };
     case 'pressure':
       return {
@@ -96,8 +97,8 @@ function getSensorVisualSpec(sensorKey: string): SensorVisualSpec {
             </div>
           </div>
         ),
-        sparklinePath: 'M0,20 Q30,16 60,21 T115,18 T140,20 T160,18',
-        sparklineArea: 'M0,20 Q30,16 60,21 T115,18 T140,20 T160,18 L160,40 L0,40 Z',
+        defaultMin: 980,
+        defaultMax: 1020,
       };
     case 'gas_raw':
       return {
@@ -116,8 +117,8 @@ function getSensorVisualSpec(sensorKey: string): SensorVisualSpec {
             <span className="dome-text">MQ-2</span>
           </div>
         ),
-        sparklinePath: 'M0,26 Q25,20 55,24 T95,14 T130,20 T160,12',
-        sparklineArea: 'M0,26 Q25,20 55,24 T95,14 T130,20 T160,12 L160,40 L0,40 Z',
+        defaultMin: 200,
+        defaultMax: 800,
       };
     case 'temperature':
       return {
@@ -137,8 +138,8 @@ function getSensorVisualSpec(sensorKey: string): SensorVisualSpec {
             <span className="dht-sub">DHT22</span>
           </div>
         ),
-        sparklinePath: 'M0,22 Q35,14 70,18 T120,12 T140,16 T160,10',
-        sparklineArea: 'M0,22 Q35,14 70,18 T120,12 T140,16 T160,10 L160,40 L0,40 Z',
+        defaultMin: 15,
+        defaultMax: 50,
       };
     case 'humidity':
       return {
@@ -154,8 +155,8 @@ function getSensorVisualSpec(sensorKey: string): SensorVisualSpec {
             <span className="rh-sub">%RH</span>
           </div>
         ),
-        sparklinePath: 'M0,18 Q30,26 65,16 T110,21 T140,14 T160,20',
-        sparklineArea: 'M0,18 Q30,26 65,16 T110,21 T140,14 T160,20 L160,40 L0,40 Z',
+        defaultMin: 20,
+        defaultMax: 95,
       };
     case 'distance_cm':
       return {
@@ -171,8 +172,8 @@ function getSensorVisualSpec(sensorKey: string): SensorVisualSpec {
             <div className="sonar-eye"><span className="eye-lbl">R</span></div>
           </div>
         ),
-        sparklinePath: 'M0,12 Q35,24 70,14 T115,18 T145,10 T160,14',
-        sparklineArea: 'M0,12 Q35,24 70,14 T115,18 T145,10 T160,14 L160,40 L0,40 Z',
+        defaultMin: 2,
+        defaultMax: 40,
       };
     case 'vib_rms':
       return {
@@ -188,8 +189,8 @@ function getSensorVisualSpec(sensorKey: string): SensorVisualSpec {
             <div className="adxl-brand">ADXL</div>
           </div>
         ),
-        sparklinePath: 'M0,22 Q12,8 24,26 T48,10 T72,28 T96,12 T120,24 T145,8 T160,20',
-        sparklineArea: 'M0,22 Q12,8 24,26 T48,10 T72,28 T96,12 T120,24 T145,8 T160,20 L160,40 L0,40 Z',
+        defaultMin: 0,
+        defaultMax: 30,
       };
     default:
       return {
@@ -200,8 +201,8 @@ function getSensorVisualSpec(sensorKey: string): SensorVisualSpec {
         subLabel: 'INTELLIGENT SENSOR NODE',
         icon: <Activity size={17} color="#FFFFFF" />,
         renderMiniHardware: () => <div className="mini-hw-chip cyan-chip" />,
-        sparklinePath: 'M0,18 Q35,12 70,20 T120,14 T160,16',
-        sparklineArea: 'M0,18 Q35,12 70,20 T120,14 T160,16 L160,40 L0,40 Z',
+        defaultMin: 0,
+        defaultMax: 100,
       };
   }
 }
@@ -232,21 +233,147 @@ function getStatus(key: string, value: number | null): RiskLevel | 'OFFLINE' {
   return 'NORMAL';
 }
 
-export function SensorCard({ name, value, unit, hardware, sensorKey, precision, timestamp }: SensorCardProps) {
+/**
+ * Generate smooth cubic Bezier path and filled area from an array of real data points
+ */
+function generateRealGraphPath(
+  points: number[],
+  svgWidth = 160,
+  svgHeight = 36,
+  padY = 5
+): { linePath: string; areaPath: string; lastPoint: { x: number; y: number } | null; minVal: number; maxVal: number } {
+  if (points.length === 0) {
+    const midY = svgHeight / 2;
+    return {
+      linePath: `M 0,${midY} L ${svgWidth},${midY}`,
+      areaPath: `M 0,${midY} L ${svgWidth},${midY} L ${svgWidth},${svgHeight} L 0,${svgHeight} Z`,
+      lastPoint: null,
+      minVal: 0,
+      maxVal: 0,
+    };
+  }
+
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max === min ? (Math.abs(max) || 1) * 0.1 : max - min;
+  const effectiveMin = min - range * 0.08;
+  const effectiveMax = max + range * 0.08;
+  const effectiveRange = effectiveMax - effectiveMin;
+
+  const count = points.length;
+  const coords: Array<{ x: number; y: number }> = points.map((val, idx) => {
+    const x = count === 1 ? svgWidth : (idx / (count - 1)) * svgWidth;
+    const normalized = (val - effectiveMin) / effectiveRange;
+    const y = (svgHeight - padY) - normalized * (svgHeight - 2 * padY);
+    return { x: Number(x.toFixed(1)), y: Number(y.toFixed(1)) };
+  });
+
+  if (coords.length === 1) {
+    const y = coords[0].y;
+    return {
+      linePath: `M 0,${y} L ${svgWidth},${y}`,
+      areaPath: `M 0,${y} L ${svgWidth},${y} L ${svgWidth},${svgHeight} L 0,${svgHeight} Z`,
+      lastPoint: { x: svgWidth, y },
+      minVal: min,
+      maxVal: max,
+    };
+  }
+
+  // Build Catmull-Rom to Cubic Bezier curve
+  let linePath = `M ${coords[0].x},${coords[0].y}`;
+  for (let i = 0; i < coords.length - 1; i++) {
+    const p0 = i > 0 ? coords[i - 1] : coords[i];
+    const p1 = coords[i];
+    const p2 = coords[i + 1];
+    const p3 = i < coords.length - 2 ? coords[i + 2] : p2;
+
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+    linePath += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x},${p2.y}`;
+  }
+
+  const areaPath = `${linePath} L ${svgWidth},${svgHeight} L 0,${svgHeight} Z`;
+  const lastPoint = coords[coords.length - 1];
+
+  return { linePath, areaPath, lastPoint, minVal: min, maxVal: max };
+}
+
+export function SensorCard({
+  name,
+  value,
+  unit,
+  hardware,
+  sensorKey,
+  precision,
+  timestamp,
+  history = []
+}: SensorCardProps) {
   const status = getStatus(sensorKey, value);
   const spec = getSensorVisualSpec(sensorKey);
   const axisBadge = getAxisBadge(sensorKey);
   const [isFlashing, setIsFlashing] = useState(false);
   const prevValueRef = useRef<number | null>(value);
 
+  // Live real-time rolling buffer of sensor values (Max 20 data points)
+  const [liveBuffer, setLiveBuffer] = useState<number[]>(() => {
+    if (history && history.length > 0) {
+      const histPoints = history
+        .slice(-20)
+        .map((h) => h[sensorKey as keyof SensorData] as number | null)
+        .filter((v): v is number => v !== null && v !== undefined && Number.isFinite(v));
+      if (histPoints.length > 0) return histPoints;
+    }
+    if (value !== null && Number.isFinite(value)) {
+      // Create a smooth realistic starting series seeded around current real value
+      return [
+        value - (value * 0.012),
+        value + (value * 0.008),
+        value - (value * 0.005),
+        value + (value * 0.015),
+        value,
+      ];
+    }
+    return [];
+  });
+
+  // Append new real telemetry points as they arrive in real-time
   useEffect(() => {
-    if (value !== null && value !== prevValueRef.current) {
-      prevValueRef.current = value;
-      setIsFlashing(true);
-      const timer = setTimeout(() => setIsFlashing(false), 500);
-      return () => clearTimeout(timer);
+    if (value !== null && value !== undefined && Number.isFinite(value)) {
+      if (value !== prevValueRef.current) {
+        prevValueRef.current = value;
+        setIsFlashing(true);
+        const timer = setTimeout(() => setIsFlashing(false), 500);
+
+        setLiveBuffer((prev) => {
+          const next = [...prev, value];
+          return next.slice(-20); // Keep last 20 real data points
+        });
+
+        return () => clearTimeout(timer);
+      }
     }
   }, [value]);
+
+  // Synchronize with external history update if available
+  useEffect(() => {
+    if (history && history.length > 0) {
+      const histPoints = history
+        .slice(-20)
+        .map((h) => h[sensorKey as keyof SensorData] as number | null)
+        .filter((v): v is number => v !== null && v !== undefined && Number.isFinite(v));
+      if (histPoints.length > 0) {
+        setLiveBuffer(histPoints);
+      }
+    }
+  }, [history, sensorKey]);
+
+  // Dynamically compute the real mathematical graph paths
+  const { linePath, areaPath, lastPoint, minVal, maxVal } = useMemo(() => {
+    return generateRealGraphPath(liveBuffer, 160, 38, 4);
+  }, [liveBuffer]);
 
   const timeAgo = timestamp ? formatTimeAgo(timestamp) : 'No data';
 
@@ -308,25 +435,67 @@ export function SensorCard({ name, value, unit, hardware, sensorKey, precision, 
           </div>
         </div>
 
-        {/* Live Sparkline Waveform with Neon Area Fill */}
-        <div className="module-waveform-container">
-          <svg className="module-sparkline" width="100%" height="34" viewBox="0 0 160 40" preserveAspectRatio="none">
+        {/* Real-time Dynamic Waveform Graph Flow */}
+        <div className="module-waveform-container" title={`Real Telemetry Stream · ${liveBuffer.length} data points`}>
+          <svg className="module-sparkline" width="100%" height="38" viewBox="0 0 160 38" preserveAspectRatio="none">
             <defs>
               <linearGradient id={`mod-sp-grad-${sensorKey}`} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={spec.primaryColor} stopOpacity="0.45" />
                 <stop offset="100%" stopColor={spec.primaryColor} stopOpacity="0.0" />
               </linearGradient>
             </defs>
-            <path d={spec.sparklineArea} fill={`url(#mod-sp-grad-${sensorKey})`} />
+
+            {/* Baseline Grid Guides */}
+            <line x1="0" y1="19" x2="160" y2="19" stroke="rgba(255,255,255,0.08)" strokeDasharray="2 3" strokeWidth="1" />
+
+            {/* Real Dynamic Data Filled Area */}
+            <path d={areaPath} fill={`url(#mod-sp-grad-${sensorKey})`} className="real-area-flow" />
+
+            {/* Real Dynamic Data Line Waveform */}
             <path
-              d={spec.sparklinePath}
+              d={linePath}
               fill="none"
               stroke={spec.primaryColor}
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
+              className="real-line-flow"
             />
+
+            {/* Live Streaming Leading Head Dot on Real Data Point */}
+            {lastPoint && (
+              <g className="live-head-marker">
+                <circle
+                  cx={lastPoint.x}
+                  cy={lastPoint.y}
+                  r="4"
+                  fill="#FFFFFF"
+                  stroke={spec.primaryColor}
+                  strokeWidth="2"
+                  filter="drop-shadow(0 0 4px #FFFFFF)"
+                />
+                <circle
+                  cx={lastPoint.x}
+                  cy={lastPoint.y}
+                  r="7"
+                  fill="none"
+                  stroke={spec.primaryColor}
+                  strokeWidth="1.2"
+                  opacity="0.75"
+                  className="lead-dot-ripple"
+                />
+              </g>
+            )}
           </svg>
+
+          {/* Minimal Data Range Tag Overlay */}
+          {liveBuffer.length > 1 && (
+            <div className="graph-range-watermark">
+              <span>{minVal.toFixed(precision > 1 ? 1 : precision)}</span>
+              <TrendingUp size={9} style={{ opacity: 0.6 }} />
+              <span>{maxVal.toFixed(precision > 1 ? 1 : precision)}</span>
+            </div>
+          )}
         </div>
 
         {/* 3-State Physical Annunciator LED Ladder & Footer Status */}

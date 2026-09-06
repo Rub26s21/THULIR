@@ -1974,16 +1974,57 @@ img, svg { display: block; }
 /* Waveform */
 .module-waveform-container {
   width: 100%;
-  height: 34px;
+  height: 38px;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--bg-well);
   border: 1px solid var(--border-well);
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+  position: relative;
 }
 
 .module-sparkline {
   display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.real-line-flow {
+  transition: d 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 0 3px var(--module-theme-color, #10b981));
+}
+
+.real-area-flow {
+  transition: d 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lead-dot-ripple {
+  animation: lead-pulse 1.5s infinite ease-out;
+  transform-origin: center;
+}
+
+@keyframes lead-pulse {
+  0%   { r: 4; opacity: 0.9; }
+  100% { r: 10; opacity: 0; }
+}
+
+.graph-range-watermark {
+  position: absolute;
+  bottom: 2px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.52rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  background: rgba(0,0,0,0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 1px 4px;
+  border-radius: 4px;
+  pointer-events: none;
 }
 
 /* Footer Bar with LED Ladder */

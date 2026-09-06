@@ -367,7 +367,7 @@ export function Dashboard() {
                 </span>
               </div>
               <div className="reveal">
-                <SensorGrid data={latestData} />
+                <SensorGrid data={latestData} history={history} />
               </div>
             </section>
 
