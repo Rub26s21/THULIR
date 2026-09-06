@@ -102,6 +102,7 @@ export function SmartMineControlDesk({
   const vibAngle = calcAngle(vibrationG, 0, 3.0);
   const distAngle = calcAngle(distanceCm, 0, 100);
   const tempAngle = calcAngle(tempC, 0, 60);
+  const humidAngle = calcAngle(humidityRh, 0, 100);
   const battAngle = calcAngle(batteryPct, 0, 100);
 
   // Safety risk rotary dial angle (0 to 100 maps to -135deg to +135deg)
@@ -420,27 +421,27 @@ export function SmartMineControlDesk({
         </div>
 
         {/* ════════════════════════════════════════════════════════
-            RIGHT PANEL: Analog Dials, VU Meters, Switches, Terminal Readouts
+            RIGHT PANEL: Precision Instrumentation & Hardware Telemetry
            ════════════════════════════════════════════════════════ */}
         <div className="desk-right-panel">
 
-          {/* Top Dials & Bar Meters Area */}
+          {/* Dials and VU / Switches Row */}
           <div className="desk-dials-and-meters-row">
 
-            {/* Left Column: 5 Circular Analog Meters */}
+            {/* Left Column: 6 Circular Analog Meters */}
             <div className="desk-analog-dials-column">
 
               {/* Dial 1: GAS */}
               <div className="desk-analog-gauge-card">
                 <div className="desk-gauge-circle">
                   <div className="desk-gauge-ticks" />
-                  <div className="desk-gauge-needle" style={{ transform: `rotate(${gasAngle}deg)` }} />
+                  <div className={`desk-gauge-needle ${isGasWarning ? 'warning' : ''}`} style={{ transform: `rotate(${gasAngle}deg)` }} />
                   <div className="desk-gauge-pivot" />
                 </div>
                 <div className="desk-gauge-info">
                   <span className="gauge-name">GAS</span>
                   <span className="gauge-val">{gasPpm} ppm</span>
-                  <span className="gauge-sub">METERS</span>
+                  <span className="gauge-sub">AIR QUALITY</span>
                 </div>
               </div>
 
@@ -454,7 +455,7 @@ export function SmartMineControlDesk({
                 <div className="desk-gauge-info">
                   <span className="gauge-name">VIBRATION</span>
                   <span className="gauge-val">{vibrationG.toFixed(2)} g</span>
-                  <span className="gauge-sub">TILT</span>
+                  <span className="gauge-sub">SEISMIC RMS</span>
                 </div>
               </div>
 
@@ -462,17 +463,17 @@ export function SmartMineControlDesk({
               <div className="desk-analog-gauge-card">
                 <div className="desk-gauge-circle">
                   <div className="desk-gauge-ticks" />
-                  <div className="desk-gauge-needle" style={{ transform: `rotate(${distAngle}deg)` }} />
+                  <div className={`desk-gauge-needle ${isDistWarning ? 'warning' : ''}`} style={{ transform: `rotate(${distAngle}deg)` }} />
                   <div className="desk-gauge-pivot" />
                 </div>
                 <div className="desk-gauge-info">
                   <span className="gauge-name">DISTANCE</span>
                   <span className="gauge-val">{distanceCm.toFixed(1)} cm</span>
-                  <span className="gauge-sub">TEMPERATURE</span>
+                  <span className="gauge-sub">SUBSIDENCE GAP</span>
                 </div>
               </div>
 
-              {/* Dial 4: HUMIDITY */}
+              {/* Dial 4: TEMPERATURE */}
               <div className="desk-analog-gauge-card">
                 <div className="desk-gauge-circle">
                   <div className="desk-gauge-ticks" />
@@ -480,13 +481,27 @@ export function SmartMineControlDesk({
                   <div className="desk-gauge-pivot" />
                 </div>
                 <div className="desk-gauge-info">
-                  <span className="gauge-name">HUMIDITY</span>
+                  <span className="gauge-name">TEMPERATURE</span>
                   <span className="gauge-val">{tempC.toFixed(1)}°C</span>
-                  <span className="gauge-sub">{humidityRh}% RH</span>
+                  <span className="gauge-sub">AMBIENT THERMAL</span>
                 </div>
               </div>
 
-              {/* Dial 5: BATTERY */}
+              {/* Dial 5: HUMIDITY */}
+              <div className="desk-analog-gauge-card">
+                <div className="desk-gauge-circle">
+                  <div className="desk-gauge-ticks" />
+                  <div className="desk-gauge-needle" style={{ transform: `rotate(${humidAngle}deg)` }} />
+                  <div className="desk-gauge-pivot" />
+                </div>
+                <div className="desk-gauge-info">
+                  <span className="gauge-name">HUMIDITY</span>
+                  <span className="gauge-val">{humidityRh}%</span>
+                  <span className="gauge-sub">RH LEVEL</span>
+                </div>
+              </div>
+
+              {/* Dial 6: BATTERY */}
               <div className="desk-analog-gauge-card">
                 <div className="desk-gauge-circle">
                   <div className="desk-gauge-ticks" />
@@ -496,13 +511,13 @@ export function SmartMineControlDesk({
                 <div className="desk-gauge-info">
                   <span className="gauge-name">BATTERY</span>
                   <span className="gauge-val">{batteryPct}%</span>
-                  <span className="gauge-sub">ONLINE</span>
+                  <span className="gauge-sub">3.7V / 4.08V</span>
                 </div>
               </div>
 
             </div>
 
-            {/* Right Column: 2 VU Bar Graph Meters & 4 Physical Toggle Switches */}
+            {/* Right Column: 2 VU Bar Graph Meters, Bus Status & 4 Physical Toggle Switches */}
             <div className="desk-vu-and-switches-column">
 
               {/* VU Strips */}
@@ -562,30 +577,32 @@ export function SmartMineControlDesk({
               <div className="terminal-data-column">
                 <div className="terminal-line"><span>CPU</span> <strong>42%</strong></div>
                 <div className="terminal-line"><span>RAM</span> <strong>38%</strong></div>
-                <div className="terminal-line"><span>GPIO</span> <strong>18 / 34</strong></div>
+                <div className="terminal-line"><span>GPIO</span> <strong>18/34</strong></div>
+              </div>
+
+              <div className="terminal-data-column">
                 <div className="terminal-line"><span>ADC</span> <strong>ACTIVE</strong></div>
-                <div className="terminal-line"><span>I2C</span> <strong>ACTIVE</strong></div>
-                <div className="terminal-line"><span>UART</span> <strong>ACTIVE</strong></div>
-                <div className="terminal-line"><span>VOLTAGE</span> <strong>5.02V</strong></div>
-                <div className="terminal-line"><span>CURRENT</span> <strong>180mA</strong></div>
-                <div className="terminal-line"><span>NODE TEMP</span> <strong>42°C</strong></div>
+                <div className="terminal-line"><span>I2C</span> <strong>400k</strong></div>
+                <div className="terminal-line"><span>UART</span> <strong>115.2k</strong></div>
+              </div>
+
+              <div className="terminal-data-column">
+                <div className="terminal-line"><span>VOLT</span> <strong>5.02V</strong></div>
+                <div className="terminal-line"><span>CURR</span> <strong>180mA</strong></div>
+                <div className="terminal-line"><span>TEMP</span> <strong>42°C</strong></div>
               </div>
 
               <div className="terminal-led-column">
                 <div className="terminal-led-row">
-                  <span className="led-label">POWER</span>
+                  <span className="led-label">PWR</span>
                   <span className="status-jewel-led red" />
                 </div>
                 <div className="terminal-led-row">
-                  <span className="led-label">DATA</span>
+                  <span className="led-label">DAT</span>
                   <span className="status-jewel-led green" />
                 </div>
                 <div className="terminal-led-row">
                   <span className="led-label">I2C</span>
-                  <span className="status-jewel-led green" />
-                </div>
-                <div className="terminal-led-row">
-                  <span className="led-label">UART</span>
                   <span className="status-jewel-led green" />
                 </div>
                 <div className="terminal-led-row">
@@ -599,13 +616,15 @@ export function SmartMineControlDesk({
           {/* A7670C 4G Modem Module Terminal with Antenna */}
           <div className="desk-modem-terminal">
             <div className="modem-info-area">
-              <div className="modem-title">A7670C 4G MODEM</div>
-              <div className="modem-metric"><span>SIGNAL</span> <strong>-67 dBm</strong></div>
-              <div className="modem-metric"><span>RSSI</span> <strong>19 / 31</strong></div>
-              <div className="modem-metric"><span>LATENCY</span> <strong>82 ms</strong></div>
-              <div className="modem-metric"><span>PACKET LOSS</span> <strong>0.4%</strong></div>
-              <div className="modem-metric"><span>DATA TX</span> <strong>2.4 MB</strong></div>
-              <div className="modem-metric"><span>DATA RX</span> <strong>8.7 MB</strong></div>
+              <div className="modem-title">A7670C 4G MODEM · LTE-M</div>
+              <div className="modem-metrics-grid">
+                <div className="modem-metric"><span>SIG</span> <strong>-67 dBm</strong></div>
+                <div className="modem-metric"><span>RSSI</span> <strong>19/31</strong></div>
+                <div className="modem-metric"><span>LAT</span> <strong>82ms</strong></div>
+                <div className="modem-metric"><span>LOSS</span> <strong>0.4%</strong></div>
+                <div className="modem-metric"><span>TX</span> <strong>2.4MB</strong></div>
+                <div className="modem-metric"><span>RX</span> <strong>8.7MB</strong></div>
+              </div>
             </div>
 
             {/* Rubber Antenna Model */}
