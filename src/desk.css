@@ -580,7 +580,7 @@
 }
 
 /* ════════════════════════════════════════════════════════
-   CENTER PANEL: Hardware PCB Workbench
+   CENTER PANEL: Hardware PCB Workbench (Ultra 3D Skeuomorphic)
    ════════════════════════════════════════════════════════ */
 .desk-center-panel {
   display: flex;
@@ -595,11 +595,11 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background: #f1ebdE;
+  background: #f1ebde;
   border-radius: 16px;
   box-shadow:
-    inset 0 3px 8px rgba(60, 45, 30, 0.18),
-    0 1px 2px rgba(255, 255, 255, 0.8);
+    inset 0 3px 10px rgba(60, 45, 30, 0.22),
+    0 2px 4px rgba(255, 255, 255, 0.9);
   padding: 8px;
   overflow: hidden;
   box-sizing: border-box;
@@ -607,13 +607,60 @@
 
 [data-theme="dark-apple"] .desk-pcb-workbench,
 [data-theme="dark-space"] .desk-pcb-workbench {
-  background: #11141c;
+  background: #0d111a;
   box-shadow:
-    inset 0 3px 8px rgba(0, 0, 0, 0.5),
+    inset 0 3px 10px rgba(0, 0, 0, 0.7),
     0 1px 2px rgba(255, 255, 255, 0.05);
 }
 
-/* Bus traces SVG */
+/* Corner Brass Screws */
+.pcb-corner-screw {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e6c575 0%, #b88628 70%, #684810 100%);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.pcb-corner-screw .screw-thread {
+  width: 6px;
+  height: 1.5px;
+  background: #4a340b;
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+
+.pcb-corner-screw.top-left { top: 6px; left: 6px; }
+.pcb-corner-screw.top-right { top: 6px; right: 6px; }
+.pcb-corner-screw.bottom-left { bottom: 6px; left: 6px; }
+.pcb-corner-screw.bottom-right { bottom: 6px; right: 6px; }
+
+/* PCB Silkscreen Markings */
+.pcb-silk-markings {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.44rem;
+  font-weight: 800;
+  color: rgba(140, 115, 85, 0.55);
+  letter-spacing: 1px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+[data-theme="dark-apple"] .pcb-silk-markings,
+[data-theme="dark-space"] .pcb-silk-markings {
+  color: rgba(56, 189, 248, 0.35);
+}
+
+.pcb-silk-markings.top { top: 6px; left: 50%; transform: translateX(-50%); }
+.pcb-silk-markings.bottom { bottom: 6px; left: 50%; transform: translateX(-50%); }
+
+/* Bus Traces SVG */
 .desk-pcb-traces-svg {
   position: absolute;
   top: 0;
@@ -627,179 +674,282 @@
 .desk-bus-path {
   fill: none;
   stroke: #c88651;
-  stroke-width: 4px;
+  stroke-width: 3.5px;
   stroke-linecap: round;
   stroke-linejoin: round;
   opacity: 0.85;
 }
 
+.desk-bus-path.bus-blue { stroke: #0284c7; }
+.desk-bus-path.bus-red { stroke: #dc2626; }
+.desk-bus-path.bus-green { stroke: #16a34a; }
+.desk-bus-path.bus-black { stroke: #64748b; }
+.desk-bus-path.bus-amber { stroke: #d97706; }
+
 [data-theme="dark-apple"] .desk-bus-path,
 [data-theme="dark-space"] .desk-bus-path {
-  stroke: #0284c7;
   opacity: 0.75;
-  filter: drop-shadow(0 0 4px rgba(2, 132, 199, 0.5));
+  filter: drop-shadow(0 0 4px rgba(2, 132, 199, 0.4));
 }
 
-.desk-bus-pulse {
-  fill: #ffeb99;
-  filter: drop-shadow(0 0 4px #ffc107);
-}
+.desk-bus-pulse.pulse-blue { fill: #38bdf8; filter: drop-shadow(0 0 6px #0284c7); }
+.desk-bus-pulse.pulse-red { fill: #f87171; filter: drop-shadow(0 0 6px #dc2626); }
+.desk-bus-pulse.pulse-green { fill: #4ade80; filter: drop-shadow(0 0 6px #16a34a); }
+.desk-bus-pulse.pulse-amber { fill: #fbbf24; filter: drop-shadow(0 0 6px #d97706); }
+.desk-bus-pulse.pulse-cyan { fill: #22d3ee; filter: drop-shadow(0 0 6px #06b6d4); }
+.desk-bus-pulse.pulse-gold { fill: #fde047; filter: drop-shadow(0 0 6px #eab308); }
 
-[data-theme="dark-apple"] .desk-bus-pulse,
-[data-theme="dark-space"] .desk-bus-pulse {
-  fill: #38bdf8;
-  filter: drop-shadow(0 0 6px #38bdf8);
-}
-
-/* Sensor Modules (Terracotta boards with screw mount aesthetics) */
+/* ── Universal 3D Skeuomorphic Sensor Module Card ── */
 .desk-sensor-module {
   position: absolute;
   z-index: 2;
-  background: #c36b53;
-  border-radius: 8px;
-  padding: 4px 8px;
-  box-shadow:
-    0 4px 10px rgba(90, 40, 25, 0.28),
-    inset 0 1px 2px rgba(255, 255, 255, 0.35);
+  border-radius: 9px;
+  padding: 5px 8px;
   display: flex;
   flex-direction: column;
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.22),
+    0 2px 4px rgba(0, 0, 0, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  cursor: default;
+  box-sizing: border-box;
+}
+
+.desk-sensor-module:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.32),
+    0 4px 8px rgba(0, 0, 0, 0.18),
+    inset 0 1px 2px rgba(255, 255, 255, 0.55);
+}
+
+.desk-module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3px;
+  gap: 4px;
+}
+
+.mod-corner-hole {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #1e1b18;
+  border: 1px solid #d4af37;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.8);
 }
 
 .desk-module-label {
-  font-size: 0.56rem;
+  font-size: 0.54rem;
   font-weight: 800;
   letter-spacing: 0.4px;
   text-align: center;
-  margin-bottom: 2px;
   color: #fbf5ef;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  flex: 1;
+  white-space: nowrap;
 }
 
+.mod-pwr-led {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mod-pwr-led.green { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+.mod-pwr-led.amber { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+.mod-pwr-led.red { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+.mod-pwr-led.flash { animation: jewelPulse 0.8s infinite alternate; }
+
 .desk-module-body {
-  background: #ab5741;
-  border-radius: 5px;
+  border-radius: 6px;
   padding: 4px 6px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .desk-module-readout {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
 }
 
-.desk-module-readout.centered {
-  align-items: center;
-  width: 100%;
+.readout-primary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.readout-title {
+  font-size: 0.44rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.2px;
 }
 
 .desk-readout-val {
   font-size: 0.68rem;
-  font-weight: 800;
+  font-weight: 900;
   font-family: 'JetBrains Mono', monospace;
-  color: #fff9f0;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.readout-sub-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.readout-meta {
+  font-size: 0.42rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
 }
 
 .desk-mini-badge {
-  font-size: 0.46rem;
+  font-size: 0.42rem;
   font-weight: 800;
   padding: 1px 4px;
   border-radius: 3px;
   letter-spacing: 0.3px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .desk-mini-badge.normal {
-  background: #475f42;
-  color: #f1f8ee;
+  background: #15803d;
+  color: #f0fdf4;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .desk-mini-badge.warning {
-  background: #c4832c;
-  color: #fffaf0;
+  background: #b45309;
+  color: #fffbeb;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .desk-mini-badge.danger {
-  background: #b54736;
-  color: #fffaf0;
+  background: #b91c1c;
+  color: #fef2f2;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .desk-smd-chip {
-  background: #1f1b18;
-  color: #d1c8b8;
+  background: #1c1917;
+  color: #e2d9cc;
   font-size: 0.42rem;
-  font-weight: 700;
+  font-weight: 800;
   padding: 3px 5px;
   border-radius: 3px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
+  gap: 1px;
+  border: 1px solid #44403c;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+  width: 32px;
+  height: 28px;
 }
 
 .desk-chip-dot {
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #e2d9cc;
+  background: #d4af37;
+  align-self: flex-start;
 }
+
+.chip-code { font-size: 0.46rem; font-weight: 900; line-height: 1; }
+.chip-sub { font-size: 0.36rem; font-weight: 700; opacity: 0.8; line-height: 1; }
 
 .desk-smd-led-row {
   display: flex;
-  gap: 3px;
-  margin-top: 2px;
+  gap: 2.5px;
 }
 
 .smd-led {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #6a3528;
+  background: #44403c;
 }
 
-.smd-led.active-amber {
-  background: #f59e0b;
-  box-shadow: 0 0 6px #f59e0b;
-}
+.smd-led.active-green { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+.smd-led.active-amber { background: #f59e0b; box-shadow: 0 0 5px #f59e0b; }
+.smd-led.active-red { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
 
-/* Symmetric Module Positions on Dynamic Workbench */
+/* ── 1. MPU-6050 (Signature Royal Blue PCB) ── */
 .mod-mpu6050 {
   top: 10px;
-  left: 14px;
-  width: 130px;
+  left: 12px;
+  width: 142px;
+  background: linear-gradient(145deg, #0284c7 0%, #0369a1 100%);
 }
 
+.mpu6050-body {
+  background: #075985;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* ── 2. ADXL-345 (Signature Crimson Red PCB) ── */
 .mod-adxl345 {
   top: 8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 125px;
+  width: 142px;
+  background: linear-gradient(145deg, #b91c1c 0%, #881337 100%);
 }
 
+.adxl345-body {
+  background: #7f1d1d;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.adxl-axis-icon {
+  font-size: 0.36rem;
+  color: #fca5a5;
+  font-weight: 800;
+}
+
+/* ── 3. MQ-2 Gas Sensor (Signature Dark Green PCB + Metal Dome) ── */
 .mod-mq2 {
   top: 10px;
-  right: 14px;
-  width: 130px;
+  right: 12px;
+  width: 142px;
+  background: linear-gradient(145deg, #15803d 0%, #14532d 100%);
 }
 
 .mq2-body {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 5px;
+  background: #166534;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .desk-gas-mesh-cylinder {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: radial-gradient(circle, #a8a29e 25%, #78716c 60%, #44403c 100%);
+  background: radial-gradient(circle, #a8a29e 20%, #78716c 60%, #44403c 100%);
   border: 2px solid #57534e;
   box-shadow:
     inset 0 1px 3px rgba(255, 255, 255, 0.4),
-    0 2px 4px rgba(0, 0, 0, 0.3);
+    0 2px 5px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -813,70 +963,84 @@
   position: absolute;
   inset: 2px;
   border-radius: 50%;
-  background-image: radial-gradient(#292524 1px, transparent 1px);
+  background-image: radial-gradient(#1c1917 1px, transparent 1px);
   background-size: 3px 3px;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .gas-mesh-cap {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
-  background: radial-gradient(circle, #d6d3d1 0%, #78716c 100%);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  background: radial-gradient(circle, #f5f5f4 0%, #78716c 100%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.gas-heating-glow {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.6);
+  filter: blur(4px);
   z-index: 1;
 }
 
-.hcsr04-body {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  padding: 4px;
+.gas-heating-glow.active {
+  background: rgba(239, 68, 68, 0.9);
+  animation: heatPulse 1s infinite alternate;
 }
 
-.desk-ultrasonic-mesh {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #8a8884 20%, #cfcac2 60%, #44423e 100%);
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.4),
-    0 2px 4px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@keyframes heatPulse {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(1.3); opacity: 1; }
 }
 
-.desk-mesh-ring {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1px dashed rgba(0, 0, 0, 0.4);
-}
-
+/* ── 4. APU-6050 (Signature Matte Black Tactical PCB) ── */
 .mod-apu6050 {
   top: 50%;
-  left: 14px;
+  left: 12px;
   transform: translateY(-50%);
-  width: 130px;
+  width: 142px;
+  background: linear-gradient(145deg, #292524 0%, #1c1917 100%);
 }
 
+.apu6050-body {
+  background: #141210;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.black-chip {
+  background: #0c0a09;
+  border-color: #292524;
+}
+
+/* ── 5. DHT-22 (Signature White Vented Housing) ── */
 .mod-dht22 {
   top: 50%;
-  right: 14px;
+  right: 12px;
   transform: translateY(-50%);
-  width: 130px;
+  width: 142px;
+  background: linear-gradient(145deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.dht22-body {
+  background: #1e3a8a;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 3px 4px;
 }
 
 .dht22-white-cage {
   background: #ffffff;
   border-radius: 5px;
-  padding: 3px 5px;
-  color: #2b221a;
+  padding: 3px 6px;
+  color: #1e293b;
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: space-between;
   width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .dht22-vents {
@@ -886,47 +1050,131 @@
 }
 
 .dht22-vents span {
-  width: 10px;
+  width: 11px;
   height: 2px;
-  background: #a8a096;
+  background: #94a3b8;
   border-radius: 1px;
 }
 
-.dht22-readout {
-  font-size: 0.58rem;
-  font-weight: 800;
-  font-family: 'JetBrains Mono', monospace;
+.dht22-readout-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
+.dht22-val-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.dht22-icon {
+  font-size: 0.56rem;
+}
+
+.dht22-val {
+  font-size: 0.6rem;
+  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  color: #0f172a;
+}
+
+/* ── 6. FLEX SENSOR (Signature Amber Gold Polyimide Ribbon) ── */
 .mod-flex {
   bottom: 10px;
-  left: 14px;
-  width: 130px;
+  left: 12px;
+  width: 142px;
+  background: linear-gradient(145deg, #d97706 0%, #b45309 100%);
+}
+
+.flex-body {
+  background: #92400e;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .flex-gold-ribbon {
-  width: 28px;
-  height: 12px;
-  background: linear-gradient(90deg, #d4a34b 0%, #f3cf7a 100%);
-  border-radius: 2px;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+  width: 32px;
+  height: 26px;
+  background: linear-gradient(90deg, #d4a34b 0%, #fef08a 50%, #d4a34b 100%);
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.mod-soil,
-.mod-hcsr04-bottom {
+.flex-segmented-carbon {
+  display: flex;
+  gap: 2px;
+}
+
+.flex-segmented-carbon span {
+  width: 2px;
+  height: 18px;
+  background: #1c1917;
+  border-radius: 1px;
+}
+
+/* ── 7. HC-SR04 (Signature Deep Blue Ultrasonic Board) ── */
+.mod-hcsr04 {
   bottom: 10px;
-  right: 14px;
-  width: 130px;
+  right: 12px;
+  width: 142px;
+  background: linear-gradient(145deg, #1d4ed8 0%, #1e3a8a 100%);
 }
 
-/* Centerpiece: ESP32 Edge Node */
+.hcsr04-body {
+  background: #172554;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.hcsr04-transducers-col {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.desk-ultrasonic-mesh {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #d6d3d1 20%, #a8a29e 60%, #44403c 100%);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.tr-glyph {
+  font-size: 0.42rem;
+  font-weight: 900;
+  color: #1c1917;
+  font-family: 'JetBrains Mono', monospace;
+  z-index: 2;
+}
+
+.desk-mesh-ring {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 0, 0, 0.4);
+}
+
+/* ════════════════════════════════════════════════════════
+   CENTERPIECE: ESP32 Edge Node (3D Skeuomorphic Hub)
+   ════════════════════════════════════════════════════════ */
 .desk-esp32-node {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 130px;
-  height: 155px;
+  width: 154px;
+  height: 182px;
   display: flex;
   align-items: center;
   z-index: 3;
@@ -935,99 +1183,270 @@
 .desk-esp32-board {
   flex: 1;
   height: 100%;
-  background: #232220;
-  border-radius: 8px;
+  background: #1a1918;
+  border-radius: 10px;
   padding: 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow:
-    0 6px 16px rgba(0, 0, 0, 0.4),
-    inset 0 1px 2px rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    0 8px 22px rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-sizing: border-box;
+}
+
+/* Golden Meandering Antenna & Animated Wi-Fi Waves */
+.desk-antenna-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 3px;
+  width: 100%;
 }
 
 .desk-esp32-antenna {
-  width: 38px;
-  height: 10px;
-  background: repeating-linear-gradient(90deg, #c48b47, #c48b47 3px, #1a1918 3px, #1a1918 6px);
+  width: 44px;
+  height: 9px;
+  background: repeating-linear-gradient(90deg, #d4a34b, #d4a34b 3px, #1a1918 3px, #1a1918 6px);
   border-radius: 2px;
-  margin-bottom: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  z-index: 2;
 }
 
+.desk-rf-waves-container {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.rf-wave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 1.5px solid #38bdf8;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  animation: rfRadiate 2.2s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+}
+
+.rf-wave.wave-1 { animation-delay: 0s; }
+.rf-wave.wave-2 { animation-delay: 0.7s; }
+.rf-wave.wave-3 { animation-delay: 1.4s; }
+
+@keyframes rfRadiate {
+  0% { width: 10px; height: 8px; opacity: 0.9; }
+  100% { width: 62px; height: 32px; opacity: 0; }
+}
+
+.antenna-tag {
+  font-size: 0.38rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.3px;
+  margin-top: 1px;
+}
+
+/* Brushed Aluminum RF Shield with Specular Sheen */
 .desk-esp32-shield {
-  width: 74px;
+  position: relative;
+  width: 90px;
   height: 52px;
-  background: linear-gradient(145deg, #7c828d 0%, #525862 100%);
+  background: linear-gradient(135deg, #9ca3af 0%, #4b5563 45%, #6b7280 70%, #374151 100%);
   border-radius: 4px;
   box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.4),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.4),
-    0 2px 5px rgba(0, 0, 0, 0.3);
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.5),
+    0 3px 8px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  border: 0.5px solid #d1d5db;
 }
 
-.esp32-title {
+.shield-sheen {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+  pointer-events: none;
+  animation: sheenMove 4s infinite linear;
+}
+
+@keyframes sheenMove {
+  0% { transform: translateY(-50%) rotate(25deg); }
+  100% { transform: translateY(50%) rotate(25deg); }
+}
+
+.shield-top-row {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  z-index: 1;
+}
+
+.esp32-brand {
   font-size: 0.85rem;
   font-weight: 900;
-  color: #eceff4;
+  color: #f8fafc;
   letter-spacing: 0.8px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-.esp32-sub {
+.esp32-spec {
   font-size: 0.42rem;
-  font-weight: 700;
-  color: #b0b7c3;
-  letter-spacing: 0.4px;
+  font-weight: 800;
+  color: #cbd5e1;
 }
 
+.shield-meta {
+  font-size: 0.38rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  letter-spacing: 0.3px;
+  z-index: 1;
+}
+
+.shield-fcc {
+  font-size: 0.32rem;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.2px;
+  z-index: 1;
+}
+
+/* Live Transmission Telemetry Strip (TX / RX / Wi-Fi Mesh) */
+.desk-esp32-telemetry-live {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 3px;
+  background: #11100e;
+  padding: 3px 5px;
+  border-radius: 5px;
+  margin-top: 4px;
+  border: 1px solid #2e2820;
+  box-sizing: border-box;
+}
+
+.esp-comm-pill {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.4rem;
+}
+
+.comm-lbl { color: #9ca3af; font-weight: 700; }
+.comm-val { color: #f9fafb; font-weight: 800; }
+.comm-led { width: 4px; height: 4px; border-radius: 50%; }
+.comm-led.tx-blue { background: #38bdf8; box-shadow: 0 0 5px #38bdf8; }
+.comm-led.rx-green { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+.comm-led.blink { animation: blinkLed 0.5s infinite alternate; }
+
+@keyframes blinkLed { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+
+.esp-mesh-status {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.38rem;
+  font-weight: 800;
+  color: #4ade80;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.mesh-dot {
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 4px #4ade80;
+}
+
+/* USB-C Port & Tactile Buttons */
 .desk-esp32-bottom-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 6px;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 4px;
 }
 
 .desk-tactile-btn {
   font-size: 0.38rem;
   font-weight: 800;
-  color: #cfd6e0;
-  background: #393e46;
+  color: #f1f5f9;
+  background: #334155;
+  border: 1px solid rgba(255,255,255,0.2);
   border-radius: 2px;
-  padding: 1px 3px;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.2);
+  padding: 1px 4px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.4);
+  transition: all 0.1s ease;
+}
+
+.desk-tactile-btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
 }
 
 .desk-usbc-port {
   width: 18px;
   height: 7px;
-  background: #111214;
+  background: #09090b;
   border-radius: 2px;
-  border: 1px solid #4a505b;
+  border: 1px solid #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.usbc-inner-pins {
+  width: 10px;
+  height: 2px;
+  background: #d4a34b;
+  border-radius: 1px;
 }
 
 .desk-node-tag {
-  font-size: 0.52rem;
+  font-size: 0.48rem;
   font-weight: 800;
-  color: #c98845;
+  color: #f59e0b;
   margin-top: auto;
   letter-spacing: 0.4px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
+/* GPIO Pins */
 .desk-esp32-pins {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4.5px;
 }
 
-.desk-pin {
-  width: 6px;
+.desk-pin-slot {
+  display: flex;
+  align-items: center;
+}
+
+.desk-pin-gold {
+  width: 7px;
   height: 3px;
-  background: linear-gradient(90deg, #d4a34b 0%, #ffd885 100%);
+  background: linear-gradient(90deg, #d4a34b 0%, #fef08a 60%, #d4a34b 100%);
   border-radius: 1px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.35);
 }
 
 /* ════════════════════════════════════════════════════════

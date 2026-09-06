@@ -227,198 +227,338 @@ export function SmartMineControlDesk({
         </div>
 
         {/* ════════════════════════════════════════════════════════
-            CENTER PANEL: Hardware Circuit Workbench with ESP32 & Sensors
+            CENTER PANEL: Hardware Circuit Workbench with ESP32 & Sensors (Ultra 3D Skeuomorphic)
            ════════════════════════════════════════════════════════ */}
         <div className="desk-center-panel">
           <div className="desk-pcb-workbench">
+
+            {/* Corner Brass Mounting Screws for Realistic Depth */}
+            <div className="pcb-corner-screw top-left"><div className="screw-thread" /></div>
+            <div className="pcb-corner-screw top-right"><div className="screw-thread" /></div>
+            <div className="pcb-corner-screw bottom-left"><div className="screw-thread" /></div>
+            <div className="pcb-corner-screw bottom-right"><div className="screw-thread" /></div>
+
+            {/* PCB Silk-Screen Brand Markings */}
+            <div className="pcb-silk-markings top">THULIR BUS v3.2 · 3.3V / 5.0V DUAL RAIL</div>
+            <div className="pcb-silk-markings bottom">HIGH-RELIABILITY MINE TELEMETRY MATRIX · 50Hz</div>
 
             {/* Animated SVG Circuit Bus Traces (Scalable 1000x600 Coordinates) */}
             <svg className="desk-pcb-traces-svg" viewBox="0 0 1000 600" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="copperTraceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#c58652" />
-                  <stop offset="50%" stopColor="#de9e68" />
-                  <stop offset="100%" stopColor="#b47441" />
+                  <stop offset="0%" stopColor="#d98236" />
+                  <stop offset="50%" stopColor="#f5aa62" />
+                  <stop offset="100%" stopColor="#b46424" />
                 </linearGradient>
                 <filter id="traceGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="2" result="blur" />
+                  <feGaussianBlur stdDeviation="2.5" result="blur" />
                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
               </defs>
 
               {/* Trace 1: To MPU6050 (Top Left) */}
-              <path d="M 420 250 C 300 250, 220 70, 150 70" className="desk-bus-path" />
-              <circle className="desk-bus-pulse pulse-1" r="3.5">
-                <animateMotion path="M 420 250 C 300 250, 220 70, 150 70" dur="1.8s" repeatCount="indefinite" />
+              <path d="M 420 250 C 300 250, 220 70, 160 70" className="desk-bus-path bus-blue" />
+              <circle className="desk-bus-pulse pulse-blue" r="4">
+                <animateMotion path="M 420 250 C 300 250, 220 70, 160 70" dur="1.8s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 2: To ADXL345 (Top Center) */}
-              <path d="M 500 210 L 500 70" className="desk-bus-path" />
-              <circle className="desk-bus-pulse pulse-2" r="3.5">
-                <animateMotion path="M 500 210 L 500 70" dur="1.4s" repeatCount="indefinite" />
+              <path d="M 500 200 L 500 70" className="desk-bus-path bus-red" />
+              <circle className="desk-bus-pulse pulse-red" r="4">
+                <animateMotion path="M 500 200 L 500 70" dur="1.3s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 3: To MQ-2 Gas Sensor (Top Right) */}
-              <path d="M 580 250 C 700 250, 780 70, 850 70" className="desk-bus-path" />
-              <circle className="desk-bus-pulse pulse-3" r="3.5">
-                <animateMotion path="M 580 250 C 700 250, 780 70, 850 70" dur="2.1s" repeatCount="indefinite" />
+              <path d="M 580 250 C 700 250, 780 70, 840 70" className="desk-bus-path bus-green" />
+              <circle className="desk-bus-pulse pulse-green" r="4">
+                <animateMotion path="M 580 250 C 700 250, 780 70, 840 70" dur="2.0s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 4: To APU6050 (Middle Left) */}
-              <path d="M 420 300 L 150 300" className="desk-bus-path" />
-              <circle className="desk-bus-pulse pulse-4" r="3.5">
-                <animateMotion path="M 420 300 L 150 300" dur="1.5s" repeatCount="indefinite" />
+              <path d="M 420 300 L 160 300" className="desk-bus-path bus-black" />
+              <circle className="desk-bus-pulse pulse-amber" r="4">
+                <animateMotion path="M 420 300 L 160 300" dur="1.5s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 5: To DHT22 (Middle Right) */}
-              <path d="M 580 300 L 850 300" className="desk-bus-path" />
-              <circle className="desk-bus-pulse pulse-5" r="3.5">
-                <animateMotion path="M 580 300 L 850 300" dur="1.7s" repeatCount="indefinite" />
+              <path d="M 580 300 L 840 300" className="desk-bus-path bus-blue" />
+              <circle className="desk-bus-pulse pulse-cyan" r="4">
+                <animateMotion path="M 580 300 L 840 300" dur="1.7s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 6: To FLEX SENSOR (Bottom Left) */}
-              <path d="M 420 350 C 300 350, 220 530, 150 530" className="desk-bus-path" />
-              <circle className="desk-bus-pulse pulse-6" r="3.5">
-                <animateMotion path="M 420 350 C 300 350, 220 530, 150 530" dur="2.3s" repeatCount="indefinite" />
+              <path d="M 420 350 C 300 350, 220 530, 160 530" className="desk-bus-path bus-amber" />
+              <circle className="desk-bus-pulse pulse-gold" r="4">
+                <animateMotion path="M 420 350 C 300 350, 220 530, 160 530" dur="2.2s" repeatCount="indefinite" />
               </circle>
 
               {/* Trace 7: To HC-SR04 (Bottom Right) */}
-              <path d="M 580 350 C 700 350, 780 530, 850 530" className="desk-bus-path" />
-              <circle className="desk-bus-pulse pulse-7" r="3.5">
-                <animateMotion path="M 580 350 C 700 350, 780 530, 850 530" dur="1.9s" repeatCount="indefinite" />
+              <path d="M 580 350 C 700 350, 780 530, 840 530" className="desk-bus-path bus-blue" />
+              <circle className="desk-bus-pulse pulse-blue" r="4">
+                <animateMotion path="M 580 350 C 700 350, 780 530, 840 530" dur="1.9s" repeatCount="indefinite" />
               </circle>
             </svg>
 
-            {/* Module 1: MPU6050 (Top Left) */}
-            <div className="desk-sensor-module mod-mpu6050">
-              <div className="desk-module-label">MPU6050</div>
-              <div className="desk-module-body">
-                <div className="desk-smd-chip">
+            {/* ── MODULE 1: MPU6050 (Top Left · Signature Blue PCB) ── */}
+            <div className="desk-sensor-module mod-mpu6050" title="MPU-6050 6-Axis Motion Tracking Gyro & Accelerometer">
+              <div className="desk-module-header">
+                <span className="mod-corner-hole" />
+                <span className="desk-module-label">MPU-6050 · 6-DOF</span>
+                <span className="mod-pwr-led green" />
+              </div>
+              <div className="desk-module-body mpu6050-body">
+                <div className="desk-smd-chip mpu-chip">
                   <div className="desk-chip-dot" />
-                  <span>6-DOF</span>
+                  <span className="chip-code">MPU</span>
+                  <span className="chip-sub">6050</span>
                 </div>
                 <div className="desk-module-readout">
-                  <span className="desk-readout-val">{tiltX.toFixed(1)}°</span>
-                  <span className="desk-mini-badge normal">NORMAL</span>
+                  <div className="readout-primary">
+                    <span className="readout-title">TILT</span>
+                    <span className="desk-readout-val">{tiltX.toFixed(1)}°</span>
+                  </div>
+                  <div className="readout-sub-row">
+                    <span className="readout-meta">PITCH 1.2°</span>
+                    <span className="desk-mini-badge normal">NORMAL</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Module 2: ADXL345 (Top Center) */}
-            <div className="desk-sensor-module mod-adxl345">
-              <div className="desk-module-label">ADXL345</div>
-              <div className="desk-module-body">
-                <div className="desk-module-readout centered">
-                  <span className="desk-readout-val">{vibrationG.toFixed(2)} g</span>
-                  <span className="desk-mini-badge warning">WARNING</span>
+            {/* ── MODULE 2: ADXL345 (Top Center · Signature Crimson Red PCB) ── */}
+            <div className="desk-sensor-module mod-adxl345" title="ADXL-345 3-Axis Digital Seismic Vibration Accelerometer">
+              <div className="desk-module-header">
+                <span className="mod-corner-hole" />
+                <span className="desk-module-label">ADXL-345 · SEISMIC</span>
+                <span className={`mod-pwr-led ${isVibWarning ? 'amber flash' : 'green'}`} />
+              </div>
+              <div className="desk-module-body adxl345-body">
+                <div className="desk-smd-chip adxl-chip">
+                  <span className="chip-code">ADXL</span>
+                  <div className="adxl-axis-icon">XYZ</div>
                 </div>
-                <div className="desk-smd-led-row">
-                  <span className="smd-led active-amber" />
-                  <span className="smd-led" />
-                  <span className="smd-led" />
+                <div className="desk-module-readout">
+                  <div className="readout-primary">
+                    <span className="readout-title">VIB</span>
+                    <span className="desk-readout-val">{vibrationG.toFixed(2)} g</span>
+                  </div>
+                  <div className="readout-sub-row">
+                    <div className="desk-smd-led-row">
+                      <span className="smd-led active-green" />
+                      <span className={`smd-led ${vibrationG > 1.0 ? 'active-amber' : ''}`} />
+                      <span className={`smd-led ${vibrationG > 2.0 ? 'active-red' : ''}`} />
+                    </div>
+                    <span className={`desk-mini-badge ${isVibWarning ? 'warning' : 'normal'}`}>
+                      {isVibWarning ? 'WARNING' : 'NORMAL'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Module 3: MQ-2 Gas Sensor (Top Right) */}
-            <div className="desk-sensor-module mod-mq2">
-              <div className="desk-module-label">MQ-2</div>
+            {/* ── MODULE 3: MQ-2 (Top Right · Signature Forest Green PCB + Metal Mesh Dome) ── */}
+            <div className="desk-sensor-module mod-mq2" title="MQ-2 Flammable Gas & Smoke Sensor Dome">
+              <div className="desk-module-header">
+                <span className="mod-corner-hole" />
+                <span className="desk-module-label">MQ-2 · GAS & SMOKE</span>
+                <span className={`mod-pwr-led ${isGasWarning ? 'red flash' : 'green'}`} />
+              </div>
               <div className="desk-module-body mq2-body">
-                {/* Metal Mesh Gas Dome */}
+                {/* Realistic 3D Metal Mesh Gas Cylinder with Internal Heating Coil Glow */}
                 <div className="desk-gas-mesh-cylinder">
+                  <div className={`gas-heating-glow ${isGasWarning ? 'active' : ''}`} />
                   <div className="gas-mesh-cap" />
+                  <div className="gas-concentric-ring" />
                 </div>
                 <div className="desk-module-readout">
-                  <span className="desk-readout-val">{gasPpm} ppm</span>
-                  <span className={`desk-mini-badge ${gasPpm > 700 ? 'danger' : gasPpm > 400 ? 'warning' : 'normal'}`}>
-                    {gasPpm > 700 ? 'DANGER' : gasPpm > 400 ? 'WARNING' : 'NORMAL'}
-                  </span>
+                  <div className="readout-primary">
+                    <span className="readout-title">AIR</span>
+                    <span className="desk-readout-val">{gasPpm} ppm</span>
+                  </div>
+                  <div className="readout-sub-row">
+                    <span className="readout-meta">CH4 / LPG</span>
+                    <span className={`desk-mini-badge ${gasPpm > 700 ? 'danger' : gasPpm > 400 ? 'warning' : 'normal'}`}>
+                      {gasPpm > 700 ? 'DANGER' : gasPpm > 400 ? 'WARNING' : 'NORMAL'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Module 4: APU6050 (Middle Left) */}
-            <div className="desk-sensor-module mod-apu6050">
-              <div className="desk-module-label">APU6050</div>
-              <div className="desk-module-body">
-                <div className="desk-smd-chip small">
-                  <span>ACC</span>
+            {/* ── MODULE 4: APU6050 (Middle Left · Signature Tactical Matte Black PCB) ── */}
+            <div className="desk-sensor-module mod-apu6050" title="APU-6050 Structural Inertial Kinematics Unit">
+              <div className="desk-module-header">
+                <span className="mod-corner-hole" />
+                <span className="desk-module-label">APU6050 · DYNAMICS</span>
+                <span className="mod-pwr-led green" />
+              </div>
+              <div className="desk-module-body apu6050-body">
+                <div className="desk-smd-chip black-chip">
+                  <span className="chip-code">APU</span>
+                  <span className="chip-sub">ACC</span>
                 </div>
                 <div className="desk-module-readout">
-                  <span className="desk-readout-val">{vibrationG.toFixed(2)} g</span>
-                  <span className="desk-mini-badge warning">WARNING</span>
+                  <div className="readout-primary">
+                    <span className="readout-title">ACC</span>
+                    <span className="desk-readout-val">{vibrationG.toFixed(2)} g</span>
+                  </div>
+                  <div className="readout-sub-row">
+                    <span className="readout-meta">50Hz FFT</span>
+                    <span className="desk-mini-badge warning">WARNING</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Centerpiece: ESP32 Edge Node */}
-            <div className="desk-esp32-node">
+            {/* ── CENTERPIECE: ESP32 EDGE NODE (Hyper-Realistic 3D Module with Wi-Fi Waves & Live TX/RX) ── */}
+            <div className="desk-esp32-node" title="ESP32-WROOM-32D Dual-Core Edge Compute Node">
+              {/* Left Castellated GPIO Pins */}
               <div className="desk-esp32-pins left">
-                {[...Array(8)].map((_, i) => <div key={i} className="desk-pin" />)}
+                {['3V3', 'EN', 'VP', 'VN', '34', '35', '32', '33'].map((pin, i) => (
+                  <div key={i} className="desk-pin-slot" title={`Pin ${pin}`}>
+                    <span className="desk-pin-gold" />
+                  </div>
+                ))}
               </div>
 
+              {/* Main Board PCB */}
               <div className="desk-esp32-board">
-                {/* Antenna Pattern */}
-                <div className="desk-esp32-antenna" />
 
-                {/* Metal RF Shield */}
-                <div className="desk-esp32-shield">
-                  <span className="esp32-title">ESP32</span>
-                  <span className="esp32-sub">WROOM-32D</span>
+                {/* Golden Meandering Antenna with Animated Radiating Wi-Fi Waves */}
+                <div className="desk-antenna-section">
+                  <div className="desk-esp32-antenna" />
+                  <div className="desk-rf-waves-container">
+                    <span className="rf-wave wave-1" />
+                    <span className="rf-wave wave-2" />
+                    <span className="rf-wave wave-3" />
+                  </div>
+                  <span className="antenna-tag">Wi-Fi 2.4G · LTE</span>
                 </div>
 
-                {/* USB Port & Tactile Buttons */}
+                {/* Metallic Brushed Aluminum RF Shield with Specular Sheen */}
+                <div className="desk-esp32-shield">
+                  <div className="shield-sheen" />
+                  <div className="shield-top-row">
+                    <span className="esp32-brand">ESP32</span>
+                    <span className="esp32-spec">WROOM-32D</span>
+                  </div>
+                  <div className="shield-meta">240MHz DUAL-CORE</div>
+                  <div className="shield-fcc">FCC ID: 2AC7Z-ESPWROOM32</div>
+                </div>
+
+                {/* Live Transmission Telemetry Strip (TX / RX / Wi-Fi Mesh) */}
+                <div className="desk-esp32-telemetry-live">
+                  <div className="esp-comm-pill">
+                    <span className="comm-led tx-blue blink" />
+                    <span className="comm-lbl">TX</span>
+                    <strong className="comm-val">50Hz</strong>
+                  </div>
+                  <div className="esp-comm-pill">
+                    <span className="comm-led rx-green blink" />
+                    <span className="comm-lbl">RX</span>
+                    <strong className="comm-val">400k</strong>
+                  </div>
+                  <div className="esp-mesh-status">
+                    <span className="mesh-dot" />
+                    <span className="mesh-text">MESH-01 ONLINE</span>
+                  </div>
+                </div>
+
+                {/* USB-C Port & Tactile Click Micro-Buttons */}
                 <div className="desk-esp32-bottom-bar">
-                  <div className="desk-tactile-btn">RST</div>
-                  <div className="desk-usbc-port" />
-                  <div className="desk-tactile-btn">BOOT</div>
+                  <button
+                    className="desk-tactile-btn"
+                    onClick={() => playHapticClick(500, 0.04)}
+                    title="Hardware Reset (EN)"
+                  >
+                    RST
+                  </button>
+                  <div className="desk-usbc-port" title="USB-C Debug & Power Interface">
+                    <div className="usbc-inner-pins" />
+                  </div>
+                  <button
+                    className="desk-tactile-btn"
+                    onClick={() => playHapticClick(800, 0.04)}
+                    title="Boot Mode Select (IO0)"
+                  >
+                    BOOT
+                  </button>
                 </div>
 
                 {/* Edge Node Status Tag */}
-                <div className="desk-node-tag">EDGE NODE</div>
+                <div className="desk-node-tag">EDGE COMPUTE HUB</div>
               </div>
 
+              {/* Right Castellated GPIO Pins */}
               <div className="desk-esp32-pins right">
-                {[...Array(8)].map((_, i) => <div key={i} className="desk-pin" />)}
+                {['GND', '23', '22', 'TX', 'RX', '21', 'GND', '5V'].map((pin, i) => (
+                  <div key={i} className="desk-pin-slot" title={`Pin ${pin}`}>
+                    <span className="desk-pin-gold" />
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Module 5: DHT22 (Middle Right) */}
-            <div className="desk-sensor-module mod-dht22">
-              <div className="desk-module-label">DHT22</div>
+            {/* ── MODULE 5: DHT22 (Middle Right · Signature White Vented Enclosure) ── */}
+            <div className="desk-sensor-module mod-dht22" title="DHT-22 (AM2302) Precision Digital Temperature & Humidity Sensor">
+              <div className="desk-module-header">
+                <span className="mod-corner-hole" />
+                <span className="desk-module-label">DHT-22 · THERMAL</span>
+                <span className="mod-pwr-led green" />
+              </div>
               <div className="desk-module-body dht22-body">
                 <div className="dht22-white-cage">
                   <div className="dht22-vents">
                     <span /><span /><span />
                   </div>
-                  <div className="dht22-readout">
-                    <div>{tempC.toFixed(1)}°C</div>
-                    <div>{humidityRh.toFixed(0)}% RH</div>
+                  <div className="dht22-readout-col">
+                    <div className="dht22-val-row">
+                      <span className="dht22-icon">🌡️</span>
+                      <span className="dht22-val">{tempC.toFixed(1)}°C</span>
+                    </div>
+                    <div className="dht22-val-row">
+                      <span className="dht22-icon">💧</span>
+                      <span className="dht22-val">{humidityRh.toFixed(0)}% RH</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Module 6: FLEX SENSOR (Bottom Left) */}
-            <div className="desk-sensor-module mod-flex">
-              <div className="desk-module-label">FLEX SENSOR</div>
+            {/* ── MODULE 6: FLEX SENSOR (Bottom Left · Signature Amber Gold Polyimide Ribbon) ── */}
+            <div className="desk-sensor-module mod-flex" title="Spectra-Symbol Flexible Deflection & Strain Strip">
+              <div className="desk-module-header">
+                <span className="mod-corner-hole" />
+                <span className="desk-module-label">FLEX · STRAIN</span>
+                <span className="mod-pwr-led green" />
+              </div>
               <div className="desk-module-body flex-body">
                 <div className="flex-gold-ribbon">
-                  <span className="flex-strip" />
+                  <div className="flex-segmented-carbon">
+                    <span /><span /><span /><span /><span />
+                  </div>
                 </div>
                 <div className="desk-module-readout">
-                  <span className="desk-mini-badge normal">NORMAL</span>
+                  <div className="readout-primary">
+                    <span className="readout-title">BEND</span>
+                    <span className="desk-readout-val">14.2°</span>
+                  </div>
+                  <div className="readout-sub-row">
+                    <span className="readout-meta">24.5 kΩ</span>
+                    <span className="desk-mini-badge normal">NORMAL</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Module 7: HC-SR04 (Bottom Right) */}
-            <div className="desk-sensor-module mod-soil mod-hcsr04-bottom">
-              <div className="desk-module-label">HC-SR04</div>
+            {/* ── MODULE 7: HC-SR04 (Bottom Right · Signature Deep Blue PCB + Dual Aluminium Transducers) ── */}
+            <div className="desk-sensor-module mod-hcsr04" title="HC-SR04 Ultrasonic Distance Transducer (T/R Subsystem)">
+              <div className="desk-module-header">
+                <span className="mod-corner-hole" />
+                <span className="desk-module-label">HC-SR04 · SUBSIDENCE</span>
+                <span className={`mod-pwr-led ${isDistWarning ? 'amber flash' : 'green'}`} />
+              </div>
               <div className="desk-module-body hcsr04-body">
-                <div className="desk-ultrasonic-mesh">
-                  <div className="desk-mesh-ring" />
-                </div>
                 <div className="desk-ultrasonic-mesh">
                   <div className="desk-mesh-ring" />
                 </div>
