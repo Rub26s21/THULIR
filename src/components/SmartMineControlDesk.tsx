@@ -116,20 +116,29 @@ export function SmartMineControlDesk({
 
   return (
     <div className="desk-workbench">
-      {/* ── Header Title Plate ── */}
+      {/* ── Glassmorphic Sky-Blue Header Control Bar (Symmetrical & Centered) ── */}
       <div className="desk-header-title">
-        <span className="desk-header-text">THULIR SMART MINE CONTROL DESK</span>
-        <div className="desk-header-badge">
-          ESP32 DUAL CORE · 4G LTE-M · NEURAL ENGINE LIVE
+        <div className="desk-header-left">
+          <div className="desk-header-badge">
+            <span className="desk-header-pulse-dot" />
+            <span>ESP32 DUAL CORE · 4G LTE-M · NEURAL LIVE</span>
+          </div>
         </div>
-        <button
-          className="desk-header-scroll-btn"
-          onClick={handleScrollDown}
-          title="Scroll down to deep telemetry & multi-node analytics"
-        >
-          <span>Deep Analytics</span>
-          <span className="scroll-arrow">↓</span>
-        </button>
+
+        <div className="desk-header-center">
+          <span className="desk-header-text">THULIR SMART MINE CONTROL DESK</span>
+        </div>
+
+        <div className="desk-header-right">
+          <button
+            className="desk-header-scroll-btn"
+            onClick={handleScrollDown}
+            title="Scroll down to deep telemetry & multi-node analytics"
+          >
+            <span>Deep Analytics</span>
+            <span className="scroll-arrow">↓</span>
+          </button>
+        </div>
       </div>
 
       {/* ── Top Master Grid: Left Console, Center Hardware PCB, Right Telemetry Meters ── */}

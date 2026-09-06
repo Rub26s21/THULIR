@@ -189,85 +189,144 @@
   color: #e2e8f0;
 }
 
-/* ── Header Title Plate ── */
+/* ── Glassmorphic Sky-Blue Header Control Bar ── */
 .desk-header-title {
-  height: 24px;
+  height: 38px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 14px;
+  background: rgba(186, 230, 253, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  box-shadow:
+    0 4px 16px rgba(14, 165, 233, 0.12),
+    inset 0 1px 1px rgba(255, 255, 255, 0.85),
+    inset 0 -1px 2px rgba(14, 165, 233, 0.1);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+[data-theme="dark-apple"] .desk-header-title,
+[data-theme="dark-space"] .desk-header-title {
+  background: rgba(14, 30, 50, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.desk-header-left {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 4px;
-  flex-shrink: 0;
+  justify-content: flex-start;
+}
+
+.desk-header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.desk-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .desk-header-text {
-  font-size: 1.15rem;
-  font-weight: 800;
+  font-size: 0.95rem;
+  font-weight: 900;
   letter-spacing: 2px;
-  color: #2b221a;
+  color: #0369a1;
   text-transform: uppercase;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
 }
 
 [data-theme="dark-apple"] .desk-header-text,
 [data-theme="dark-space"] .desk-header-text {
-  color: #f1f5f9;
-  text-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
+  color: #38bdf8;
+  text-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
 }
 
 .desk-header-badge {
-  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.52rem;
   font-weight: 800;
-  letter-spacing: 0.8px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: rgba(16, 185, 129, 0.15);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  letter-spacing: 0.6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(2, 132, 199, 0.12);
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.25);
+  white-space: nowrap;
 }
 
 [data-theme="dark-apple"] .desk-header-badge,
 [data-theme="dark-space"] .desk-header-badge {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  color: #7dd3fc;
   border-color: rgba(56, 189, 248, 0.3);
+}
+
+.desk-header-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0284c7;
+  box-shadow: 0 0 6px #0284c7;
+  animation: jewelPulse 1.2s infinite alternate;
+}
+
+[data-theme="dark-apple"] .desk-header-pulse-dot,
+[data-theme="dark-space"] .desk-header-pulse-dot {
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
 }
 
 .desk-header-scroll-btn {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 800;
-  color: #5c4e3f;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 3px 10px;
+  color: #0369a1;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(2, 132, 199, 0.25);
+  padding: 4px 12px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(14, 165, 233, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
 }
 
 [data-theme="dark-apple"] .desk-header-scroll-btn,
 [data-theme="dark-space"] .desk-header-scroll-btn {
   color: #38bdf8;
-  background: rgba(56, 189, 248, 0.1);
-  border-color: rgba(56, 189, 248, 0.3);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .desk-header-scroll-btn:hover {
   background: #ffffff;
-  color: #1a1714;
+  color: #0284c7;
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
 }
 
 [data-theme="dark-apple"] .desk-header-scroll-btn:hover,
 [data-theme="dark-space"] .desk-header-scroll-btn:hover {
-  background: rgba(56, 189, 248, 0.2);
+  background: rgba(56, 189, 248, 0.25);
   color: #ffffff;
-  box-shadow: 0 3px 12px rgba(56, 189, 248, 0.25);
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.35);
 }
 
 .desk-header-scroll-btn .scroll-arrow {
