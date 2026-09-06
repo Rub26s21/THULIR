@@ -425,152 +425,145 @@ export function SmartMineControlDesk({
            ════════════════════════════════════════════════════════ */}
         <div className="desk-right-panel">
 
-          {/* Dials and VU / Switches Row */}
-          <div className="desk-dials-and-meters-row">
+          {/* Module 1: 2x3 Precision Analog Gauges Grid */}
+          <div className="desk-analog-gauges-grid">
 
-            {/* Left Column: 6 Circular Analog Meters */}
-            <div className="desk-analog-dials-column">
-
-              {/* Dial 1: GAS */}
-              <div className="desk-analog-gauge-card">
-                <div className="desk-gauge-circle">
-                  <div className="desk-gauge-ticks" />
-                  <div className={`desk-gauge-needle ${isGasWarning ? 'warning' : ''}`} style={{ transform: `rotate(${gasAngle}deg)` }} />
-                  <div className="desk-gauge-pivot" />
-                </div>
-                <div className="desk-gauge-info">
-                  <span className="gauge-name">GAS</span>
-                  <span className="gauge-val">{gasPpm} ppm</span>
-                  <span className="gauge-sub">AIR QUALITY</span>
-                </div>
+            {/* Dial 1: GAS */}
+            <div className="desk-analog-gauge-card">
+              <div className="desk-gauge-circle">
+                <div className="desk-gauge-ticks" />
+                <div className={`desk-gauge-needle ${isGasWarning ? 'warning' : ''}`} style={{ transform: `rotate(${gasAngle}deg)` }} />
+                <div className="desk-gauge-pivot" />
               </div>
-
-              {/* Dial 2: VIBRATION */}
-              <div className="desk-analog-gauge-card">
-                <div className="desk-gauge-circle">
-                  <div className="desk-gauge-ticks" />
-                  <div className={`desk-gauge-needle ${isVibWarning ? 'warning' : ''}`} style={{ transform: `rotate(${vibAngle}deg)` }} />
-                  <div className="desk-gauge-pivot" />
-                </div>
-                <div className="desk-gauge-info">
-                  <span className="gauge-name">VIBRATION</span>
-                  <span className="gauge-val">{vibrationG.toFixed(2)} g</span>
-                  <span className="gauge-sub">SEISMIC RMS</span>
-                </div>
+              <div className="desk-gauge-info">
+                <span className="gauge-name">GAS</span>
+                <span className="gauge-val">{gasPpm} ppm</span>
+                <span className="gauge-sub">AIR QUALITY</span>
               </div>
-
-              {/* Dial 3: DISTANCE */}
-              <div className="desk-analog-gauge-card">
-                <div className="desk-gauge-circle">
-                  <div className="desk-gauge-ticks" />
-                  <div className={`desk-gauge-needle ${isDistWarning ? 'warning' : ''}`} style={{ transform: `rotate(${distAngle}deg)` }} />
-                  <div className="desk-gauge-pivot" />
-                </div>
-                <div className="desk-gauge-info">
-                  <span className="gauge-name">DISTANCE</span>
-                  <span className="gauge-val">{distanceCm.toFixed(1)} cm</span>
-                  <span className="gauge-sub">SUBSIDENCE GAP</span>
-                </div>
-              </div>
-
-              {/* Dial 4: TEMPERATURE */}
-              <div className="desk-analog-gauge-card">
-                <div className="desk-gauge-circle">
-                  <div className="desk-gauge-ticks" />
-                  <div className="desk-gauge-needle" style={{ transform: `rotate(${tempAngle}deg)` }} />
-                  <div className="desk-gauge-pivot" />
-                </div>
-                <div className="desk-gauge-info">
-                  <span className="gauge-name">TEMPERATURE</span>
-                  <span className="gauge-val">{tempC.toFixed(1)}°C</span>
-                  <span className="gauge-sub">AMBIENT THERMAL</span>
-                </div>
-              </div>
-
-              {/* Dial 5: HUMIDITY */}
-              <div className="desk-analog-gauge-card">
-                <div className="desk-gauge-circle">
-                  <div className="desk-gauge-ticks" />
-                  <div className="desk-gauge-needle" style={{ transform: `rotate(${humidAngle}deg)` }} />
-                  <div className="desk-gauge-pivot" />
-                </div>
-                <div className="desk-gauge-info">
-                  <span className="gauge-name">HUMIDITY</span>
-                  <span className="gauge-val">{humidityRh}%</span>
-                  <span className="gauge-sub">RH LEVEL</span>
-                </div>
-              </div>
-
-              {/* Dial 6: BATTERY */}
-              <div className="desk-analog-gauge-card">
-                <div className="desk-gauge-circle">
-                  <div className="desk-gauge-ticks" />
-                  <div className="desk-gauge-needle" style={{ transform: `rotate(${battAngle}deg)` }} />
-                  <div className="desk-gauge-pivot" />
-                </div>
-                <div className="desk-gauge-info">
-                  <span className="gauge-name">BATTERY</span>
-                  <span className="gauge-val">{batteryPct}%</span>
-                  <span className="gauge-sub">3.7V / 4.08V</span>
-                </div>
-              </div>
-
             </div>
 
-            {/* Right Column: 2 VU Bar Graph Meters, Bus Status & 4 Physical Toggle Switches */}
-            <div className="desk-vu-and-switches-column">
-
-              {/* VU Strips */}
-              <div className="desk-vu-meters-strip">
-                {/* VU 1: Meter */}
-                <div className="desk-vu-meter-box">
-                  <div className="desk-vu-scale">
-                    {[...Array(8)].map((_, i) => (
-                      <span key={i} className={`desk-vu-led ${i < 6 ? 'active-green' : i === 6 ? 'active-amber' : ''}`} />
-                    ))}
-                  </div>
-                  <span className="desk-vu-title">METER</span>
-                </div>
-
-                {/* VU 2: Network */}
-                <div className="desk-vu-meter-box">
-                  <div className="desk-vu-scale">
-                    {[...Array(8)].map((_, i) => (
-                      <span key={i} className={`desk-vu-led ${i < 5 ? 'active-green' : i === 5 ? 'active-amber' : ''}`} />
-                    ))}
-                  </div>
-                  <span className="desk-vu-title">NETWRK</span>
-                </div>
+            {/* Dial 2: TEMPERATURE */}
+            <div className="desk-analog-gauge-card">
+              <div className="desk-gauge-circle">
+                <div className="desk-gauge-ticks" />
+                <div className="desk-gauge-needle" style={{ transform: `rotate(${tempAngle}deg)` }} />
+                <div className="desk-gauge-pivot" />
               </div>
-
-              {/* 4 Physical Rocker Switches */}
-              <div className="desk-toggle-switches-panel">
-                {[
-                  { key: 'power' as const, label: 'POWER', unit: 'mA' },
-                  { key: 'data' as const, label: 'DATA', unit: 'I2C' },
-                  { key: 'modem4G' as const, label: '4G', unit: 'mA' },
-                  { key: 'server' as const, label: 'SERVER', unit: 'V' },
-                ].map(sw => (
-                  <div
-                    key={sw.key}
-                    className="desk-switch-item"
-                    onClick={() => toggleSwitch(sw.key)}
-                    title={`Toggle ${sw.label}`}
-                  >
-                    <span className="switch-label">{sw.label}</span>
-                    <div className={`desk-rocker-switch ${toggles[sw.key] ? 'on' : 'off'}`}>
-                      <div className="rocker-lever" />
-                    </div>
-                    <span className="switch-unit">{sw.unit}</span>
-                  </div>
-                ))}
+              <div className="desk-gauge-info">
+                <span className="gauge-name">TEMPERATURE</span>
+                <span className="gauge-val">{tempC.toFixed(1)}°C</span>
+                <span className="gauge-sub">AMBIENT THERMAL</span>
               </div>
+            </div>
 
+            {/* Dial 3: VIBRATION */}
+            <div className="desk-analog-gauge-card">
+              <div className="desk-gauge-circle">
+                <div className="desk-gauge-ticks" />
+                <div className={`desk-gauge-needle ${isVibWarning ? 'warning' : ''}`} style={{ transform: `rotate(${vibAngle}deg)` }} />
+                <div className="desk-gauge-pivot" />
+              </div>
+              <div className="desk-gauge-info">
+                <span className="gauge-name">VIBRATION</span>
+                <span className="gauge-val">{vibrationG.toFixed(2)} g</span>
+                <span className="gauge-sub">SEISMIC RMS</span>
+              </div>
+            </div>
+
+            {/* Dial 4: HUMIDITY */}
+            <div className="desk-analog-gauge-card">
+              <div className="desk-gauge-circle">
+                <div className="desk-gauge-ticks" />
+                <div className="desk-gauge-needle" style={{ transform: `rotate(${humidAngle}deg)` }} />
+                <div className="desk-gauge-pivot" />
+              </div>
+              <div className="desk-gauge-info">
+                <span className="gauge-name">HUMIDITY</span>
+                <span className="gauge-val">{humidityRh}%</span>
+                <span className="gauge-sub">RH LEVEL</span>
+              </div>
+            </div>
+
+            {/* Dial 5: DISTANCE */}
+            <div className="desk-analog-gauge-card">
+              <div className="desk-gauge-circle">
+                <div className="desk-gauge-ticks" />
+                <div className={`desk-gauge-needle ${isDistWarning ? 'warning' : ''}`} style={{ transform: `rotate(${distAngle}deg)` }} />
+                <div className="desk-gauge-pivot" />
+              </div>
+              <div className="desk-gauge-info">
+                <span className="gauge-name">DISTANCE</span>
+                <span className="gauge-val">{distanceCm.toFixed(1)} cm</span>
+                <span className="gauge-sub">SUBSIDENCE GAP</span>
+              </div>
+            </div>
+
+            {/* Dial 6: BATTERY */}
+            <div className="desk-analog-gauge-card">
+              <div className="desk-gauge-circle">
+                <div className="desk-gauge-ticks" />
+                <div className="desk-gauge-needle" style={{ transform: `rotate(${battAngle}deg)` }} />
+                <div className="desk-gauge-pivot" />
+              </div>
+              <div className="desk-gauge-info">
+                <span className="gauge-name">BATTERY</span>
+                <span className="gauge-val">{batteryPct}%</span>
+                <span className="gauge-sub">3.7V / 4.08V</span>
+              </div>
             </div>
 
           </div>
 
-          {/* Recessed ESP32 Edge Node Hardware Terminal */}
+          {/* Module 2: Hardware Control & Signal Matrix (VU Meters + Rocker Switches) */}
+          <div className="desk-hardware-controls-bar">
+
+            {/* Dual VU Meter Strips */}
+            <div className="desk-vu-meters-strip">
+              <div className="desk-vu-meter-box">
+                <div className="desk-vu-scale">
+                  {[...Array(8)].map((_, i) => (
+                    <span key={i} className={`desk-vu-led ${i < 6 ? 'active-green' : i === 6 ? 'active-amber' : ''}`} />
+                  ))}
+                </div>
+                <span className="desk-vu-title">METER</span>
+              </div>
+
+              <div className="desk-vu-meter-box">
+                <div className="desk-vu-scale">
+                  {[...Array(8)].map((_, i) => (
+                    <span key={i} className={`desk-vu-led ${i < 5 ? 'active-green' : i === 5 ? 'active-amber' : ''}`} />
+                  ))}
+                </div>
+                <span className="desk-vu-title">NETWRK</span>
+              </div>
+            </div>
+
+            {/* 4 Physical Rocker Switches */}
+            <div className="desk-toggle-switches-panel">
+              {[
+                { key: 'power' as const, label: 'POWER', unit: 'mA' },
+                { key: 'data' as const, label: 'DATA', unit: 'I2C' },
+                { key: 'modem4G' as const, label: '4G LTE', unit: 'mA' },
+                { key: 'server' as const, label: 'SERVER', unit: 'V' },
+              ].map(sw => (
+                <div
+                  key={sw.key}
+                  className="desk-switch-item"
+                  onClick={() => toggleSwitch(sw.key)}
+                  title={`Toggle ${sw.label}`}
+                >
+                  <span className="switch-label">{sw.label}</span>
+                  <div className={`desk-rocker-switch ${toggles[sw.key] ? 'on' : 'off'}`}>
+                    <div className="rocker-lever" />
+                  </div>
+                  <span className="switch-unit">{sw.unit}</span>
+                </div>
+              ))}
+            </div>
+
+          </div>
+
+          {/* Module 3: Recessed ESP32 Edge Node Hardware Terminal */}
           <div className="desk-recessed-terminal">
             <div className="terminal-header">ESP32 EDGE NODE SYSTEM TELEMETRY</div>
             <div className="terminal-body-grid">
@@ -613,17 +606,17 @@ export function SmartMineControlDesk({
             </div>
           </div>
 
-          {/* A7670C 4G Modem Module Terminal with Antenna */}
+          {/* Module 4: A7670C 4G Modem Module Terminal with Antenna */}
           <div className="desk-modem-terminal">
             <div className="modem-info-area">
-              <div className="modem-title">A7670C 4G MODEM · LTE-M</div>
+              <div className="modem-title">A7670C 4G MODEM · LTE-M CONNECTIVITY</div>
               <div className="modem-metrics-grid">
                 <div className="modem-metric"><span>SIG</span> <strong>-67 dBm</strong></div>
                 <div className="modem-metric"><span>RSSI</span> <strong>19/31</strong></div>
-                <div className="modem-metric"><span>LAT</span> <strong>82ms</strong></div>
+                <div className="modem-metric"><span>LAT</span> <strong>82 ms</strong></div>
                 <div className="modem-metric"><span>LOSS</span> <strong>0.4%</strong></div>
-                <div className="modem-metric"><span>TX</span> <strong>2.4MB</strong></div>
-                <div className="modem-metric"><span>RX</span> <strong>8.7MB</strong></div>
+                <div className="modem-metric"><span>TX</span> <strong>2.4 MB</strong></div>
+                <div className="modem-metric"><span>RX</span> <strong>8.7 MB</strong></div>
               </div>
             </div>
 

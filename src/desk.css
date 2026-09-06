@@ -983,7 +983,7 @@
 }
 
 /* ════════════════════════════════════════════════════════
-   RIGHT PANEL: Analog Dials, VU Meters, Switches, Terminal
+   RIGHT PANEL: Precision Instrumentation & Hardware Telemetry
    ════════════════════════════════════════════════════════ */
 .desk-right-panel {
   background: #dfd5c7;
@@ -999,7 +999,7 @@
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
-  gap: 6px;
+  gap: 5px;
 }
 
 [data-theme="dark-apple"] .desk-right-panel,
@@ -1011,36 +1011,37 @@
     0 4px 14px rgba(0, 0, 0, 0.3);
 }
 
-.desk-dials-and-meters-row {
+/* Module 1: 2x3 Precision Analog Gauges Grid */
+.desk-analog-gauges-grid {
   display: grid;
-  grid-template-columns: 145px 1fr;
-  gap: 6px;
-  align-items: center;
-}
-
-/* 6 Circular Analog Meters Column */
-.desk-analog-dials-column {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 8px;
 }
 
 .desk-analog-gauge-card {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.03);
+  padding: 3px 5px;
+  border-radius: 6px;
+}
+
+[data-theme="dark-apple"] .desk-analog-gauge-card,
+[data-theme="dark-space"] .desk-analog-gauge-card {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .desk-gauge-circle {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: #f4ede4;
   border: 1.5px solid #d5c8b7;
   box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.15),
-    0 1px 1px rgba(0, 0, 0, 0.08);
+    0 1px 2px rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1055,8 +1056,8 @@
 
 .desk-gauge-ticks {
   position: absolute;
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 1px dotted #a89f92;
 }
@@ -1064,9 +1065,9 @@
 .desk-gauge-needle {
   position: absolute;
   bottom: 50%;
-  left: calc(50% - 0.75px);
-  width: 1.5px;
-  height: 7.5px;
+  left: calc(50% - 1px);
+  width: 2px;
+  height: 9px;
   background: #2b221a;
   transform-origin: bottom center;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1084,8 +1085,8 @@
 
 .desk-gauge-pivot {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: #a84f37;
   z-index: 2;
@@ -1094,11 +1095,11 @@
 .desk-gauge-info {
   display: flex;
   flex-direction: column;
-  line-height: 1.05;
+  line-height: 1.1;
 }
 
 .gauge-name {
-  font-size: 0.46rem;
+  font-size: 0.5rem;
   font-weight: 800;
   color: #3b3026;
   letter-spacing: 0.2px;
@@ -1110,11 +1111,11 @@
 }
 
 .gauge-val {
-  font-size: 0.58rem;
+  font-size: 0.68rem;
   font-weight: 800;
   font-family: 'JetBrains Mono', monospace;
   color: #2b221a;
-  line-height: 1;
+  line-height: 1.1;
 }
 
 [data-theme="dark-apple"] .gauge-val,
@@ -1123,24 +1124,31 @@
 }
 
 .gauge-sub {
-  font-size: 0.38rem;
+  font-size: 0.4rem;
   font-weight: 700;
   color: #8c7e6e;
 }
 
-/* Right VU + Switches Column */
-.desk-vu-and-switches-column {
+/* Module 2: Hardware Control & Signal Matrix */
+.desk-hardware-controls-bar {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: space-between;
-  gap: 5px;
-  height: 100%;
+  background: #cbbfaf;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+}
+
+[data-theme="dark-apple"] .desk-hardware-controls-bar,
+[data-theme="dark-space"] .desk-hardware-controls-bar {
+  background: #11141c;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
 }
 
 .desk-vu-meters-strip {
   display: flex;
-  justify-content: space-around;
-  gap: 4px;
+  gap: 6px;
 }
 
 .desk-vu-meter-box {
@@ -1190,18 +1198,9 @@
 
 /* 4 Physical Toggle Switches */
 .desk-toggle-switches-panel {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
-  background: rgba(0, 0, 0, 0.04);
-  padding: 3px 2px;
-  border-radius: 5px;
+  display: flex;
+  gap: 8px;
   align-items: center;
-}
-
-[data-theme="dark-apple"] .desk-toggle-switches-panel,
-[data-theme="dark-space"] .desk-toggle-switches-panel {
-  background: rgba(255, 255, 255, 0.03);
 }
 
 .desk-switch-item {
@@ -1213,7 +1212,7 @@
 }
 
 .switch-label {
-  font-size: 0.42rem;
+  font-size: 0.44rem;
   font-weight: 800;
   color: #3b3026;
 }
@@ -1224,8 +1223,8 @@
 }
 
 .desk-rocker-switch {
-  width: 11px;
-  height: 18px;
+  width: 12px;
+  height: 19px;
   background: #231f1c;
   border-radius: 2px;
   padding: 1.5px;
@@ -1236,8 +1235,8 @@
 }
 
 .desk-rocker-switch .rocker-lever {
-  width: 8px;
-  height: 7px;
+  width: 9px;
+  height: 7.5px;
   border-radius: 1.5px;
   background: #d46b4f;
   box-shadow: 0 1px 3px rgba(0,0,0,0.4);
@@ -1253,16 +1252,17 @@
 }
 
 .switch-unit {
-  font-size: 0.36rem;
+  font-size: 0.38rem;
   font-weight: 700;
   color: #8c7e6e;
 }
 
-/* Recessed Terminal */
+/* Module 3: Recessed ESP32 Hardware Terminal */
 .desk-recessed-terminal {
-  background: #161413;
-  border-radius: 6px;
-  padding: 4px 6px;
+  background: #141312;
+  border-radius: 7px;
+  padding: 5px 8px;
+  border: 1px solid #2e2820;
   box-shadow:
     inset 0 2px 5px rgba(0, 0, 0, 0.7),
     0 1px 1px rgba(255, 255, 255, 0.5);
@@ -1271,17 +1271,17 @@
 }
 
 .terminal-header {
-  font-size: 0.48rem;
+  font-size: 0.5rem;
   font-weight: 800;
   color: #c98845;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
   letter-spacing: 0.3px;
 }
 
 .terminal-body-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr auto;
-  gap: 3px;
+  gap: 4px;
   align-items: center;
 }
 
@@ -1289,7 +1289,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5px;
-  font-size: 0.44rem;
+  font-size: 0.46rem;
 }
 
 .terminal-line {
@@ -1320,7 +1320,7 @@
 }
 
 .led-label {
-  font-size: 0.4rem;
+  font-size: 0.42rem;
   font-weight: 700;
   color: #8c8275;
 }
@@ -1341,21 +1341,21 @@
   box-shadow: 0 0 5px #22c55e;
 }
 
-/* A7670C 4G Modem */
+/* Module 4: A7670C 4G Modem Module */
 .desk-modem-terminal {
-  background: #dfd5c7;
-  border-radius: 6px;
-  padding: 4px 6px;
+  background: #cbbfaf;
+  border-radius: 7px;
+  padding: 4px 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 [data-theme="dark-apple"] .desk-modem-terminal,
 [data-theme="dark-space"] .desk-modem-terminal {
   background: #141822;
-  border-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .modem-info-area {
@@ -1363,7 +1363,7 @@
 }
 
 .modem-title {
-  font-size: 0.48rem;
+  font-size: 0.5rem;
   font-weight: 800;
   color: #2b221a;
   margin-bottom: 2px;
@@ -1377,11 +1377,11 @@
 .modem-metrics-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5px 4px;
+  gap: 1.5px 6px;
 }
 
 .modem-metric {
-  font-size: 0.42rem;
+  font-size: 0.44rem;
   display: flex;
   gap: 3px;
   color: #4a4036;
@@ -1406,7 +1406,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: 6px;
+  margin-left: 8px;
 }
 
 .antenna-stalk {
