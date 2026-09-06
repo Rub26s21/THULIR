@@ -410,7 +410,7 @@ img, svg { display: block; }
   display: flex;
   flex-direction: column;
   min-width: 0;
-  width: calc(100% - var(--sidebar-width));
+  width: 100%;
 }
 
 /* ── Command Bar ── */
@@ -688,32 +688,6 @@ img, svg { display: block; }
   position: relative;
   width: 100%;
   scroll-margin-top: 0;
-}
-
-.app-layout .sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: var(--sidebar-width);
-  flex-shrink: 0;
-  z-index: 50;
-  box-sizing: border-box;
-}
-
-.app-layout .main-content {
-  margin-left: var(--sidebar-width);
-  width: calc(100% - var(--sidebar-width));
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.app-layout .command-bar {
-  position: sticky;
-  top: 0;
-  z-index: 40;
 }
 
 /* ============================================================
