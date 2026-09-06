@@ -1,8 +1,10 @@
 // ============================================================
-// THULIR AI — Surface Intelligence Network (Node Selector)
+// THULIR AI — 3D Surface Intelligence Network (Node Selector)
 // ============================================================
+// Skeuomorphic Server Blade Selector with metallic edge highlights,
+// active LED status rivets, live telemetry transmission beacon, and battery level bars.
 
-import { Server, MapPin, Battery, Wifi } from 'lucide-react';
+import { Server, MapPin, Battery, BatteryCharging, Radio, Cpu } from 'lucide-react';
 import type { NodeRecord, RegistryNodeStatus } from '../types';
 
 interface NodeSelectorBarProps {
@@ -14,12 +16,12 @@ interface NodeSelectorBarProps {
 
 const STATUS_CONFIG: Record<
   RegistryNodeStatus,
-  { label: string; dotClass: string; pillClass: string }
+  { label: string; ledColor: string; pillClass: string }
 > = {
-  ONLINE:       { label: 'ONLINE',       dotClass: 'dot-green', pillClass: 'node-status-online' },
-  DEGRADED:     { label: 'DEGRADED',     dotClass: 'dot-amber', pillClass: 'node-status-deployed' },
-  OFFLINE:      { label: 'OFFLINE',      dotClass: 'dot-red',   pillClass: 'node-status-offline' },
-  NOT_DEPLOYED: { label: 'NOT DEPLOYED', dotClass: '',          pillClass: 'node-status-offline' },
+  ONLINE:       { label: 'ONLINE',       ledColor: '#10B981', pillClass: 'node-status-online' },
+  DEGRADED:     { label: 'WATCH',        ledColor: '#F59E0B', pillClass: 'node-status-deployed' },
+  OFFLINE:      { label: 'OFFLINE',      ledColor: '#EF4444', pillClass: 'node-status-offline' },
+  NOT_DEPLOYED: { label: 'STANDBY',      ledColor: '#64748B', pillClass: 'node-status-offline' },
 };
 
 export function NodeSelectorBar({
@@ -31,86 +33,94 @@ export function NodeSelectorBar({
   const onlineCount = nodes.filter(n => n.status === 'ONLINE').length;
 
   return (
-    <div className="page-section">
-      {/* Section Header */}
+    <div className="surface-network-rack">
+      {/* Rack Bezel Header */}
       <div className="surface-network-header">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
-              <Wifi size={16} color="var(--brand-green)" strokeWidth={2} />
-              <span className="section-title">Surface Intelligence Network</span>
-              <span
-                style={{
-                  fontSize: '0.62rem',
-                  fontWeight: 700,
-                  padding: '2px 8px',
-                  borderRadius: 999,
-                  background: demoMode ? 'var(--status-watch-bg)' : 'var(--brand-green-tint)',
-                  color: demoMode ? 'var(--status-watch)' : 'var(--brand-green)',
-                  border: `1px solid ${demoMode ? 'var(--status-watch-border)' : 'var(--brand-green-border)'}`,
-                  fontFamily: 'var(--font-mono)',
-                  letterSpacing: '0.06em',
-                }}
-              >
-                {demoMode ? 'SIMULATED' : 'LIVE NETWORK'}
-              </span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="rack-beacon-icon">
+              <Radio size={16} color="#FFFFFF" />
             </div>
-            <div className="surface-network-sub">
-              Every node watches the ground. THULIR AI watches the pattern.
-              <span style={{ marginLeft: 12, color: 'var(--brand-green)', fontWeight: 600 }}>
-                {onlineCount}/{nodes.length} Active
-              </span>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span className="section-title">Surface Intelligence Network</span>
+                <span className={`network-mode-pill ${demoMode ? 'simulated' : 'live'}`}>
+                  {demoMode ? 'SIMULATED ARRAY' : 'LIVE 2.4G/LTE MESH'}
+                </span>
+              </div>
+              <div className="surface-network-sub">
+                Every node watches the ground. THULIR AI watches the pattern.
+                <span className="active-nodes-badge">
+                  {onlineCount}/{nodes.length} ONLINE
+                </span>
+              </div>
             </div>
           </div>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            SELECT NODE TO INSPECT TELEMETRY
+
+          <div className="rack-sub-guide">
+            <Cpu size={12} />
+            <span>CLICK NODE BLADE TO ROUTE TELEMETRY STREAM</span>
           </div>
         </div>
       </div>
 
-      {/* Node Cards Grid */}
+      {/* Node Blades Grid */}
       <div className="node-grid">
         {nodes.map((node, i) => {
           const isActive = node.node_id === activeNodeId;
           const statusCfg = STATUS_CONFIG[node.status] || STATUS_CONFIG.NOT_DEPLOYED;
+          const batt = node.battery_level ?? 100;
 
           return (
             <button
               key={node.node_id}
               type="button"
               onClick={() => onSelectNode(node.node_id)}
-              className={`node-card ${isActive ? 'active' : ''} reveal reveal-delay-${Math.min(i + 1, 4) as 1 | 2 | 3 | 4}`}
+              className={`node-card-blade ${isActive ? 'active-blade' : ''} reveal reveal-delay-${Math.min(i + 1, 4) as 1 | 2 | 3 | 4}`}
               aria-pressed={isActive}
-              style={{ textAlign: 'left' }}
             >
-              {/* Header row */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <Server
-                    size={14}
-                    color={isActive ? 'var(--brand-green)' : 'var(--text-muted)'}
-                    strokeWidth={2}
-                  />
-                  <span className="node-card-id">{node.node_id}</span>
+              {/* Metallic Tab & Active Indicator */}
+              <div className="blade-accent-bar" />
+
+              {/* Blade Header */}
+              <div className="blade-header">
+                <div className="blade-id-group">
+                  <div className={`blade-server-icon ${isActive ? 'active' : ''}`}>
+                    <Server size={14} />
+                  </div>
+                  <div className="blade-title-meta">
+                    <span className="node-card-id">{node.node_id}</span>
+                    <span className="node-card-sub">{node.zone_id || 'SECTOR ALPHA'}</span>
+                  </div>
                 </div>
+
                 <div className={`node-status-pill ${statusCfg.pillClass}`}>
-                  {statusCfg.dotClass && (
-                    <span className={`pulse-dot ${statusCfg.dotClass}`} />
-                  )}
+                  <span
+                    className="status-led-dot"
+                    style={{ background: statusCfg.ledColor, boxShadow: `0 0 8px ${statusCfg.ledColor}` }}
+                  />
                   {statusCfg.label}
                 </div>
               </div>
 
-              {/* Meta row */}
-              <div className="node-meta">
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              {/* Hardware Bar */}
+              <div className="blade-hardware-bar">
+                <div className="blade-geo-tag">
                   <MapPin size={10} />
-                  {node.zone_id || 'ZONE_A'}
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <Battery size={10} />
-                  {node.status === 'NOT_DEPLOYED' ? '—' : `${node.battery_level ?? 100}%`}
-                </span>
+                  <span>{node.zone_id || 'ZONE_A'}</span>
+                </div>
+
+                {/* Battery Meter */}
+                <div className="blade-battery-meter" title={`Battery: ${batt}%`}>
+                  {batt > 80 ? (
+                    <BatteryCharging size={13} color="#10b981" />
+                  ) : (
+                    <Battery size={13} color={batt > 30 ? '#f59e0b' : '#ef4444'} />
+                  )}
+                  <span className="batt-pct">
+                    {node.status === 'NOT_DEPLOYED' ? '—' : `${batt}%`}
+                  </span>
+                </div>
               </div>
             </button>
           );
