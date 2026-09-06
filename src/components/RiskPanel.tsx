@@ -1,9 +1,12 @@
 // ============================================================
-// THULIR AI — Structural Intelligence Risk Panel
+// THULIR AI — 3D Skeuomorphic Structural Intelligence Risk Panel
 // ============================================================
+// High-tactility physical hazard evaluator chassis with metallic corner screws,
+// 3D radial score gauge with neon phosphor arc, animated annunciator triggers,
+// and tactile factor alarm wells.
 
 import { useState, useEffect, useRef } from 'react';
-import { ShieldAlert, ShieldCheck, AlertTriangle, Brain, Activity } from 'lucide-react';
+import { ShieldAlert, ShieldCheck, AlertTriangle, Radio, Zap } from 'lucide-react';
 import type { RiskState } from '../types';
 
 interface RiskPanelProps {
@@ -15,10 +18,6 @@ export function RiskPanel({ risk }: RiskPanelProps) {
 
   const [displayScore, setDisplayScore] = useState(score);
   const prevScoreRef = useRef(score);
-  const cardRef = useRef<HTMLDivElement | null>(null);
-  const [tiltStyle, setTiltStyle] = useState({
-    transform: 'perspective(900px) rotateX(0deg) rotateY(0deg)',
-  });
 
   useEffect(() => {
     let startTimestamp: number | null = null;
@@ -39,240 +38,164 @@ export function RiskPanel({ risk }: RiskPanelProps) {
     return () => cancelAnimationFrame(animId);
   }, [score]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    const rotateY = (x / (rect.width / 2)) * 3.5;
-    const rotateX = -(y / (rect.height / 2)) * 3.5;
-    setTiltStyle({ transform: `perspective(900px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)` });
-  };
-
-  const handleMouseLeave = () => {
-    setTiltStyle({ transform: 'perspective(900px) rotateX(0deg) rotateY(0deg)' });
-  };
-
-  // Gauge
-  const radius = 58;
+  // Gauge calculations
+  const radius = 54;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (Math.min(100, Math.max(0, score)) / 100) * circumference;
-
-  const gaugeColor =
-    score >= 70 ? 'var(--status-critical)' :
-    score >= 40 ? 'var(--status-watch)' :
-    'var(--status-normal)';
-
-  const gaugeGlowColor =
-    score >= 70 ? 'rgba(198, 40, 40, 0.35)' :
-    score >= 40 ? 'rgba(180, 83, 9, 0.3)' :
-    'rgba(15, 107, 87, 0.3)';
+  const strokeDashoffset = circumference - (Math.min(100, Math.max(0, displayScore)) / 100) * circumference;
 
   const isCritical = level === 'CRITICAL';
+  const isWatch = level === 'WATCH';
+
+  const themeColor = isCritical ? '#EF4444' : isWatch ? '#F59E0B' : '#10B981';
+  const headerGrad = isCritical
+    ? 'linear-gradient(135deg, #991B1B 0%, #DC2626 50%, #EF4444 100%)'
+    : isWatch
+      ? 'linear-gradient(135deg, #B45309 0%, #D97706 50%, #F59E0B 100%)'
+      : 'linear-gradient(135deg, #065F46 0%, #059669 50%, #10B981 100%)';
 
   const levelLabel =
-    level === 'NORMAL'   ? 'Nominal / Low Risk' :
-    level === 'WATCH'    ? 'Elevated / Moderate' :
-                           'Critical Hazard';
-
-  const levelColor =
-    level === 'CRITICAL' ? 'var(--status-critical)' :
-    level === 'WATCH'    ? 'var(--status-watch)' :
-    'var(--status-normal)';
+    level === 'NORMAL' ? 'NOMINAL STABILITY' :
+    level === 'WATCH'  ? 'MODERATE ELEVATED' :
+                         'CRITICAL HAZARD';
 
   return (
     <div
-      ref={cardRef}
-      className={`risk-hero-card ${isCritical ? 'critical-pulse' : ''}`}
-      style={tiltStyle}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      className={`individual-overview-3d-card risk-chassis ${isCritical ? 'hazard-pulse' : ''}`}
       role="region"
-      aria-label="Structural risk assessment"
+      aria-label="Structural Risk Assessment"
+      style={{ '--card-theme-color': themeColor } as React.CSSProperties}
     >
-      {/* Subtle strata background illustration */}
-      <svg
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          right: 0,
-          opacity: 0.055,
-          pointerEvents: 'none',
-        }}
-        width="220"
-        height="140"
-        viewBox="0 0 220 140"
-      >
-        <path d="M0 140 Q55 100 110 115 T220 100 L220 140 Z" fill="var(--brand-green)" />
-        <path d="M0 140 Q55 115 110 128 T220 115 L220 140 Z" fill="var(--brand-green)" opacity="0.7" />
-        <path d="M0 140 Q55 128 110 138 T220 130 L220 140 Z" fill="var(--brand-green)" opacity="0.5" />
-      </svg>
+      {/* 4 Corner Metallic Machined Fasteners */}
+      <div className="corner-screw top-left" />
+      <div className="corner-screw top-right" />
+      <div className="corner-screw bottom-left" />
+      <div className="corner-screw bottom-right" />
 
-      <div className="risk-hero-main">
-        {/* Left: Status Headline */}
-        <div className="risk-level-display">
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap'
-          }}>
-            <span style={{
-              fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.1em',
-              textTransform: 'uppercase', color: 'var(--text-muted)'
-            }}>
-              Structural Intelligence
-            </span>
-            <span style={{
-              fontSize: '0.6rem', padding: '2px 7px', borderRadius: 6, fontWeight: 700,
-              color: source === 'COMBINED' ? 'var(--brand-blue)' : 'var(--text-dim)',
-              background: source === 'COMBINED' ? 'var(--brand-blue-tint)' : 'var(--bg-well)',
-              border: `1px solid ${source === 'COMBINED' ? 'var(--brand-blue-border)' : 'var(--border-subtle)'}`,
-              fontFamily: 'var(--font-mono)',
-            }}>
-              {source === 'COMBINED' ? 'RULES + AI' : source === 'ML' ? 'AI INFERENCE' : 'SAFETY RULES'}
-            </span>
+      {/* Top 3D Metallic Header Bezel */}
+      <div className="card-top-bezel" style={{ background: headerGrad }}>
+        <div className="bezel-left">
+          <div className="bezel-icon-orb">
+            {isCritical && <ShieldAlert size={17} color="#FFFFFF" />}
+            {isWatch && <AlertTriangle size={17} color="#FFFFFF" />}
+            {!isCritical && !isWatch && <ShieldCheck size={17} color="#FFFFFF" />}
           </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-            {level === 'CRITICAL' && <ShieldAlert size={32} color="var(--status-critical)" />}
-            {level === 'WATCH'    && <AlertTriangle size={32} color="var(--status-watch)" />}
-            {level === 'NORMAL'   && <ShieldCheck size={32} color="var(--status-normal)" />}
-            <span style={{
-              fontSize: '1.65rem', fontWeight: 800, letterSpacing: '-0.02em',
-              color: levelColor, lineHeight: 1.15
-            }}>
-              {levelLabel}
-            </span>
+          <div className="bezel-text">
+            <span className="card-sensor-title">STRUCTURAL INTELLIGENCE</span>
+            <span className="card-chip-sub">MULTI-STRATA HAZARD MATRIX</span>
           </div>
-
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 12 }}>
-            {level === 'NORMAL'
-              ? 'Multi-sensor strata readings and ML classifier indicate nominal ground stability.'
-              : `${reasons.length} active stress/anomaly factor${reasons.length > 1 ? 's' : ''} triggered in coal mine strata.`}
-          </p>
-
-          {triggeredSensors && triggeredSensors.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {triggeredSensors.map((s, i) => (
-                <span
-                  key={i}
-                  style={{
-                    fontSize: '0.68rem', padding: '3px 10px', borderRadius: 8,
-                    background: 'var(--bg-well)', color: 'var(--text-secondary)',
-                    fontWeight: 600, border: '1px solid var(--border-well)',
-                  }}
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
-        {/* Right: Gauge + Score */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
-          <div className="risk-gauge-bezel">
-            <svg width="140" height="140" viewBox="0 0 140 140" style={{ transform: 'rotate(-90deg)' }}>
-              <defs>
-                <filter id="gaugeGlow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feGaussianBlur stdDeviation="6" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-              {/* Track */}
-              <circle cx="70" cy="70" r={radius} fill="none" stroke="var(--bg-well)" strokeWidth="13" />
-              {/* Glow arc */}
-              <circle
-                cx="70" cy="70" r={radius}
-                fill="none"
-                stroke={gaugeGlowColor}
-                strokeWidth="16"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                strokeLinecap="round"
-                filter="url(#gaugeGlow)"
-                style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}
-              />
-              {/* Progress arc */}
-              <circle
-                cx="70" cy="70" r={radius}
-                fill="none"
-                stroke={gaugeColor}
-                strokeWidth="12"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                strokeLinecap="round"
-                style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease' }}
-              />
-            </svg>
-            <div className="risk-score-value">{displayScore}</div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <span style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', fontWeight: 700 }}>
-              Risk Score
-            </span>
-            <span style={{ fontSize: '1.35rem', fontWeight: 900, fontFamily: 'var(--font-mono)', color: gaugeColor }}>
-              {displayScore} <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>/ 100</span>
-            </span>
-            <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
-              Level: <strong style={{ color: levelColor }}>{level}</strong>
-            </span>
-            {confidence < 1.0 && (
-              <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
-                AI Conf: {(confidence * 100).toFixed(1)}%
-              </span>
-            )}
-          </div>
+        <div className="bezel-right">
+          <span className="card-hw-badge">
+            {source === 'COMBINED' ? 'RULES + ML ENSEMBLE' : source === 'ML' ? 'AI INFERENCE' : 'SAFETY RULES'}
+          </span>
         </div>
       </div>
 
-      {/* Risk Factors */}
-      <div style={{ marginTop: 20 }}>
-        <div style={{
-          fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.1em',
-          color: 'var(--text-muted)', fontWeight: 700, marginBottom: 10
-        }}>
-          Active Risk Factors
-        </div>
-        {reasons.length === 0 ? (
-          <div className="skeuo-well" style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            color: 'var(--status-normal)', fontSize: '0.8rem'
-          }}>
-            <ShieldCheck size={15} />
-            <span>Nominal ground equilibrium — no structural anomalies detected.</span>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {reasons.map((r, idx) => (
-              <div key={idx} className="risk-factor-row">
-                <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                  {r.source === 'ML' ? (
-                    <Brain size={14} color="#7C3AED" />
-                  ) : (
-                    <Activity size={14} color={r.severity === 'CRITICAL' ? 'var(--status-critical)' : 'var(--status-watch)'} />
-                  )}
-                  <div>
-                    <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.8rem' }}>{r.sensor}</span>
-                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.78rem' }}> — {r.message}</span>
-                  </div>
-                </div>
-                <span style={{
-                  fontSize: '0.62rem', fontWeight: 800, padding: '3px 9px', borderRadius: 8,
-                  fontFamily: 'var(--font-mono)', flexShrink: 0, marginLeft: 10,
-                  color: r.severity === 'CRITICAL' ? 'var(--status-critical)' : 'var(--status-watch)',
-                  background: r.severity === 'CRITICAL' ? 'var(--status-critical-bg)' : 'var(--status-watch-bg)',
-                  border: `1px solid ${r.severity === 'CRITICAL' ? 'var(--status-critical-border)' : 'var(--status-watch-border)'}`,
-                }}>
-                  {r.severity}
+      {/* Main Assessment Body */}
+      <div className="overview-card-body">
+        <div className="risk-evaluation-row">
+          {/* Left: Headline & Trigger tags */}
+          <div className="risk-status-info">
+            <div className="risk-headline-wrap">
+              <span className="risk-level-badge" style={{ color: themeColor, borderColor: `${themeColor}60` }}>
+                <span className="status-beacon-dot" style={{ background: themeColor, boxShadow: `0 0 8px ${themeColor}` }} />
+                {levelLabel}
+              </span>
+            </div>
+
+            <p className="risk-subline-desc">
+              {level === 'NORMAL'
+                ? 'Multi-sensor strata readings and ML classifier indicate nominal ground stability.'
+                : `${reasons.length} active stress/anomaly factor${reasons.length > 1 ? 's' : ''} triggered in coal mine strata.`}
+            </p>
+
+            {/* Triggered sensor pills */}
+            {triggeredSensors && triggeredSensors.length > 0 && (
+              <div className="triggered-chips-cluster">
+                {triggeredSensors.map((s) => (
+                  <span key={s} className="triggered-chip">
+                    <Zap size={9} />
+                    {s}
+                  </span>
+                ))}
+                <span className="triggered-chip ml-chip">
+                  AI Conf: {(confidence * 100).toFixed(0)}%
                 </span>
               </div>
-            ))}
+            )}
+          </div>
+
+          {/* Right: 3D Dial Gauge */}
+          <div className="risk-dial-gauge-wrapper">
+            <svg width="128" height="128" viewBox="0 0 128 128" className="risk-svg-dial">
+              <circle
+                cx="64"
+                cy="64"
+                r={radius}
+                fill="none"
+                stroke="var(--bg-well)"
+                strokeWidth="10"
+              />
+              <circle
+                cx="64"
+                cy="64"
+                r={radius}
+                fill="none"
+                stroke={themeColor}
+                strokeWidth="10"
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                transform="rotate(-90 64 64)"
+                style={{
+                  transition: 'stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease',
+                  filter: `drop-shadow(0 0 6px ${themeColor})`,
+                }}
+              />
+            </svg>
+
+            {/* Inset Score Display */}
+            <div className="dial-score-content">
+              <span className="dial-num">{displayScore}</span>
+              <span className="dial-denom">/ 100</span>
+              <span className="dial-sub-tag" style={{ color: themeColor }}>{level}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Active Risk Factors Alarm Strips */}
+        {reasons.length > 0 && (
+          <div className="risk-factors-section">
+            <span className="section-micro-header">ACTIVE RISK TRIGGERS</span>
+            <div className="risk-alarms-list">
+              {reasons.map((r, i) => (
+                <div key={i} className={`tactile-alarm-strip ${r.severity.toLowerCase()}`}>
+                  <div className="alarm-strip-left">
+                    <span className="alarm-dot" style={{
+                      background: r.severity === 'CRITICAL' ? '#EF4444' : '#F59E0B',
+                      boxShadow: `0 0 8px ${r.severity === 'CRITICAL' ? '#EF4444' : '#F59E0B'}`
+                    }} />
+                    <span className="alarm-name">{r.sensor}</span>
+                    <span className="alarm-msg">— {r.message}</span>
+                  </div>
+                  <span className={`alarm-sev-badge ${r.severity.toLowerCase()}`}>
+                    {r.severity}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
+      </div>
+
+      {/* Card Footer */}
+      <div className="card-footer-strip">
+        <div className="footer-status-pill">
+          <Radio size={11} className="spin-slow" />
+          <span>REAL-TIME INFERENCE ENGINE ACTIVE</span>
+        </div>
+        <span className="footer-clock-tag">50Hz FUSION CYCLE</span>
       </div>
     </div>
   );

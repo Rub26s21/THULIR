@@ -2128,74 +2128,126 @@ img, svg { display: block; }
 }
 
 /* ============================================================
-   10. RISK PANEL — STRUCTURAL INTELLIGENCE
+   10. 3D SYSTEM OVERVIEW CHASSIS (RISK, NODE, SPATIAL, GNSS)
    ============================================================ */
-.risk-hero-card {
+.individual-overview-3d-card {
+  position: relative;
   background: var(--bg-card-raised);
   border: 1px solid var(--border-card);
   border-radius: 24px;
-  padding: 26px 28px;
-  box-shadow: var(--shadow-card-hero);
-  position: relative;
   overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-}
-
-.risk-hero-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
-}
-
-.risk-hero-card.critical-pulse {
-  animation: critical-border-pulse 2.5s ease-in-out infinite;
-}
-
-@keyframes critical-border-pulse {
-  0%, 100% { box-shadow: var(--shadow-card-hero); }
-  50% { box-shadow: var(--shadow-card-hero), 0 0 0 2px rgba(198, 40, 40, 0.15); }
-}
-
-.risk-hero-main {
+  box-shadow: var(--shadow-card-hero), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
-  gap: 24px;
-  align-items: flex-start;
+  flex-direction: column;
+}
+
+[data-theme="dark-apple"] .individual-overview-3d-card,
+[data-theme="dark-space"] .individual-overview-3d-card {
+  background: rgba(18, 24, 34, 0.85);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.individual-overview-3d-card:hover {
+  transform: perspective(800px) translateY(-4px) scale(1.015);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.16), 0 0 24px var(--card-theme-color, rgba(56, 189, 248, 0.25)), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: var(--card-theme-color, var(--brand-green-border));
+}
+
+.overview-card-body {
+  padding: 16px 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+
+/* ── Risk Panel Specifics ── */
+.risk-evaluation-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
-.risk-level-display {
+.risk-status-info {
   flex: 1;
-  min-width: 220px;
+  min-width: 200px;
 }
 
-.risk-level-headline {
+.risk-level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.risk-subline-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.triggered-chips-cluster {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 10px;
-  margin-bottom: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.risk-level-headline .level-CRITICAL { color: var(--status-critical); font-size: 1.8rem; font-weight: 800; }
-.risk-level-headline .level-WATCH    { color: var(--status-watch); font-size: 1.8rem; font-weight: 800; }
-.risk-level-headline .level-NORMAL   { color: var(--status-normal); font-size: 1.8rem; font-weight: 800; }
+.triggered-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  color: var(--text-primary);
+}
 
-/* ── Risk gauge center value ── */
-.risk-gauge-bezel {
+.triggered-chip.ml-chip {
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* 3D Dial Gauge */
+.risk-dial-gauge-wrapper {
   position: relative;
-  width: 140px;
-  height: 140px;
+  width: 128px;
+  height: 128px;
   flex-shrink: 0;
-}
-
-.risk-score-value {
-  position: absolute;
-  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.risk-svg-dial {
+  transform: rotate(-90deg);
+}
+
+.dial-score-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.dial-num {
   font-size: 2rem;
   font-weight: 900;
   font-family: var(--font-mono);
@@ -2203,88 +2255,482 @@ img, svg { display: block; }
   letter-spacing: -0.04em;
 }
 
-/* ── Risk factor rows ── */
-.risk-factor-row {
+.dial-denom {
+  font-size: 0.6rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.dial-sub-tag {
+  font-size: 0.55rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  margin-top: 3px;
+}
+
+/* Tactile Alarm Strip */
+.risk-factors-section {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.section-micro-header {
+  font-size: 0.54rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+.risk-alarms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tactile-alarm-strip {
+  display: flex;
   align-items: center;
-  padding: 11px 14px;
+  justify-content: space-between;
+  padding: 8px 12px;
   border-radius: 12px;
   background: var(--bg-well);
   border: 1px solid var(--border-well);
   box-shadow: var(--shadow-well-inset);
-  margin-bottom: 8px;
-  font-size: 0.8rem;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
-.risk-factor-row:hover {
-  transform: translateX(2px);
+.tactile-alarm-strip:hover {
+  transform: translateX(3px);
 }
 
-/* ============================================================
-   11. NODE HEALTH — NODE INTELLIGENCE
-   ============================================================ */
-.node-health-grid {
+.tactile-alarm-strip.critical {
+  border-left: 3px solid #ef4444;
+}
+
+.tactile-alarm-strip.watch {
+  border-left: 3px solid #f59e0b;
+}
+
+.alarm-strip-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+}
+
+.alarm-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.alarm-name {
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.alarm-msg {
+  color: var(--text-secondary);
+}
+
+.alarm-sev-badge {
+  font-size: 0.56rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  padding: 2px 6px;
+  border-radius: 5px;
+}
+
+.alarm-sev-badge.critical {
+  background: var(--status-critical-bg);
+  color: var(--status-critical);
+  border: 1px solid var(--status-critical-border);
+}
+
+.alarm-sev-badge.watch {
+  background: var(--status-watch-bg);
+  color: var(--status-watch);
+  border: 1px solid var(--status-watch-border);
+}
+
+/* ── Node Diagnostics Specifics ── */
+.node-online-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.node-online-badge.online {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.node-online-badge.offline {
+  background: rgba(100, 116, 139, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.35);
+}
+
+.diagnostics-stale-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--status-watch-bg);
+  border: 1px solid var(--status-watch-border);
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--status-watch);
+}
+
+.diagnostics-meter-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  margin-bottom: 16px;
 }
 
-.node-stat-box {
+.diag-well {
   background: var(--bg-well);
   border: 1px solid var(--border-well);
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   box-shadow: var(--shadow-well-inset);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.node-stat-label {
-  font-size: 0.65rem;
-  font-weight: 600;
+.diag-lbl {
+  font-size: 0.52rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
   letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+}
+
+.diag-val {
+  font-size: 0.85rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.diag-val.time { font-size: 0.75rem; color: var(--text-primary); }
+.diag-val.bus  { font-size: 0.72rem; color: var(--text-muted); }
+
+/* Physical IC Socket Array */
+.hardware-ic-array-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ic-array-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ic-title {
+  font-size: 0.52rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+.ic-sub {
+  font-size: 0.52rem;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+.ic-chips-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+@media (max-width: 640px) {
+  .ic-chips-row { grid-template-columns: repeat(3, 1fr); }
+}
+
+.micro-ic-socket {
+  position: relative;
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: transform 0.2s ease;
+}
+
+.micro-ic-socket:hover {
+  transform: translateY(-2px);
+}
+
+.micro-ic-socket.socket-ok { border-color: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.25); }
+.micro-ic-socket.socket-err { border-color: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.25); }
+
+.ic-gold-pins {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  height: 2px;
+  background: repeating-linear-gradient(to right, #f59e0b 0px, #f59e0b 3px, transparent 3px, transparent 6px);
+}
+
+.ic-gold-pins.top { top: -2px; }
+.ic-gold-pins.bottom { bottom: -2px; }
+
+.ic-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.ic-hw-name {
+  font-size: 0.56rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: #38bdf8;
+}
+
+.ic-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.48rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: #94a3b8;
+}
+
+/* ── Spatial Zones Specifics ── */
+.spatial-zones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.zone-sector-card {
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: var(--shadow-well-inset);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.zone-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.zone-name-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.zone-name {
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.zone-id-tag {
+  font-size: 0.56rem;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  display: block;
+  margin-top: 2px;
+}
+
+.zone-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.zone-factors-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.zone-factor-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.64rem;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+.zone-factor-item.nominal {
+  color: #10b981;
+}
+
+.factor-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── GNSS Positioning Specifics ── */
+.gnss-sat-fix-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: #FFFFFF;
+}
+
+.sat-count {
+  font-weight: 700;
+}
+
+.fix-tag {
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 900;
+}
+
+.fix-tag.has-fix {
+  background: #10b981;
+  color: #FFFFFF;
+}
+
+.fix-tag.no-fix {
+  background: #64748b;
+  color: #FFFFFF;
+}
+
+.gnss-coordinate-triad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 580px) {
+  .gnss-coordinate-triad { grid-template-columns: 1fr; }
+}
+
+.coord-axis-well {
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: var(--shadow-well-inset);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.axis-well-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   margin-bottom: 4px;
 }
 
-.node-stat-val {
-  font-size: 0.95rem;
+.axis-badge {
+  font-size: 0.52rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.axis-badge.lat { background: rgba(2, 132, 199, 0.15); color: #0284c7; }
+.axis-badge.lon { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.axis-badge.alt { background: rgba(217, 119, 6, 0.15); color: #d97706; }
+
+.axis-title {
+  font-size: 0.56rem;
+  font-family: var(--font-mono);
   font-weight: 700;
+  color: var(--text-dim);
+}
+
+.coord-val {
+  font-size: 1.05rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
   color: var(--text-primary);
-  font-family: var(--font-mono);
+  margin: 2px 0;
 }
 
-.sensor-chips-row {
+.coord-sub {
+  font-size: 0.52rem;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+.gnss-radar-meta-strip {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.sensor-chip-item {
-  flex: 1;
-  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
   border-radius: 10px;
-  padding: 8px 6px;
-  text-align: center;
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.68rem;
   font-family: var(--font-mono);
-  border: 1px solid var(--border-card);
-  transition: all 0.2s ease;
+  color: var(--text-secondary);
 }
 
-.chip-ok {
-  background: var(--status-normal-bg);
-  color: var(--status-normal);
-  border-color: var(--status-normal-border);
+.radar-notice-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.chip-err {
-  background: var(--status-critical-bg);
-  color: var(--status-critical);
-  border-color: var(--status-critical-border);
+.radar-notice-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  color: var(--text-dim);
 }
 
 /* ============================================================

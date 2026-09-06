@@ -1,10 +1,10 @@
 // ============================================================
-// THULIR AI — Node Location Intelligence (GNSS Metadata)
+// THULIR AI — 3D Node Location & GNSS Spatial Intelligence
 // ============================================================
-// Displays geospatial telemetry from onboard GNSS receiver (GY-GPS6MV2)
-// with explicit precision disclaimers and X, Y, Z coordinates.
+// High-tactility GNSS positioning module with satellite signal radar,
+// 3-axis spatial coordinate wells (Latitude, Longitude, Altitude), and precision beacons.
 
-import { Compass, Satellite, MapPin } from 'lucide-react';
+import { Compass, Satellite, Radio, Globe, Navigation } from 'lucide-react';
 import type { NodeRecord } from '../types';
 
 interface GPSCardProps {
@@ -13,154 +13,107 @@ interface GPSCardProps {
 
 export function GPSCard({ node }: GPSCardProps) {
   const hasFix = node?.gps_fix && node.gps_fix !== 'NONE' && node.latitude !== null && node.longitude !== null;
+  const satCount = node?.gps_satellites ?? 0;
 
   return (
-    <div className="clay-card" role="region" aria-label="Node Location Intelligence">
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 14,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Compass size={17} color="var(--brand-green)" strokeWidth={2} />
-          <div>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>Node Location Intelligence</div>
-            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>GNSS · Spatial Coordinates · {node?.node_id || 'NODE_01'}</div>
+    <div
+      className="individual-overview-3d-card gnss-spatial-chassis"
+      role="region"
+      aria-label="Node Location Intelligence"
+      style={{ '--card-theme-color': '#0284C7' } as React.CSSProperties}
+    >
+      {/* 4 Corner Metallic Machined Fasteners */}
+      <div className="corner-screw top-left" />
+      <div className="corner-screw top-right" />
+      <div className="corner-screw bottom-left" />
+      <div className="corner-screw bottom-right" />
+
+      {/* Top 3D Metallic Header Bezel */}
+      <div className="card-top-bezel" style={{ background: 'linear-gradient(135deg, #075985 0%, #0284C7 50%, #38BDF8 100%)' }}>
+        <div className="bezel-left">
+          <div className="bezel-icon-orb">
+            <Compass size={17} color="#FFFFFF" />
+          </div>
+          <div className="bezel-text">
+            <span className="card-sensor-title">NODE LOCATION &amp; GNSS POSITIONING</span>
+            <span className="card-chip-sub">GY-GPS6MV2 · SPATIAL TRIAD</span>
           </div>
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            fontSize: '0.68rem',
-            fontFamily: 'var(--font-mono)',
-            color: hasFix ? 'var(--status-normal)' : 'var(--text-muted)',
-          }}
-        >
-          <Satellite size={13} />
-          <span>{node?.gps_satellites ?? 0} SATS</span>
-          <span
-            style={{
-              padding: '1px 6px',
-              borderRadius: 4,
-              backgroundColor: hasFix ? 'var(--status-normal-bg)' : 'var(--bg-well)',
-              border: `1px solid ${hasFix ? 'var(--status-normal-border)' : 'var(--border-subtle)'}`,
-              fontWeight: 700,
-            }}
-          >
-            FIX: {node?.gps_fix || 'NONE'}
-          </span>
+        <div className="bezel-right">
+          <div className="gnss-sat-fix-pill">
+            <Satellite size={12} color={hasFix ? '#38BDF8' : '#94A3B8'} />
+            <span className="sat-count">{satCount} SATS</span>
+            <span className={`fix-tag ${hasFix ? 'has-fix' : 'no-fix'}`}>
+              {node?.gps_fix || 'NO FIX'}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Coordinate Display (X, Y, Z Position) */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 10,
-          marginBottom: 12,
-        }}
-      >
-        {/* Y Axis: Latitude */}
-        <div className="clay-well" style={{ padding: '12px 10px', textAlign: 'center', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginBottom: 4 }}>
-            <span style={{
-              fontSize: '0.58rem', fontWeight: 800, padding: '1px 5px', borderRadius: 3,
-              background: 'rgba(8, 126, 164, 0.15)', color: '#087EA4', fontFamily: 'var(--font-mono)'
-            }}>
-              Y-AXIS
-            </span>
-            <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>LATITUDE</span>
+      {/* Main Coordinate Triad Body */}
+      <div className="overview-card-body">
+        {/* 3-Axis Coordinate Wells */}
+        <div className="gnss-coordinate-triad">
+          {/* Y Axis: Latitude */}
+          <div className="coord-axis-well lat">
+            <div className="axis-well-head">
+              <span className="axis-badge lat">Y-AXIS</span>
+              <span className="axis-title">LATITUDE</span>
+            </div>
+            <div className="coord-val">
+              {node?.latitude !== null && node?.latitude !== undefined ? `${node.latitude.toFixed(5)}°` : '—'}
+            </div>
+            <span className="coord-sub">North / South Geodetic</span>
           </div>
-          <div
-            style={{
-              fontSize: '0.92rem',
-              fontWeight: 800,
-              fontFamily: 'var(--font-mono)',
-              color: node?.latitude !== null && node?.latitude !== undefined ? 'var(--text-primary)' : 'var(--text-muted)',
-            }}
-          >
-            {node?.latitude !== null && node?.latitude !== undefined ? `${node.latitude.toFixed(5)}°` : '—'}
+
+          {/* X Axis: Longitude */}
+          <div className="coord-axis-well lon">
+            <div className="axis-well-head">
+              <span className="axis-badge lon">X-AXIS</span>
+              <span className="axis-title">LONGITUDE</span>
+            </div>
+            <div className="coord-val">
+              {node?.longitude !== null && node?.longitude !== undefined ? `${node.longitude.toFixed(5)}°` : '—'}
+            </div>
+            <span className="coord-sub">East / West Geodetic</span>
           </div>
-          <div style={{ fontSize: '0.58rem', color: 'var(--text-dim)', marginTop: 2 }}>North / South</div>
+
+          {/* Z Axis: Altitude */}
+          <div className="coord-axis-well alt">
+            <div className="axis-well-head">
+              <span className="axis-badge alt">Z-AXIS</span>
+              <span className="axis-title">ALTITUDE</span>
+            </div>
+            <div className="coord-val">
+              {node?.altitude !== null && node?.altitude !== undefined ? `${node.altitude.toFixed(1)}m` : '—'}
+            </div>
+            <span className="coord-sub">Mean Sea Level (MSL)</span>
+          </div>
         </div>
 
-        {/* X Axis: Longitude */}
-        <div className="clay-well" style={{ padding: '12px 10px', textAlign: 'center', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginBottom: 4 }}>
-            <span style={{
-              fontSize: '0.58rem', fontWeight: 800, padding: '1px 5px', borderRadius: 3,
-              background: 'rgba(15, 107, 87, 0.15)', color: 'var(--brand-green)', fontFamily: 'var(--font-mono)'
-            }}>
-              X-AXIS
+        {/* Spatial Geodetic Notice Banner */}
+        <div className="gnss-radar-meta-strip">
+          <div className="radar-notice-left">
+            <Navigation size={13} color="#0284C7" />
+            <span>
+              <strong>Surface &amp; Subsurface Mapping:</strong> Triad coordinates (X: Lon, Y: Lat, Z: Alt) lock ground surface elevation.
             </span>
-            <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>LONGITUDE</span>
           </div>
-          <div
-            style={{
-              fontSize: '0.92rem',
-              fontWeight: 800,
-              fontFamily: 'var(--font-mono)',
-              color: node?.longitude !== null && node?.longitude !== undefined ? 'var(--text-primary)' : 'var(--text-muted)',
-            }}
-          >
-            {node?.longitude !== null && node?.longitude !== undefined ? `${node.longitude.toFixed(5)}°` : '—'}
+          <div className="radar-notice-right">
+            <Globe size={12} />
+            <span>WGS-84 DATUM</span>
           </div>
-          <div style={{ fontSize: '0.58rem', color: 'var(--text-dim)', marginTop: 2 }}>East / West</div>
-        </div>
-
-        {/* Z Axis: Altitude */}
-        <div className="clay-well" style={{ padding: '12px 10px', textAlign: 'center', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginBottom: 4 }}>
-            <span style={{
-              fontSize: '0.58rem', fontWeight: 800, padding: '1px 5px', borderRadius: 3,
-              background: 'rgba(93, 64, 55, 0.15)', color: '#8D6E63', fontFamily: 'var(--font-mono)'
-            }}>
-              Z-AXIS
-            </span>
-            <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>ALTITUDE</span>
-          </div>
-          <div
-            style={{
-              fontSize: '0.92rem',
-              fontWeight: 800,
-              fontFamily: 'var(--font-mono)',
-              color: node?.altitude !== null && node?.altitude !== undefined ? 'var(--text-primary)' : 'var(--text-muted)',
-            }}
-          >
-            {node?.altitude !== null && node?.altitude !== undefined ? `${node.altitude.toFixed(1)}m` : '—'}
-          </div>
-          <div style={{ fontSize: '0.58rem', color: 'var(--text-dim)', marginTop: 2 }}>Elevation (MSL)</div>
         </div>
       </div>
 
-      {/* Geospatial Clarification / Disclosure */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: 8,
-          padding: '8px 12px',
-          borderRadius: 10,
-          backgroundColor: 'var(--brand-blue-tint)',
-          border: '1px solid var(--brand-blue-border)',
-          fontSize: '0.68rem',
-          color: 'var(--text-secondary)',
-          lineHeight: 1.45,
-        }}
-      >
-        <MapPin size={14} color="var(--brand-blue)" style={{ flexShrink: 0, marginTop: 2 }} />
-        <div>
-          <span style={{ fontWeight: 700, color: 'var(--brand-blue)' }}>Geospatial Positioning: </span>
-          Surface coordinate triad (X: Lon, Y: Lat, Z: Alt). Ground subsidence and angular deformation are tracked subsurface via MPU6050 inclination and HC-SR04 displacement.
+      {/* Card Footer */}
+      <div className="card-footer-strip">
+        <div className="footer-status-pill">
+          <Radio size={11} className="spin-slow" />
+          <span>ONBOARD GNSS RECEIVER: GY-GPS6MV2 ACTIVE</span>
         </div>
+        <span className="footer-clock-tag">{node?.node_id || 'NODE_01'} LOCK</span>
       </div>
     </div>
   );

@@ -1,158 +1,132 @@
 // ============================================================
-// THULIR AI — Spatial Risk Intelligence
+// THULIR AI — 3D Spatial Zone Risk Intelligence
 // ============================================================
-// Displays spatial zone risk assessment aggregating node telemetry
-// across longwall panels and mine haulage drifts.
+// High-tactility multi-node spatial risk evaluator with metallic corner screws,
+// animated zone hazard annunciators, and sector health indicators.
 
-import { ShieldAlert, Layers, CheckCircle, AlertTriangle } from 'lucide-react';
+import { ShieldAlert, Layers, CheckCircle2, AlertTriangle, Radio, MapPin } from 'lucide-react';
 import type { ZoneRiskState, RiskLevel } from '../types';
 
 interface ZoneRiskPanelProps {
   zones: ZoneRiskState[];
 }
 
-const LEVEL_COLORS: Record<RiskLevel, { text: string; bg: string; border: string; icon: typeof CheckCircle }> = {
+const LEVEL_CONFIG: Record<RiskLevel, { text: string; bg: string; grad: string; icon: typeof CheckCircle2 }> = {
   NORMAL: {
-    text: 'var(--status-normal)',
-    bg: 'rgba(16, 185, 129, 0.08)',
-    border: 'rgba(16, 185, 129, 0.3)',
-    icon: CheckCircle,
+    text: '#10B981',
+    bg: 'rgba(16, 185, 129, 0.12)',
+    grad: 'linear-gradient(135deg, #065F46 0%, #059669 50%, #10B981 100%)',
+    icon: CheckCircle2,
   },
   WATCH: {
-    text: 'var(--status-watch)',
-    bg: 'rgba(245, 158, 11, 0.08)',
-    border: 'rgba(245, 158, 11, 0.3)',
+    text: '#F59E0B',
+    bg: 'rgba(245, 158, 11, 0.12)',
+    grad: 'linear-gradient(135deg, #B45309 0%, #D97706 50%, #F59E0B 100%)',
     icon: AlertTriangle,
   },
   CRITICAL: {
-    text: 'var(--status-critical)',
-    bg: 'rgba(239, 68, 68, 0.08)',
-    border: 'rgba(239, 68, 68, 0.3)',
+    text: '#EF4444',
+    bg: 'rgba(239, 68, 68, 0.12)',
+    grad: 'linear-gradient(135deg, #991B1B 0%, #DC2626 50%, #EF4444 100%)',
     icon: ShieldAlert,
   },
 };
 
 export function ZoneRiskPanel({ zones }: ZoneRiskPanelProps) {
   return (
-    <div className="clay-card" role="region" aria-label="Spatial Risk Intelligence">
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 14,
-          flexWrap: 'wrap',
-          gap: 8,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Layers size={17} color="var(--brand-green)" strokeWidth={2} />
-          <div>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>Spatial Risk Intelligence</div>
-            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>Multi-node fusion across mine zones</div>
+    <div
+      className="individual-overview-3d-card spatial-zone-chassis"
+      role="region"
+      aria-label="Spatial Risk Intelligence"
+      style={{ '--card-theme-color': '#0F766E' } as React.CSSProperties}
+    >
+      {/* 4 Corner Metallic Machined Fasteners */}
+      <div className="corner-screw top-left" />
+      <div className="corner-screw top-right" />
+      <div className="corner-screw bottom-left" />
+      <div className="corner-screw bottom-right" />
+
+      {/* Top 3D Metallic Header Bezel */}
+      <div className="card-top-bezel" style={{ background: 'linear-gradient(135deg, #115E59 0%, #0F766E 50%, #14B8A6 100%)' }}>
+        <div className="bezel-left">
+          <div className="bezel-icon-orb">
+            <Layers size={17} color="#FFFFFF" />
+          </div>
+          <div className="bezel-text">
+            <span className="card-sensor-title">SPATIAL ZONE RISK INTELLIGENCE</span>
+            <span className="card-chip-sub">MULTI-NODE MINE STRATA FUSION</span>
           </div>
         </div>
 
-        <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          MULTI-NODE FUSION ENGINE
-        </span>
+        <div className="bezel-right">
+          <span className="card-hw-badge">3 COAL SECTORS ACTIVE</span>
+        </div>
       </div>
 
-      {/* Zones Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 12,
-        }}
-      >
-        {zones.map((zone) => {
-          const cfg = LEVEL_COLORS[zone.aggregatedRisk];
-          const IconComponent = cfg.icon;
+      {/* Main Zones Grid Body */}
+      <div className="overview-card-body">
+        <div className="spatial-zones-grid">
+          {zones.map((zone) => {
+            const cfg = LEVEL_CONFIG[zone.aggregatedRisk] || LEVEL_CONFIG.NORMAL;
+            const IconComponent = cfg.icon;
 
-          return (
-            <div
-              key={zone.zone_id}
-              className="skeuo-well"
-              style={{
-                padding: '12px 14px',
-                borderTop: `2px solid ${cfg.text}`,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 10,
-              }}
-            >
-              {/* Top row: Sector name and status badge */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-                    {zone.zone_name}
-                  </div>
-                  <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', marginTop: 2 }}>
-                    ID: {zone.zone_id} • {zone.onlineNodeCount}/{zone.nodeCount} Nodes Active
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 5,
-                    fontSize: '0.68rem',
-                    fontWeight: 800,
-                    padding: '3px 8px',
-                    borderRadius: 4,
-                    color: cfg.text,
-                    backgroundColor: cfg.bg,
-                    border: `1px solid ${cfg.border}`,
-                    fontFamily: 'var(--font-mono)',
-                  }}
-                >
-                  <IconComponent size={12} />
-                  {zone.aggregatedRisk}
-                </div>
-              </div>
-
-              {/* Summary note */}
+            return (
               <div
-                style={{
-                  fontSize: '0.7rem',
-                  color: 'var(--text-secondary)',
-                  lineHeight: 1.35,
-                  padding: '6px 8px',
-                  borderRadius: 4,
-                  backgroundColor: 'rgba(0,0,0,0.2)',
-                }}
+                key={zone.zone_id}
+                className="zone-sector-card"
+                style={{ borderLeft: `3px solid ${cfg.text}` }}
               >
-                {zone.summary}
-              </div>
-
-              {/* Contributing nodes */}
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {zone.contributingNodes.map((cn) => {
-                  const nodeCfg = LEVEL_COLORS[cn.level];
-                  return (
-                    <span
-                      key={cn.node_id}
-                      style={{
-                        fontSize: '0.64rem',
-                        fontFamily: 'var(--font-mono)',
-                        padding: '2px 6px',
-                        borderRadius: 3,
-                        backgroundColor: nodeCfg.bg,
-                        color: nodeCfg.text,
-                        border: `1px solid ${nodeCfg.border}`,
-                      }}
-                    >
-                      {cn.node_id}: {cn.score > 0 ? `${cn.score}%` : 'NOMINAL'}
+                <div className="zone-card-top">
+                  <div className="zone-identity">
+                    <div className="zone-name-row">
+                      <MapPin size={12} color={cfg.text} />
+                      <span className="zone-name">{zone.zone_name}</span>
+                    </div>
+                    <span className="zone-id-tag">
+                      ID: {zone.zone_id} • {zone.onlineNodeCount}/{zone.nodeCount} NODES ACTIVE
                     </span>
-                  );
-                })}
+                  </div>
+
+                  <div className="zone-status-badge" style={{ color: cfg.text, background: cfg.bg, borderColor: `${cfg.text}40` }}>
+                    <IconComponent size={11} />
+                    <span>{zone.aggregatedRisk}</span>
+                  </div>
+                </div>
+
+                {/* Summary / Contributing info */}
+                <div className="zone-factors-box">
+                  {zone.summary ? (
+                    <div className="zone-factor-item">
+                      <span className="factor-dot" style={{ background: cfg.text }} />
+                      <span>{zone.summary}</span>
+                    </div>
+                  ) : zone.contributingNodes && zone.contributingNodes.length > 0 ? (
+                    zone.contributingNodes.map((cn) => (
+                      <div key={cn.node_id} className="zone-factor-item">
+                        <span className="factor-dot" style={{ background: cfg.text }} />
+                        <span>Node {cn.node_id} ({cn.level} - Score: {cn.score})</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="zone-factor-item nominal">
+                      <CheckCircle2 size={10} color="#10B981" />
+                      <span>Strata deformation envelope stable. Zero triggers.</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Card Footer */}
+      <div className="card-footer-strip">
+        <div className="footer-status-pill">
+          <Radio size={11} className="spin-slow" />
+          <span>REAL-TIME SPATIAL RE-CALCULATION ACTIVE</span>
+        </div>
+        <span className="footer-clock-tag">SECTOR LEVEL INTELLIGENCE</span>
       </div>
     </div>
   );

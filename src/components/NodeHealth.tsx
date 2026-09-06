@@ -1,9 +1,11 @@
 // ============================================================
-// THULIR AI — Node Intelligence (Hardware Health & Diagnostics)
+// THULIR AI — 3D Skeuomorphic Node Intelligence & Diagnostics
 // ============================================================
+// High-tactility edge diagnostics chassis with metallic corner screws,
+// diagnostic HUD meters, and realistic physical IC chip sockets with gold pins.
 
 import { formatTimeAgo } from '../utils/timeUtils';
-import { Cpu, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Cpu, AlertCircle, CheckCircle2, Radio, Server, Activity } from 'lucide-react';
 import type { NodeStatus } from '../types';
 
 interface NodeHealthProps {
@@ -19,94 +21,126 @@ export function NodeHealth({ nodeStatus }: NodeHealthProps) {
   const totalCount = sensorEntries.length || 6;
 
   const freshnessColor =
-    freshness === 'LIVE'   ? 'var(--status-normal)' :
-    freshness === 'RECENT' ? 'var(--brand-blue)' :
-    'var(--status-watch)';
+    freshness === 'LIVE'   ? '#10B981' :
+    freshness === 'RECENT' ? '#0284C7' :
+    '#F59E0B';
 
   return (
-    <div className="clay-card" role="region" aria-label="Node health and connectivity">
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Cpu size={16} color="var(--brand-green)" strokeWidth={2} />
-          <div>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-              Node Intelligence
-            </div>
-            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: 1 }}>
-              {node_id} Diagnostics
-            </div>
+    <div
+      className="individual-overview-3d-card diagnostics-chassis"
+      role="region"
+      aria-label="Node Diagnostics & Health"
+      style={{ '--card-theme-color': '#0284C7' } as React.CSSProperties}
+    >
+      {/* 4 Corner Metallic Machined Fasteners */}
+      <div className="corner-screw top-left" />
+      <div className="corner-screw top-right" />
+      <div className="corner-screw bottom-left" />
+      <div className="corner-screw bottom-right" />
+
+      {/* Top 3D Metallic Header Bezel */}
+      <div className="card-top-bezel" style={{ background: 'linear-gradient(135deg, #0369A1 0%, #0284C7 50%, #0EA5E9 100%)' }}>
+        <div className="bezel-left">
+          <div className="bezel-icon-orb">
+            <Cpu size={17} color="#FFFFFF" />
+          </div>
+          <div className="bezel-text">
+            <span className="card-sensor-title">NODE INTELLIGENCE &amp; DIAGNOSTICS</span>
+            <span className="card-chip-sub">{node_id} · HARDWARE TELEMETRY BUS</span>
           </div>
         </div>
-        <div className={`skeuo-pill ${online ? 'pill-online' : 'pill-offline'}`}>
-          <span className={`pulse-dot ${online ? 'dot-green' : 'dot-gray'}`} />
-          {online ? 'ONLINE' : 'OFFLINE'}
+
+        <div className="bezel-right">
+          <div className={`node-online-badge ${online ? 'online' : 'offline'}`}>
+            <span className="status-beacon-dot" style={{
+              background: online ? '#10B981' : '#64748B',
+              boxShadow: online ? '0 0 8px #10B981' : 'none'
+            }} />
+            {online ? 'ONLINE' : 'OFFLINE'}
+          </div>
         </div>
       </div>
 
-      {/* Stale Warning */}
-      {isStale && (
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 7, padding: '9px 12px',
-          background: 'var(--status-watch-bg)', border: '1px solid var(--status-watch-border)',
-          borderRadius: 10, marginBottom: 12, fontSize: '0.72rem', color: 'var(--status-watch)',
-          fontFamily: 'var(--font-mono)',
-        }}>
-          <AlertCircle size={13} />
-          <span><strong>STALE:</strong> No telemetry in &gt;60s — last reading {lastSeenTime}.</span>
-        </div>
-      )}
+      {/* Main Diagnostics Body */}
+      <div className="overview-card-body">
+        {/* Stale Warning Banner if applicable */}
+        {isStale && (
+          <div className="diagnostics-stale-alert">
+            <AlertCircle size={15} color="#F59E0B" />
+            <span>
+              <strong>STALE TELEMETRY:</strong> No packets in &gt;60s — last heartbeat recorded {lastSeenTime}.
+            </span>
+          </div>
+        )}
 
-      {/* 2×2 Stats Grid */}
-      <div className="node-health-grid">
-        <div className="node-stat-box">
-          <div className="node-stat-label">Data Freshness</div>
-          <div className="node-stat-val" style={{ color: freshnessColor }}>{freshness}</div>
-        </div>
-        <div className="node-stat-box">
-          <div className="node-stat-label">Last Transmission</div>
-          <div className="node-stat-val" style={{ fontSize: '0.82rem' }}>{lastSeenTime}</div>
-        </div>
-        <div className="node-stat-box">
-          <div className="node-stat-label">Sensors Healthy</div>
-          <div className="node-stat-val" style={{ color: healthyCount === totalCount ? 'var(--status-normal)' : 'var(--status-watch)' }}>
-            {healthyCount} / {totalCount} <span style={{ fontSize: '0.72rem', fontWeight: 600 }}>Nominal</span>
+        {/* 2×2 Diagnostics Gauge Wells */}
+        <div className="diagnostics-meter-grid">
+          <div className="diag-well">
+            <div className="diag-lbl">DATA FRESHNESS</div>
+            <div className="diag-val" style={{ color: freshnessColor }}>
+              <Radio size={12} className="spin-slow" />
+              <span>{freshness}</span>
+            </div>
+          </div>
+
+          <div className="diag-well">
+            <div className="diag-lbl">LAST TRANSMISSION</div>
+            <div className="diag-val time">{lastSeenTime}</div>
+          </div>
+
+          <div className="diag-well">
+            <div className="diag-lbl">SENSORS ONLINE</div>
+            <div className="diag-val" style={{ color: healthyCount === totalCount ? '#10B981' : '#F59E0B' }}>
+              <Activity size={12} />
+              <span>{healthyCount} / {totalCount} Nominal</span>
+            </div>
+          </div>
+
+          <div className="diag-well">
+            <div className="diag-lbl">POWER / BUS RAIL</div>
+            <div className="diag-val bus">5V USB · I2C+GPIO</div>
           </div>
         </div>
-        <div className="node-stat-box">
-          <div className="node-stat-label">Power / Bus</div>
-          <div className="node-stat-val" style={{ fontSize: '0.75rem', fontWeight: 600 }}>5V USB · I2C+GPIO</div>
-        </div>
-      </div>
 
-      {/* Sensor Chip Status Row */}
-      <div style={{ marginTop: 4 }}>
-        <div style={{
-          fontSize: '0.62rem', color: 'var(--text-muted)', textTransform: 'uppercase',
-          fontWeight: 700, marginBottom: 8, display: 'flex', justifyContent: 'space-between',
-          fontFamily: 'var(--font-mono)', letterSpacing: '0.08em',
-        }}>
-          <span>Hardware Sensor Array</span>
-          <span style={{ color: 'var(--text-dim)' }}>I2C / GPIO / ADC</span>
-        </div>
-        <div className="sensor-chips-row">
-          {sensorEntries.map(([hardware, h]) => {
-            const isOk = h.state === 'OK';
-            return (
-              <div
-                key={hardware}
-                className={`sensor-chip-item ${isOk ? 'chip-ok' : 'chip-err'}`}
-                title={`${hardware} (${h.name}): ${h.state}`}
-              >
-                <div style={{ fontWeight: 700 }}>{hardware}</div>
-                <div style={{ fontSize: '0.6rem', marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
-                  {isOk ? <CheckCircle2 size={9} /> : <AlertCircle size={9} />}
-                  {isOk ? 'OK' : 'ERR'}
+        {/* Physical Hardware IC Chip Socket Array */}
+        <div className="hardware-ic-array-section">
+          <div className="ic-array-header">
+            <span className="ic-title">PHYSICAL HARDWARE SENSOR IC SOCKETS</span>
+            <span className="ic-sub">I2C / GPIO / ADC BUS</span>
+          </div>
+
+          <div className="ic-chips-row">
+            {sensorEntries.map(([hardware, h]) => {
+              const isOk = h.state === 'OK';
+              return (
+                <div
+                  key={hardware}
+                  className={`micro-ic-socket ${isOk ? 'socket-ok' : 'socket-err'}`}
+                  title={`${hardware} (${h.name}): ${h.state}`}
+                >
+                  <div className="ic-gold-pins top" />
+                  <div className="ic-body">
+                    <span className="ic-hw-name">{hardware}</span>
+                    <div className="ic-status-indicator">
+                      {isOk ? <CheckCircle2 size={9} color="#10B981" /> : <AlertCircle size={9} color="#EF4444" />}
+                      <span>{isOk ? 'OK' : 'ERR'}</span>
+                    </div>
+                  </div>
+                  <div className="ic-gold-pins bottom" />
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
+      </div>
+
+      {/* Card Footer */}
+      <div className="card-footer-strip">
+        <div className="footer-status-pill">
+          <Server size={11} />
+          <span>MICROCONTROLLER: ESP32 DUAL-CORE 240MHz</span>
+        </div>
+        <span className="footer-clock-tag">FIRMWARE: THULIR-v2.4</span>
       </div>
     </div>
   );
