@@ -122,6 +122,14 @@ export function SmartMineControlDesk({
         <div className="desk-header-badge">
           ESP32 DUAL CORE · 4G LTE-M · NEURAL ENGINE LIVE
         </div>
+        <button
+          className="desk-header-scroll-btn"
+          onClick={handleScrollDown}
+          title="Scroll down to deep telemetry & multi-node analytics"
+        >
+          <span>Deep Analytics</span>
+          <span className="scroll-arrow">↓</span>
+        </button>
       </div>
 
       {/* ── Top Master Grid: Left Console, Center Hardware PCB, Right Telemetry Meters ── */}
@@ -879,16 +887,6 @@ export function SmartMineControlDesk({
         </div>
 
       </div>
-
-      {/* Floating Scroll Cue Button */}
-      <button
-        className="desk-scroll-cue"
-        onClick={handleScrollDown}
-        aria-label="Scroll down to detailed analytics"
-      >
-        <span>Deep AI Telemetry & Multi-Node Analytics</span>
-        <span className="scroll-arrow">↓</span>
-      </button>
 
     </div>
   );
