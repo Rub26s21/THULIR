@@ -339,7 +339,13 @@ export function Dashboard() {
               </div>
 
               <div className="reveal reveal-delay-1" style={{ marginTop: 14 }}>
-                <GPSCard node={activeNode} />
+                <GPSCard
+                  node={activeNode}
+                  allNodes={allNodesWithStatus}
+                  latestData={latestData}
+                  selectedNodeId={selectedNodeId}
+                  onSelectNode={setSelectedNodeId}
+                />
               </div>
             </section>
 
