@@ -8,6 +8,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Sidebar, CommandBar } from '../components/Header';
 import { NodeSelectorBar } from '../components/NodeSelectorBar';
 import { APODPanel } from '../components/APODPanel.tsx';
+import { GroundEventInvestigatorPanel } from '../components/GroundEventInvestigatorPanel';
 import { GPSCard } from '../components/GPSCard';
 import { AlertPanel } from '../components/AlertPanel';
 import { MLHeroCard, MLDiagnosticsCard } from '../components/MLPanel';
@@ -24,6 +25,7 @@ import { useNodeHealth } from '../hooks/useNodeHealth';
 import { useTheme } from '../hooks/useTheme';
 import { useMouseShine } from '../hooks/useMouseShine';
 import { useAPOD } from '../hooks/useAPOD.ts';
+import { useGroundEventInvestigator } from '../hooks/useGroundEventInvestigator';
 import { evaluateRisk } from '../utils/riskEngine';
 import { runMLInference } from '../utils/mlEngine';
 import { isSupabaseConfigured } from '../lib/supabase';
@@ -83,6 +85,12 @@ export function Dashboard() {
 
   const { alerts, acknowledgeAlert } = useAlerts(latestData, mlPrediction);
   const activeAlertCount = alerts.filter(a => a.status === 'ACTIVE').length;
+
+  const investigator = useGroundEventInvestigator({
+    apod,
+    nodes: allNodesWithStatus,
+    alerts,
+  });
 
   // Activate scroll-reveal animations
   useRevealObserver();
@@ -226,6 +234,14 @@ export function Dashboard() {
                 nodes={allNodesWithStatus}
                 selectedNodeId={selectedNodeId}
                 onSelectNode={setSelectedNodeId}
+              />
+            </section>
+
+            {/* ── SECTION 2B: THULIR AI GROUND EVENT INVESTIGATOR (NVIDIA NEMOTRON 3 ULTRA) ── */}
+            <section id="section-investigator" className="page-section reveal">
+              <GroundEventInvestigatorPanel
+                investigator={investigator}
+                apod={apod}
               />
             </section>
 
