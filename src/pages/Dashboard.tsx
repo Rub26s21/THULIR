@@ -10,7 +10,7 @@ import { NodeSelectorBar } from '../components/NodeSelectorBar';
 import { APODPanel } from '../components/APODPanel.tsx';
 import { GPSCard } from '../components/GPSCard';
 import { AlertPanel } from '../components/AlertPanel';
-import { MLPanel } from '../components/MLPanel';
+import { MLHeroCard, MLDiagnosticsCard } from '../components/MLPanel';
 import { NetworkTopology } from '../components/NetworkTopology';
 import { SystemActivity } from '../components/SystemActivity';
 import { HistoricalCharts } from '../components/HistoricalCharts';
@@ -251,19 +251,27 @@ export function Dashboard() {
               />
             </section>
 
-            {/* ── SECTION 5: AI / ML + ALERTS ── */}
+            {/* ── SECTION 5: AI / ML + ALERTS (L-SHAPED HUD GRID) ── */}
             <section id="section-ml" className="page-section">
               <div className="section-header">
                 <Brain size={14} color="var(--brand-green)" strokeWidth={2} />
                 <span className="section-eyebrow">AI Analysis</span>
                 <span className="section-title">Risk Intelligence & Alert Dispatch · {selectedNodeId}</span>
               </div>
-              <div className="bottom-dual-grid">
-                <div className="reveal">
-                  <MLPanel prediction={mlPrediction} />
+              <div className="ml-alerts-l-grid">
+                {/* Top-Left: AI Hazard Intelligence Primary Hero Assessment */}
+                <div className="ml-hero-slot reveal">
+                  <MLHeroCard prediction={mlPrediction} />
                 </div>
-                <div id="section-alerts" className="reveal reveal-delay-1">
+
+                {/* Top-Right: Safety Alert Dispatch Console */}
+                <div id="section-alerts" className="alert-slot-wrapper reveal reveal-delay-1">
                   <AlertPanel alerts={alerts} onAcknowledge={acknowledgeAlert} />
+                </div>
+
+                {/* Bottom Full-Width: 4-Well Diagnostics Matrix & Class Voting Density */}
+                <div className="ml-extended-slot reveal">
+                  <MLDiagnosticsCard prediction={mlPrediction} />
                 </div>
               </div>
             </section>

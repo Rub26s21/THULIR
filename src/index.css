@@ -3735,6 +3735,73 @@ img, svg { display: block; }
   margin-left: auto;
 }
 
+/* ── L-Shaped Section 5 Layout: ML Hero (Top-Left) + Alerts (Top-Right) + ML Extended (Full-Width Bottom) ── */
+.ml-alerts-l-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 960px) {
+  .ml-alerts-l-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ml-hero-slot {
+  grid-column: 1 / 2;
+  display: flex;
+}
+
+.alert-slot-wrapper {
+  grid-column: 2 / 3;
+  display: flex;
+}
+
+.ml-extended-slot {
+  grid-column: 1 / 3;
+}
+
+@media (max-width: 960px) {
+  .ml-hero-slot,
+  .alert-slot-wrapper,
+  .ml-extended-slot {
+    grid-column: 1 / 2;
+  }
+}
+
+.ml-hero-card,
+.alert-dispatch-chassis {
+  height: 100%;
+  width: 100%;
+}
+
+.ml-extended-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 800px) {
+  .ml-extended-split-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.column-micro-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
 /* ============================================================
    13. ALERT PANEL — 3D SAFETY ALERT DISPATCH CONSOLE
    ============================================================ */
