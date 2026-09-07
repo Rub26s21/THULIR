@@ -3377,7 +3377,7 @@ img, svg { display: block; }
   padding: 10px 14px;
   border-radius: 12px;
   margin-bottom: 12px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 0.74rem;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
 }
@@ -3403,11 +3403,12 @@ img, svg { display: block; }
 .hud-banner-text {
   flex: 1;
   line-height: 1.4;
+  font-family: var(--font-sans);
 }
 
 .hud-banner-text strong {
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 
 /* ── Hero Hazard Assessment Card ── */
@@ -3457,23 +3458,25 @@ img, svg { display: block; }
 }
 
 .hero-assessment-tag {
-  font-size: 0.55rem;
+  font-size: 0.58rem;
   font-weight: 800;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--text-dim);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .hero-assessment-value {
   font-size: 1.15rem;
   font-weight: 900;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   letter-spacing: -0.01em;
   line-height: 1.2;
 }
 
 .hero-assessment-desc {
   font-size: 0.72rem;
+  font-family: var(--font-sans);
   color: var(--text-secondary);
   line-height: 1.35;
   margin: 0;
@@ -3504,24 +3507,26 @@ img, svg { display: block; }
 }
 
 .confidence-label {
-  font-size: 0.52rem;
+  font-size: 0.55rem;
   font-weight: 800;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--text-dim);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .confidence-val {
   font-size: 1.35rem;
   font-weight: 900;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
 
 .confidence-sub {
-  font-size: 0.55rem;
-  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-family: var(--font-sans);
   color: var(--text-muted);
 }
 
@@ -3563,24 +3568,25 @@ img, svg { display: block; }
 }
 
 .well-label {
-  font-size: 0.55rem;
+  font-size: 0.58rem;
   font-weight: 800;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--text-dim);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .well-val-text {
   font-size: 0.88rem;
   font-weight: 800;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--text-primary);
   margin-top: 1px;
 }
 
 .well-sub-text {
   font-size: 0.62rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--text-muted);
   line-height: 1.2;
 }
@@ -3601,16 +3607,20 @@ img, svg { display: block; }
 }
 
 .prob-title {
-  font-size: 0.62rem;
+  font-size: 0.64rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  font-family: var(--font-sans);
+  letter-spacing: 0.06em;
   color: var(--text-muted);
+  text-transform: uppercase;
 }
 
 .prob-sub {
-  font-size: 0.55rem;
-  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-family: var(--font-sans);
   color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .neural-prob-list {
@@ -3655,23 +3665,25 @@ img, svg { display: block; }
 }
 
 .prob-name {
-  font-size: 0.74rem;
-  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-family: var(--font-sans);
 }
 
 .prob-active-tag {
-  font-size: 0.5rem;
-  font-weight: 900;
-  font-family: var(--font-mono);
-  letter-spacing: 0.06em;
+  font-size: 0.52rem;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  letter-spacing: 0.04em;
   padding: 1px 5px;
   border-radius: 4px;
   border: 1px solid;
 }
 
 .prob-percent {
-  font-size: 0.76rem;
-  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
 }
 
 .neural-prob-track {
@@ -3703,7 +3715,7 @@ img, svg { display: block; }
   border: 1px solid var(--border-well);
   border-radius: 10px;
   font-size: 0.68rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--text-muted);
 }
 
@@ -3716,6 +3728,7 @@ img, svg { display: block; }
 .trace-code {
   color: var(--text-primary);
   font-weight: 800;
+  font-family: var(--font-sans);
 }
 
 .latency-item {
