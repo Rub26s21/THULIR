@@ -2742,7 +2742,7 @@ img, svg { display: block; }
   gap: 10px;
   padding: 10px 14px;
   border-radius: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   font-family: var(--font-mono);
   font-size: 0.74rem;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -2776,18 +2776,194 @@ img, svg { display: block; }
   letter-spacing: 0.04em;
 }
 
+/* ── Hero Hazard Assessment Card ── */
+.ml-hero-assessment-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1.5px solid;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-card-sm), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.25s ease;
+}
+
+@media (max-width: 640px) {
+  .ml-hero-assessment-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.hero-assessment-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+}
+
+.hero-status-orb {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  border: 1.5px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.hero-assessment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-assessment-tag {
+  font-size: 0.55rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+.hero-assessment-value {
+  font-size: 1.15rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.hero-assessment-desc {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin: 0;
+  margin-top: 2px;
+}
+
+.hero-assessment-right {
+  flex-shrink: 0;
+}
+
+.hero-confidence-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  box-shadow: var(--shadow-well-inset);
+}
+
+@media (max-width: 640px) {
+  .hero-confidence-badge {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.confidence-label {
+  font-size: 0.52rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+.confidence-val {
+  font-size: 1.35rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.confidence-sub {
+  font-size: 0.55rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+/* ── 2x2 Recessed Diagnostic Cockpit Grid ── */
+.ml-diagnostics-cockpit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 600px) {
+  .ml-diagnostics-cockpit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ml-diag-cockpit-well {
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: var(--shadow-well-inset);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.ml-diag-cockpit-well:hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  transform: translateY(-1px);
+}
+
+.well-header-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.well-label {
+  font-size: 0.55rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+.well-val-text {
+  font-size: 0.88rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  margin-top: 1px;
+}
+
+.well-sub-text {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+/* ── Ordered Probability Distribution ── */
 .neural-prob-container {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .neural-prob-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .prob-title {
@@ -2806,11 +2982,11 @@ img, svg { display: block; }
 .neural-prob-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .neural-prob-card {
-  padding: 8px 12px;
+  padding: 9px 12px;
   background: var(--bg-well);
   border: 1px solid var(--border-well);
   border-radius: 12px;
@@ -2819,8 +2995,9 @@ img, svg { display: block; }
 }
 
 .neural-prob-card.is-max-prob {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.04) 0%, var(--bg-well) 100%);
+  border-color: rgba(139, 92, 246, 0.35);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.06) 0%, var(--bg-well) 100%);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .prob-label-row {
@@ -2837,33 +3014,43 @@ img, svg { display: block; }
 }
 
 .prob-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   box-shadow: 0 0 6px currentColor;
 }
 
 .prob-name {
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.74rem;
+  font-family: var(--font-mono);
+}
+
+.prob-active-tag {
+  font-size: 0.5rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid;
 }
 
 .prob-percent {
-  font-size: 0.74rem;
-  font-weight: 800;
+  font-size: 0.76rem;
   font-family: var(--font-mono);
 }
 
 .neural-prob-track {
-  height: 7px;
+  height: 8px;
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.06);
   overflow: hidden;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-[data-theme='dark'] .neural-prob-track {
-  background: rgba(0, 0, 0, 0.35);
+[data-theme='dark-apple'] .neural-prob-track,
+[data-theme='dark-space'] .neural-prob-track {
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .neural-prob-fill {
