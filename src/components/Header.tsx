@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import {
-  LayoutDashboard, Activity, BarChart2, Brain, Bell,
+  LayoutDashboard, BarChart2, Brain, Bell,
   Network, Map, Settings, Play, Pause, Wifi, WifiOff, Radio, Palette, Menu,
   Sun, Moon
 } from 'lucide-react';
@@ -15,7 +15,6 @@ import { ThemeSelector } from './ThemeSelector';
 
 const NAV_ITEMS = [
   { id: 'section-overview',  label: 'Overview',   icon: LayoutDashboard },
-  { id: 'section-telemetry', label: 'Telemetry',  icon: Activity },
   { id: 'section-analytics', label: 'Analytics',  icon: BarChart2 },
   { id: 'section-ml',        label: 'AI / ML',    icon: Brain },
   { id: 'section-alerts',    label: 'Alerts',     icon: Bell },

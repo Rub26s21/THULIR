@@ -7,7 +7,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Sidebar, CommandBar } from '../components/Header';
 import { NodeSelectorBar } from '../components/NodeSelectorBar';
-import { SensorGrid } from '../components/SensorGrid';
 import { RiskPanel } from '../components/RiskPanel';
 import { GPSCard } from '../components/GPSCard';
 import { AlertPanel } from '../components/AlertPanel';
@@ -215,10 +214,10 @@ export function Dashboard() {
                 </p>
                 <div className="hero-cta-group">
                   <button className="btn-primary" onClick={() => {
-                    document.getElementById('section-telemetry')?.scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('section-analytics')?.scrollIntoView({ behavior: 'smooth' });
                   }}>
                     <Activity size={15} />
-                    <span>View Live Telemetry</span>
+                    <span>View Live Telemetry Trends</span>
                     <ArrowUpRight size={14} style={{ opacity: 0.8 }} />
                   </button>
                   <button className="btn-secondary" onClick={() => {
@@ -343,20 +342,6 @@ export function Dashboard() {
               />
             </section>
 
-            {/* ── SECTION 3: LIVE SENSOR TELEMETRY ── */}
-            <section id="section-telemetry" className="page-section">
-              <div className="section-header">
-                <Activity size={14} color="var(--brand-green)" strokeWidth={2} />
-                <span className="section-eyebrow">Live Telemetry</span>
-                <span className="section-title">Multi-Sensor Array · {selectedNodeId}</span>
-                <span className="section-subtitle" style={{ marginLeft: 'auto', fontSize: '0.7rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
-                  {demoMode ? 'SIMULATED · 5s UPDATE' : 'LIVE · 5s TX CYCLE'}
-                </span>
-              </div>
-              <div className="reveal">
-                <SensorGrid data={latestData} history={history} />
-              </div>
-            </section>
 
             {/* ── SECTION 4: ANALYTICS ── */}
             <section id="section-analytics" className="page-section reveal">

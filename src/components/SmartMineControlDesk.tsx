@@ -157,7 +157,7 @@ export function SmartMineControlDesk({
             <div className="desk-button-matrix">
               {[
                 { name: 'OVERVIEW', section: 'hero' },
-                { name: 'SENSOR ARRAY', section: 'section-telemetry' },
+                { name: 'SENSOR ARRAY', section: 'section-analytics' },
                 { name: 'EDGE NODE', section: 'section-nodes' },
                 { name: 'COMMUNICATION', section: 'section-system' },
                 { name: 'AI ENGINE', section: 'section-ml' },
