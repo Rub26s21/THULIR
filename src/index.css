@@ -727,8 +727,8 @@ img, svg { display: block; }
 }
 
 .command-search {
-  flex: 1;
-  max-width: 480px;
+  flex: 0 1 380px;
+  min-width: 260px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -740,7 +740,15 @@ img, svg { display: block; }
   font-size: 0.82rem;
   color: var(--text-muted);
   cursor: text;
+  white-space: nowrap;
+  overflow: hidden;
   transition: all 0.2s ease;
+}
+
+.command-search span:first-of-type {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .command-search:hover {
@@ -868,88 +876,7 @@ img, svg { display: block; }
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-/* ── Command Bar Actionable Telemetry & SOC Badges ── */
-.cmd-threat-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 9999px;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  cursor: default;
-}
 
-.cmd-threat-badge.nominal {
-  background: var(--bg-well);
-  border: 1px solid var(--border-well);
-  color: var(--text-secondary);
-}
-
-.cmd-threat-badge.warning {
-  background: rgba(225, 29, 72, 0.12);
-  border: 1px solid rgba(225, 29, 72, 0.35);
-  color: #E11D48;
-  cursor: pointer;
-}
-
-.cmd-threat-badge.warning:hover {
-  background: rgba(225, 29, 72, 0.18);
-  transform: translateY(-1px);
-}
-
-.cmd-threat-badge.warning.pulse {
-  animation: threat-pulse 2s infinite ease-in-out;
-}
-
-@keyframes threat-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); }
-  50% { box-shadow: 0 0 0 6px rgba(225, 29, 72, 0); }
-}
-
-.cmd-metric-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-secondary);
-  font-weight: 700;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-}
-
-.sampling-pulse-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #059669;
-  box-shadow: 0 0 6px rgba(5, 150, 105, 0.5);
-  animation: sampling-pulse 1.5s infinite ease-in-out;
-}
-
-@keyframes sampling-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
-}
-
-.cmd-clock-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.soc-clock-text {
-  color: var(--text-secondary);
-  font-weight: 600;
-}
 
 /* ── Page Content Area ── */
 .page-content {

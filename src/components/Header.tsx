@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import {
   LayoutDashboard, Layers, BarChart2, Brain, Bell,
   Network, Map, Settings, Play, Pause, Wifi, WifiOff, Radio, Menu,
-  Sun, Moon, ShieldCheck, AlertTriangle, Clock, Activity
+  Sun, Moon
 } from 'lucide-react';
 import { formatTimeAgo } from '../utils/timeUtils';
 import type { ConnectionType, FreshnessState } from '../types';
@@ -233,22 +233,9 @@ export function CommandBar({
   onToggleDemo,
   mode,
   onSelectMode,
-  alertCount = 0,
   onToggleSidebar,
 }: CommandBarProps) {
   const formattedTime = lastTimestamp ? formatTimeAgo(lastTimestamp) : 'No data';
-  const [clockStr, setClockStr] = useState(() => {
-    const d = new Date();
-    return `${d.toTimeString().split(' ')[0]} IST · SHIFT 1`;
-  });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const d = new Date();
-      setClockStr(`${d.toTimeString().split(' ')[0]} IST · SHIFT 1`);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <header className="command-bar" role="banner">
@@ -306,13 +293,6 @@ export function CommandBar({
           </span>
         </div>
 
-        {/* 50Hz Hardware Sampling Metric */}
-        <div className="skeuo-pill cmd-metric-pill" title="Hardware sensor bus matrix sampling rate">
-          <Activity size={12} strokeWidth={2.2} />
-          <span className="sampling-pulse-dot" />
-          <span>50Hz FFT</span>
-        </div>
-
         {/* Demo Toggle */}
         <button
           className={`btn-tactile ${demoMode ? 'active-demo' : ''}`}
@@ -343,33 +323,6 @@ export function CommandBar({
             </>
           )}
         </button>
-
-        {/* Actionable Threat Status Indicator */}
-        {alertCount > 0 ? (
-          <button
-            className="cmd-threat-badge warning pulse"
-            onClick={() => {
-              const alertEl = document.getElementById('section-alerts');
-              if (alertEl) alertEl.scrollIntoView({ behavior: 'smooth' });
-            }}
-            title={`${alertCount} active alerts. Click to view alert panel.`}
-            aria-label={`${alertCount} active alerts`}
-          >
-            <AlertTriangle size={13} strokeWidth={2.4} />
-            <span>{alertCount} THREAT{alertCount > 1 ? 'S' : ''} ACTIVE</span>
-          </button>
-        ) : (
-          <div className="cmd-threat-badge nominal" title="All mine sensor channels nominal">
-            <ShieldCheck size={13} strokeWidth={2.4} />
-            <span>0 THREATS · SECURE</span>
-          </div>
-        )}
-
-        {/* Live Synchronized Shift Clock */}
-        <div className="skeuo-pill cmd-clock-pill" title="Live synchronized SOC shift timestamp">
-          <Clock size={12} strokeWidth={2.2} />
-          <span className="soc-clock-text">{clockStr}</span>
-        </div>
       </div>
     </header>
   );
