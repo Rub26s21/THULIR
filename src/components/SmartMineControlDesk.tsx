@@ -62,9 +62,6 @@ export function SmartMineControlDesk({
     server: true,
   });
 
-  const handleScrollDown = () => {
-    window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
-  };
 
   // Fallback / default values if data is null (e.g. initial load)
   const gasPpm = data?.gas_raw ?? 403;
@@ -116,50 +113,22 @@ export function SmartMineControlDesk({
 
   return (
     <div className="desk-workbench">
-      {/* ── Glassmorphic Sky-Blue Header Control Bar (Symmetrical & Centered) ── */}
-      <div className="desk-header-title">
-        <div className="desk-header-left">
-          <div className="desk-header-badge">
-            <span className="desk-header-pulse-dot" />
-            <span>ESP32 DUAL CORE · 4G LTE-M · NEURAL LIVE</span>
+      {/* ── Sky-Blue Running Problem Statement Marquee Bar ── */}
+      <div className="desk-header-title desk-marquee-bar">
+        <div className="desk-marquee-track">
+          <div className="desk-marquee-content">
+            <span className="marquee-problem-text">
+              Problem Statement ID: 26025 — Development of an AI-enabled Low Cost Real Time Mine Subsidence Monitoring, Prediction and Early Warning System for Underground Coal Mines in India
+            </span>
+            <span className="marquee-separator">•</span>
           </div>
-        </div>
-
-        <div className="desk-header-center desk-marquee-wrapper">
-          <div className="desk-marquee-track">
-            <div className="desk-marquee-content">
-              <span className="marquee-id-badge">PROBLEM STATEMENT ID: 26025</span>
-              <span className="marquee-separator">✦</span>
-              <span className="marquee-title-text">
-                Development of an AI-enabled Low Cost Real Time Mine Subsidence Monitoring, Prediction and Early Warning System for Underground Coal Mines in India
-              </span>
-              <span className="marquee-separator">✦</span>
-              <span className="marquee-system-tag">THULIR AI SMART MINE SAFETY</span>
-              <span className="marquee-separator">✦</span>
-            </div>
-            {/* Seamless 100% infinite loop clone */}
-            <div className="desk-marquee-content" aria-hidden="true">
-              <span className="marquee-id-badge">PROBLEM STATEMENT ID: 26025</span>
-              <span className="marquee-separator">✦</span>
-              <span className="marquee-title-text">
-                Development of an AI-enabled Low Cost Real Time Mine Subsidence Monitoring, Prediction and Early Warning System for Underground Coal Mines in India
-              </span>
-              <span className="marquee-separator">✦</span>
-              <span className="marquee-system-tag">THULIR AI SMART MINE SAFETY</span>
-              <span className="marquee-separator">✦</span>
-            </div>
+          {/* Seamless 100% infinite loop clone */}
+          <div className="desk-marquee-content" aria-hidden="true">
+            <span className="marquee-problem-text">
+              Problem Statement ID: 26025 — Development of an AI-enabled Low Cost Real Time Mine Subsidence Monitoring, Prediction and Early Warning System for Underground Coal Mines in India
+            </span>
+            <span className="marquee-separator">•</span>
           </div>
-        </div>
-
-        <div className="desk-header-right">
-          <button
-            className="desk-header-scroll-btn"
-            onClick={handleScrollDown}
-            title="Scroll down to deep telemetry & multi-node analytics"
-          >
-            <span>Deep Analytics</span>
-            <span className="scroll-arrow">↓</span>
-          </button>
         </div>
       </div>
 
