@@ -13,42 +13,56 @@ import type { ConnectionType, FreshnessState } from '../types';
 import type { VisualTheme, ColorMode } from '../hooks/useTheme';
 import { ThemeSelector } from './ThemeSelector';
 
-const NAV_ITEMS = [
-  { id: 'section-overview',  label: 'Overview',      icon: LayoutDashboard },
-  { id: 'section-apod',      label: 'A-POD Fusion',  icon: Layers },
-  { id: 'section-analytics', label: 'Analytics',     icon: BarChart2 },
-  { id: 'section-ml',        label: 'AI / ML',       icon: Brain },
-  { id: 'section-alerts',    label: 'Alerts',        icon: Bell },
-  { id: 'section-system',    label: 'Network',       icon: Network },
-  { id: 'maps',              label: 'Maps',          icon: Map },
-  { id: 'system-settings',   label: 'System',        icon: Settings },
+const NAV_GROUPS = [
+  {
+    title: 'CORE INTELLIGENCE',
+    items: [
+      { id: 'section-overview',  label: 'Overview',      icon: LayoutDashboard, tag: null },
+      { id: 'section-apod',      label: 'A-POD Fusion',  icon: Layers, tag: 'FUSION' },
+      { id: 'section-analytics', label: 'Analytics',     icon: BarChart2, tag: null },
+      { id: 'section-ml',        label: 'AI / ML',       icon: Brain, tag: 'ML' },
+    ],
+  },
+  {
+    title: 'OPERATIONS & SENSORS',
+    items: [
+      { id: 'section-alerts',    label: 'Alerts',        icon: Bell, isAlerts: true },
+      { id: 'section-system',    label: 'Network',       icon: Network, tag: null },
+      { id: 'maps',              label: 'Maps',          icon: Map, tag: 'GPS' },
+      { id: 'system-settings',   label: 'System',        icon: Settings, tag: null },
+    ],
+  },
 ];
 
-// Neural-Leaf Logo SVG
+// Neural-Leaf Logo SVG with 3D lighting
 export function NeuralLeafLogo({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 36 36" fill="none" aria-hidden="true">
-      <path
-        d="M18 3C18 3 7 8 5.5 18C4 28 13 33 18 33C23 33 32 28 30.5 18C29 8 18 3 18 3Z"
-        fill="url(#leaf-gradient)"
-        opacity="0.95"
-      />
       <defs>
         <linearGradient id="leaf-gradient" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#10B981" />
           <stop offset="50%" stopColor="#0F6B57" />
           <stop offset="100%" stopColor="#087EA4" />
         </linearGradient>
+        <filter id="leaf-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#10B981" floodOpacity="0.4" />
+        </filter>
       </defs>
-      <path d="M18 8 L18 30" stroke="white" strokeWidth="1" strokeOpacity="0.6" />
-      <path d="M18 16 C13.5 16 9.5 14.5 8 11" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
-      <path d="M18 20 C13.5 20 10 22 8.5 25" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
-      <path d="M18 16 C22.5 16 26.5 14.5 28 11" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
-      <path d="M18 20 C22.5 20 26 22 27.5 25" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
-      <circle cx="18" cy="16" r="2" fill="#34D399" />
-      <circle cx="18" cy="20" r="1.6" fill="#38BDF8" />
-      <circle cx="13" cy="16" r="1.3" fill="#A78BFA" />
-      <circle cx="23" cy="16" r="1.3" fill="#F43F5E" />
+      <path
+        d="M18 3C18 3 7 8 5.5 18C4 28 13 33 18 33C23 33 32 28 30.5 18C29 8 18 3 18 3Z"
+        fill="url(#leaf-gradient)"
+        filter="url(#leaf-glow)"
+        opacity="0.95"
+      />
+      <path d="M18 8 L18 30" stroke="white" strokeWidth="1.2" strokeOpacity="0.8" />
+      <path d="M18 16 C13.5 16 9.5 14.5 8 11" stroke="white" strokeWidth="0.9" strokeOpacity="0.6" />
+      <path d="M18 20 C13.5 20 10 22 8.5 25" stroke="white" strokeWidth="0.9" strokeOpacity="0.6" />
+      <path d="M18 16 C22.5 16 26.5 14.5 28 11" stroke="white" strokeWidth="0.9" strokeOpacity="0.6" />
+      <path d="M18 20 C22.5 20 26 22 27.5 25" stroke="white" strokeWidth="0.9" strokeOpacity="0.6" />
+      <circle cx="18" cy="16" r="2.2" fill="#34D399" />
+      <circle cx="18" cy="20" r="1.8" fill="#38BDF8" />
+      <circle cx="13" cy="16" r="1.4" fill="#A78BFA" />
+      <circle cx="23" cy="16" r="1.4" fill="#F43F5E" />
     </svg>
   );
 }
@@ -74,14 +88,16 @@ export function Sidebar({
   useEffect(() => {
     const handleScroll = () => {
       const scrollPos = window.scrollY + 200;
-      for (const item of NAV_ITEMS) {
-        const el = document.getElementById(item.id);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) {
-            setActiveSection(item.id);
-            break;
+      for (const group of NAV_GROUPS) {
+        for (const item of group.items) {
+          const el = document.getElementById(item.id);
+          if (el) {
+            const top = el.offsetTop;
+            const height = el.offsetHeight;
+            if (scrollPos >= top && scrollPos < top + height) {
+              setActiveSection(item.id);
+              return;
+            }
           }
         }
       }
@@ -104,86 +120,110 @@ export function Sidebar({
       className={`ai-sidebar ${sidebarOpen ? 'open' : ''}`}
       aria-label="Primary navigation"
     >
-      {/* Brand */}
+      {/* 3D Illuminated Brand Bezel */}
       <div className="sidebar-brand">
         <div className="sidebar-logo">
-          <NeuralLeafLogo size={38} />
-          <div className="sidebar-brand-name">
-            THULIR <span className="gradient-text-vibrant">AI</span>
+          <div className="sidebar-logo-orb">
+            <NeuralLeafLogo size={34} />
+          </div>
+          <div className="sidebar-brand-text">
+            <div className="sidebar-brand-name">
+              THULIR <span className="gradient-text-vibrant">AI</span>
+            </div>
+            <div className="sidebar-brand-status">
+              <span className="sidebar-pulse-dot" />
+              <span>MINE SAFETY NET</span>
+            </div>
           </div>
         </div>
-        <div className="sidebar-brand-sub">Intelligent Mine Safety</div>
       </div>
 
-      {/* Navigation Items */}
+      {/* Navigation Group Sections */}
       <div className="sidebar-nav">
-        <div className="sidebar-section-label">Navigation</div>
-        {NAV_ITEMS.map((item) => {
-          const Icon = item.icon;
-          const isAlerts = item.id === 'section-alerts';
-          return (
-            <button
-              key={item.id}
-              className={`sidebar-nav-btn ${activeSection === item.id ? 'active' : ''}`}
-              onClick={() => scrollToSection(item.id)}
-              aria-current={activeSection === item.id ? 'page' : undefined}
-            >
-              <Icon size={17} strokeWidth={1.75} />
-              <span>{item.label}</span>
-              {isAlerts && alertCount > 0 && (
-                <span className="sidebar-badge">{alertCount}</span>
-              )}
-            </button>
-          );
-        })}
+        {NAV_GROUPS.map((group) => (
+          <div key={group.title} className="sidebar-group-block">
+            <div className="sidebar-section-label">
+              <span>{group.title}</span>
+              <div className="sidebar-label-line" />
+            </div>
+
+            <div className="sidebar-btn-stack">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeSection === item.id;
+                const isAlerts = item.isAlerts;
+
+                return (
+                  <button
+                    key={item.id}
+                    className={`sidebar-nav-btn ${isActive ? 'active' : ''}`}
+                    onClick={() => scrollToSection(item.id)}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <div className="nav-btn-indicator" />
+                    <div className="nav-btn-icon-wrapper">
+                      <Icon size={16} strokeWidth={isActive ? 2.2 : 1.8} />
+                    </div>
+                    <span className="nav-btn-label">{item.label}</span>
+
+                    {/* Alert notification count or micro badge */}
+                    {isAlerts && alertCount > 0 ? (
+                      <span className="sidebar-badge-pulse">{alertCount}</span>
+                    ) : item.tag ? (
+                      <span className="sidebar-micro-tag">{item.tag}</span>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Theme Mode Quick Toggle in Sidebar */}
-      <div style={{ padding: '0 12px 14px' }}>
-        <div className="sidebar-mode-toggle">
+      {/* Tactile Dual-Chamber Theme Switcher */}
+      <div className="sidebar-theme-wrapper">
+        <div className="sidebar-theme-switch-tray">
+          <div
+            className="sidebar-theme-slider-thumb"
+            style={{
+              transform: mode === 'dark' ? 'translateX(100%)' : 'translateX(0%)',
+            }}
+          />
           <button
-            className={`sidebar-mode-btn ${mode === 'light' ? 'active' : ''}`}
+            className={`sidebar-theme-pill-btn ${mode === 'light' ? 'is-active' : ''}`}
             onClick={() => onSelectMode('light')}
-            title="Switch to Light Theme"
+            title="Switch to Light Appearance"
           >
-            <Sun size={13} />
+            <Sun size={13} className="theme-pill-icon" />
             <span>Light</span>
           </button>
           <button
-            className={`sidebar-mode-btn ${mode === 'dark' ? 'active' : ''}`}
+            className={`sidebar-theme-pill-btn ${mode === 'dark' ? 'is-active' : ''}`}
             onClick={() => onSelectMode('dark')}
-            title="Switch to Dark Theme"
+            title="Switch to Dark Appearance"
           >
-            <Moon size={13} />
+            <Moon size={13} className="theme-pill-icon" />
             <span>Dark</span>
           </button>
         </div>
       </div>
 
-      {/* Bottom tagline & botanical motif */}
+      {/* 3D Recessed Botanical Mission Footprint */}
       <div className="sidebar-bottom">
-        <div className="sidebar-tagline">
-          <strong>Safer Mines</strong>
-          Smarter Decisions.<br />
-          A Greener Tomorrow.
+        <div className="sidebar-mission-card">
+          <div className="mission-title-row">
+            <span className="mission-highlight">SAFER MINES</span>
+            <span className="mission-badge">ACTIVE</span>
+          </div>
+          <p className="mission-desc">
+            Smarter Decisions.<br />
+            A Greener Tomorrow.
+          </p>
+          <div className="mission-meta-strip">
+            <span className="meta-dot" />
+            <span>24/7 AI TELEMETRY</span>
+          </div>
         </div>
-        {/* Tiny neural-leaf motif */}
-        <svg
-          className="sidebar-leaf-motif"
-          width="60"
-          height="40"
-          viewBox="0 0 60 40"
-          fill="none"
-        >
-          <path
-            d="M30 5 C30 5 12 12 10 25 C8 38 20 42 30 42 C40 42 52 38 50 25 C48 12 30 5 30 5Z"
-            fill="var(--brand-green)"
-            opacity="0.6"
-          />
-          <path d="M30 10 L30 38" stroke="white" strokeWidth="0.8" strokeOpacity="0.5" />
-          <path d="M30 22 C22 22 16 20 13 16" stroke="white" strokeWidth="0.6" strokeOpacity="0.4" />
-          <path d="M30 22 C38 22 44 20 47 16" stroke="white" strokeWidth="0.6" strokeOpacity="0.4" />
-        </svg>
       </div>
     </nav>
   );
