@@ -27,7 +27,7 @@ import { useAPOD } from '../hooks/useAPOD.ts';
 import { evaluateRisk } from '../utils/riskEngine';
 import { runMLInference } from '../utils/mlEngine';
 import { isSupabaseConfigured } from '../lib/supabase';
-import { Activity, Brain, Network, AlertCircle, Info, Sparkles, ArrowUpRight } from 'lucide-react';
+import { Brain, Network, AlertCircle, Info } from 'lucide-react';
 
 // Scroll-reveal hook
 function useRevealObserver() {
@@ -46,19 +46,6 @@ function useRevealObserver() {
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   });
-}
-
-// Hero floating stat card
-function HeroStatCard({
-  label, value, sub, color, glowColor
-}: { label: string; value: string; sub?: string; color?: string; glowColor?: string }) {
-  return (
-    <div className="hero-stat-card" style={{ borderColor: glowColor ? `${glowColor}40` : undefined }}>
-      <div className="hero-stat-label">{label}</div>
-      <div className="hero-stat-value" style={{ color: color || 'var(--text-primary)' }}>{value}</div>
-      {sub && <div style={{ fontSize: '0.62rem', color: 'var(--text-dim)', marginTop: 3 }}>{sub}</div>}
-    </div>
-  );
 }
 
 export function Dashboard() {
@@ -102,12 +89,6 @@ export function Dashboard() {
 
   // Activate interactive specular mouse shining on all cards
   useMouseShine();
-
-  // Derive live hero stats
-  const riskColor =
-    risk.level === 'CRITICAL' ? 'var(--status-critical)' :
-    risk.level === 'WATCH'    ? 'var(--status-watch)' :
-    'var(--status-normal)';
 
   return (
     <>
@@ -205,104 +186,7 @@ export function Dashboard() {
 
               {/* Detailed Mission Control Content */}
               <div className="desk-detailed-content-wrapper">
-                {/* ── HERO SECTION ── */}
-                <div className="hero-section reveal" id="hero">
-              <div className="hero-content">
-                <div className="hero-eyebrow">
-                  <span className="hero-live-dot" />
-                  THULIR AI · Mine Safety Intelligence Platform
-                </div>
-                <h1 className="hero-headline">
-                  Safer Mines.<br />
-                  <span className="hero-gradient-word">Smarter</span> Decisions.
-                </h1>
-                <p className="hero-subline">
-                  AI-powered subsidence early warning platform for subsurface coal mines.
-                  Real-time ESP8266 multi-sensor fusion with Random Forest risk intelligence —
-                  analyzed every 5 seconds.
-                </p>
-                <div className="hero-cta-group">
-                  <button className="btn-primary" onClick={() => {
-                    document.getElementById('section-analytics')?.scrollIntoView({ behavior: 'smooth' });
-                  }}>
-                    <Activity size={15} />
-                    <span>View Live Telemetry Trends</span>
-                    <ArrowUpRight size={14} style={{ opacity: 0.8 }} />
-                  </button>
-                  <button className="btn-secondary" onClick={() => {
-                    document.getElementById('section-ml')?.scrollIntoView({ behavior: 'smooth' });
-                  }}>
-                    <Brain size={15} />
-                    <span>AI Model Analysis</span>
-                  </button>
-                  <button className="btn-vibrant-outline" onClick={() => {
-                    document.getElementById('section-overview')?.scrollIntoView({ behavior: 'smooth' });
-                  }}>
-                    <Sparkles size={14} />
-                    <span>Live Health</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Floating hero stat cards */}
-              <div className="hero-visual-area">
-                <HeroStatCard
-                  label="Risk Level"
-                  value={risk.level}
-                  sub={`Score: ${risk.score}/100 · ${risk.source}`}
-                  color={riskColor}
-                  glowColor={riskColor}
-                />
-                <HeroStatCard
-                  label="Active Node"
-                  value={selectedNodeId}
-                  sub={isTelemetryFresh ? 'Online & Streaming' : 'Awaiting Packets'}
-                  color={isTelemetryFresh ? 'var(--status-normal)' : 'var(--status-watch)'}
-                  glowColor="var(--status-normal)"
-                />
-                <HeroStatCard
-                  label="Active Alerts"
-                  value={String(activeAlertCount)}
-                  sub={activeAlertCount === 0 ? 'All zones nominal' : `${activeAlertCount} hazard warnings`}
-                  color={activeAlertCount > 0 ? 'var(--status-critical)' : 'var(--status-normal)'}
-                  glowColor={activeAlertCount > 0 ? 'var(--status-critical)' : undefined}
-                />
-                <HeroStatCard
-                  label="AI Inference"
-                  value={mlPrediction ? mlPrediction.prediction.replace('_', ' ') : 'Awaiting'}
-                  sub={mlPrediction ? `${(mlPrediction.confidence * 100).toFixed(0)}% confidence` : '—'}
-                  color="var(--brand-purple)"
-                  glowColor="var(--brand-purple)"
-                />
-              </div>
-
-              {/* Mine landscape background SVG */}
-              <svg
-                className="hero-landscape"
-                viewBox="0 0 600 380"
-                preserveAspectRatio="xMaxYMax slice"
-                aria-hidden="true"
-              >
-                <defs>
-                  <linearGradient id="sky-grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--brand-green)" stopOpacity="0.08" />
-                    <stop offset="100%" stopColor="var(--brand-blue)" stopOpacity="0.22" />
-                  </linearGradient>
-                </defs>
-                {/* Mountain silhouette */}
-                <path d="M0 380 L80 200 L150 280 L230 140 L310 260 L380 100 L460 230 L530 180 L600 260 L600 380 Z"
-                  fill="url(#sky-grad)" />
-                {/* Strata lines */}
-                <path d="M0 310 Q150 295 300 308 T600 300 L600 320 Q450 312 300 324 T0 330 Z"
-                  fill="var(--brand-green)" opacity="0.1" />
-                <path d="M0 335 Q150 322 300 335 T600 328 L600 345 Q450 338 300 348 T0 350 Z"
-                  fill="var(--brand-blue)" opacity="0.08" />
-                <path d="M0 358 Q150 348 300 358 T600 352 L600 368 Q450 360 300 370 T0 370 Z"
-                  fill="var(--brand-green)" opacity="0.06" />
-              </svg>
-            </div>
-
-            {/* ── Awaiting Banner ── */}
+                {/* ── Awaiting Banner ── */}
             {!latestData && !demoMode && (
               <div style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
