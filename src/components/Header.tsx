@@ -34,36 +34,21 @@ const NAV_GROUPS = [
   },
 ];
 
-// Neural-Leaf Logo SVG with 3D lighting
-export function NeuralLeafLogo({ size = 32 }: { size?: number }) {
+// Neural-Leaf / THULIR AI Logo Image
+export function NeuralLeafLogo({ size = 34 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 36 36" fill="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="leaf-gradient" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#10B981" />
-          <stop offset="50%" stopColor="#0F6B57" />
-          <stop offset="100%" stopColor="#087EA4" />
-        </linearGradient>
-        <filter id="leaf-glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#10B981" floodOpacity="0.4" />
-        </filter>
-      </defs>
-      <path
-        d="M18 3C18 3 7 8 5.5 18C4 28 13 33 18 33C23 33 32 28 30.5 18C29 8 18 3 18 3Z"
-        fill="url(#leaf-gradient)"
-        filter="url(#leaf-glow)"
-        opacity="0.95"
-      />
-      <path d="M18 8 L18 30" stroke="white" strokeWidth="1.2" strokeOpacity="0.8" />
-      <path d="M18 16 C13.5 16 9.5 14.5 8 11" stroke="white" strokeWidth="0.9" strokeOpacity="0.6" />
-      <path d="M18 20 C13.5 20 10 22 8.5 25" stroke="white" strokeWidth="0.9" strokeOpacity="0.6" />
-      <path d="M18 16 C22.5 16 26.5 14.5 28 11" stroke="white" strokeWidth="0.9" strokeOpacity="0.6" />
-      <path d="M18 20 C22.5 20 26 22 27.5 25" stroke="white" strokeWidth="0.9" strokeOpacity="0.6" />
-      <circle cx="18" cy="16" r="2.2" fill="#34D399" />
-      <circle cx="18" cy="20" r="1.8" fill="#38BDF8" />
-      <circle cx="13" cy="16" r="1.4" fill="#A78BFA" />
-      <circle cx="23" cy="16" r="1.4" fill="#F43F5E" />
-    </svg>
+    <img
+      src="/logo.png"
+      alt="THULIR AI Logo"
+      width={size}
+      height={size}
+      style={{
+        objectFit: 'contain',
+        borderRadius: '8px',
+        filter: 'drop-shadow(0 2px 6px rgba(16, 185, 129, 0.35))',
+        transition: 'transform 0.25s ease',
+      }}
+    />
   );
 }
 
