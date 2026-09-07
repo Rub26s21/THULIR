@@ -17,6 +17,7 @@ export interface ReliabilityFactors {
   dataFreshness: number;    // D_i in [0, 1]
   freshnessState?: APODFreshnessState;
   isOnline?: boolean;
+  nodeState?: 'REAL' | 'UNKNOWN' | 'OFFLINE' | 'STALE';
 }
 
 /**
@@ -44,10 +45,15 @@ export function getFreshnessFactor(
  * Q_i = H_i * C_i * D_i in [0, 1]
  *
  * Rules:
+ * - If nodeState is not 'REAL' (e.g. UNKNOWN, OFFLINE, STALE), Q_i is strictly 0.0.
  * - If isOnline is false or state is OFFLINE, Q_i is strictly 0.0.
  * - H_i, C_i, and D_i are clamped to [0, 1].
  */
 export function calculateNodeReliability(factors: ReliabilityFactors): number {
+  if (factors.nodeState && factors.nodeState !== 'REAL') {
+    return 0.0;
+  }
+
   const isOnline = factors.isOnline !== undefined ? factors.isOnline : factors.freshnessState !== 'OFFLINE';
 
   if (!isOnline || factors.freshnessState === 'OFFLINE') {

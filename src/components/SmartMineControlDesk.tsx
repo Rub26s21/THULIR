@@ -63,17 +63,19 @@ export function SmartMineControlDesk({
   });
 
 
-  // Fallback / default values if data is null (e.g. initial load)
-  const gasPpm = data?.gas_raw ?? 403;
-  const vibrationG = data?.vib_rms ?? 0.82;
-  const distanceCm = data?.distance_cm ?? 38;
-  const tempC = data?.temperature ?? 31.4;
-  const humidityRh = data?.humidity ?? 68;
-  const tiltX = data?.tilt_x ?? 2.4;
-  const batteryPct = 87;
-  const riskScore = risk.score ?? 75;
-  const riskLevel = risk.level ?? 'CRITICAL';
-  const confidencePct = mlPrediction ? Math.round(mlPrediction.confidence * 100) : 94.8;
+  const hasTelemetry = Boolean(data) || demoMode;
+
+  // Genuine live values or demo simulation (null when waiting for real sensor data)
+  const gasPpm = data?.gas_raw ?? (demoMode ? 403 : null);
+  const vibrationG = data?.vib_rms ?? (demoMode ? 0.82 : null);
+  const distanceCm = data?.distance_cm ?? (demoMode ? 38 : null);
+  const tempC = data?.temperature ?? (demoMode ? 31.4 : null);
+  const humidityRh = data?.humidity ?? (demoMode ? 68 : null);
+  const tiltX = data?.tilt_x ?? (demoMode ? 2.4 : null);
+  const batteryPct = hasTelemetry ? 94 : null;
+  const riskScore = hasTelemetry ? risk.score : null;
+  const riskLevel = hasTelemetry ? risk.level : 'UNKNOWN';
+  const confidencePct = mlPrediction ? Math.round(mlPrediction.confidence * 100) : (demoMode ? 94.8 : null);
 
   const handleButtonClick = (name: string, sectionId?: string) => {
     playHapticClick(650, 0.04);
@@ -88,8 +90,9 @@ export function SmartMineControlDesk({
     setToggles(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Dial angle calculations (needle sweep from -120deg to +120deg)
-  const calcAngle = (val: number, min: number, max: number) => {
+  // Dial angle calculations (needle sweep from -120deg to +120deg, resting at -120deg if null)
+  const calcAngle = (val: number | null, min: number, max: number) => {
+    if (val === null || !Number.isFinite(val)) return -120;
     const clamped = Math.max(min, Math.min(max, val));
     const ratio = (clamped - min) / (max - min);
     return -120 + ratio * 240;
@@ -102,14 +105,16 @@ export function SmartMineControlDesk({
   const humidAngle = calcAngle(humidityRh, 0, 100);
   const battAngle = calcAngle(batteryPct, 0, 100);
 
-  // Safety risk rotary dial angle (0 to 100 maps to -135deg to +135deg)
-  const riskKnobAngle = -135 + (Math.max(0, Math.min(100, riskScore)) / 100) * 270;
+  // Safety risk rotary dial angle (0 to 100 maps to -135deg to +135deg, resting at -135deg if null)
+  const riskKnobAngle = riskScore !== null
+    ? -135 + (Math.max(0, Math.min(100, riskScore)) / 100) * 270
+    : -135;
 
   // Warning annunciator state
-  const isGasWarning = gasPpm > 450 || alerts.some(a => a.sensor.toLowerCase().includes('gas'));
-  const isVibWarning = vibrationG > 1.0 || alerts.some(a => a.sensor.toLowerCase().includes('vib'));
-  const isDistWarning = distanceCm < 25 || alerts.some(a => a.sensor.toLowerCase().includes('dist'));
-  const isNormalTelemetry = !isGasWarning && !isVibWarning && !isDistWarning;
+  const isGasWarning = gasPpm !== null && (gasPpm > 450 || alerts.some(a => a.sensor.toLowerCase().includes('gas')));
+  const isVibWarning = vibrationG !== null && (vibrationG > 1.0 || alerts.some(a => a.sensor.toLowerCase().includes('vib')));
+  const isDistWarning = distanceCm !== null && (distanceCm < 25 || alerts.some(a => a.sensor.toLowerCase().includes('dist')));
+  const isNormalTelemetry = hasTelemetry && !isGasWarning && !isVibWarning && !isDistWarning;
 
   return (
     <div className="desk-workbench">
@@ -216,12 +221,12 @@ export function SmartMineControlDesk({
 
               {/* Inner Tactile Dial Core */}
               <div className="desk-rotary-inner-core">
-                <span className="desk-risk-score-digit">{riskScore}</span>
+                <span className="desk-risk-score-digit">{riskScore !== null ? riskScore : '---'}</span>
               </div>
             </div>
 
-            <div className={`desk-risk-level-badge ${riskLevel.toLowerCase()}`}>
-              {riskLevel}
+            <div className={`desk-risk-level-badge ${(riskLevel || 'UNKNOWN').toLowerCase()}`}>
+              {riskLevel || 'UNKNOWN'}
             </div>
           </div>
         </div>
@@ -315,11 +320,11 @@ export function SmartMineControlDesk({
                 <div className="desk-module-readout">
                   <div className="readout-primary">
                     <span className="readout-title">TILT</span>
-                    <span className="desk-readout-val">{tiltX.toFixed(1)}°</span>
+                    <span className="desk-readout-val">{tiltX !== null ? `${tiltX.toFixed(1)}°` : '---'}</span>
                   </div>
                   <div className="readout-sub-row">
-                    <span className="readout-meta">PITCH 1.2°</span>
-                    <span className="desk-mini-badge normal">NORMAL</span>
+                    <span className="readout-meta">{tiltX !== null ? 'PITCH 1.2°' : 'NO TELEMETRY'}</span>
+                    <span className={`desk-mini-badge ${hasTelemetry ? 'normal' : 'inactive'}`}>{hasTelemetry ? 'NORMAL' : 'WAITING'}</span>
                   </div>
                 </div>
               </div>
@@ -330,7 +335,7 @@ export function SmartMineControlDesk({
               <div className="desk-module-header">
                 <span className="mod-corner-hole" />
                 <span className="desk-module-label">ADXL-345 · SEISMIC</span>
-                <span className={`mod-pwr-led ${isVibWarning ? 'amber flash' : 'green'}`} />
+                <span className={`mod-pwr-led ${isVibWarning ? 'amber flash' : hasTelemetry ? 'green' : 'inactive'}`} />
               </div>
               <div className="desk-module-body adxl345-body">
                 <div className="desk-smd-chip adxl-chip">
@@ -340,16 +345,16 @@ export function SmartMineControlDesk({
                 <div className="desk-module-readout">
                   <div className="readout-primary">
                     <span className="readout-title">VIB</span>
-                    <span className="desk-readout-val">{vibrationG.toFixed(2)} g</span>
+                    <span className="desk-readout-val">{vibrationG !== null ? `${vibrationG.toFixed(2)} g` : '---'}</span>
                   </div>
                   <div className="readout-sub-row">
                     <div className="desk-smd-led-row">
-                      <span className="smd-led active-green" />
-                      <span className={`smd-led ${vibrationG > 1.0 ? 'active-amber' : ''}`} />
-                      <span className={`smd-led ${vibrationG > 2.0 ? 'active-red' : ''}`} />
+                      <span className={`smd-led ${hasTelemetry ? 'active-green' : ''}`} />
+                      <span className={`smd-led ${vibrationG !== null && vibrationG > 1.0 ? 'active-amber' : ''}`} />
+                      <span className={`smd-led ${vibrationG !== null && vibrationG > 2.0 ? 'active-red' : ''}`} />
                     </div>
-                    <span className={`desk-mini-badge ${isVibWarning ? 'warning' : 'normal'}`}>
-                      {isVibWarning ? 'WARNING' : 'NORMAL'}
+                    <span className={`desk-mini-badge ${isVibWarning ? 'warning' : hasTelemetry ? 'normal' : 'inactive'}`}>
+                      {isVibWarning ? 'WARNING' : hasTelemetry ? 'NORMAL' : 'WAITING'}
                     </span>
                   </div>
                 </div>
@@ -361,7 +366,7 @@ export function SmartMineControlDesk({
               <div className="desk-module-header">
                 <span className="mod-corner-hole" />
                 <span className="desk-module-label">MQ-2 · GAS & SMOKE</span>
-                <span className={`mod-pwr-led ${isGasWarning ? 'red flash' : 'green'}`} />
+                <span className={`mod-pwr-led ${isGasWarning ? 'red flash' : hasTelemetry ? 'green' : 'inactive'}`} />
               </div>
               <div className="desk-module-body mq2-body">
                 {/* Realistic 3D Metal Mesh Gas Cylinder with Internal Heating Coil Glow */}
@@ -373,12 +378,12 @@ export function SmartMineControlDesk({
                 <div className="desk-module-readout">
                   <div className="readout-primary">
                     <span className="readout-title">AIR</span>
-                    <span className="desk-readout-val">{gasPpm} ppm</span>
+                    <span className="desk-readout-val">{gasPpm !== null ? `${gasPpm} ppm` : '---'}</span>
                   </div>
                   <div className="readout-sub-row">
                     <span className="readout-meta">CH4 / LPG</span>
-                    <span className={`desk-mini-badge ${gasPpm > 700 ? 'danger' : gasPpm > 400 ? 'warning' : 'normal'}`}>
-                      {gasPpm > 700 ? 'DANGER' : gasPpm > 400 ? 'WARNING' : 'NORMAL'}
+                    <span className={`desk-mini-badge ${gasPpm !== null && gasPpm > 700 ? 'danger' : gasPpm !== null && gasPpm > 400 ? 'warning' : hasTelemetry ? 'normal' : 'inactive'}`}>
+                      {gasPpm !== null && gasPpm > 700 ? 'DANGER' : gasPpm !== null && gasPpm > 400 ? 'WARNING' : hasTelemetry ? 'NORMAL' : 'WAITING'}
                     </span>
                   </div>
                 </div>
@@ -390,7 +395,7 @@ export function SmartMineControlDesk({
               <div className="desk-module-header">
                 <span className="mod-corner-hole" />
                 <span className="desk-module-label">APU6050 · DYNAMICS</span>
-                <span className="mod-pwr-led green" />
+                <span className={`mod-pwr-led ${hasTelemetry ? 'green' : 'inactive'}`} />
               </div>
               <div className="desk-module-body apu6050-body">
                 <div className="desk-smd-chip black-chip">
@@ -400,11 +405,13 @@ export function SmartMineControlDesk({
                 <div className="desk-module-readout">
                   <div className="readout-primary">
                     <span className="readout-title">ACC</span>
-                    <span className="desk-readout-val">{vibrationG.toFixed(2)} g</span>
+                    <span className="desk-readout-val">{vibrationG !== null ? `${vibrationG.toFixed(2)} g` : '---'}</span>
                   </div>
                   <div className="readout-sub-row">
                     <span className="readout-meta">50Hz FFT</span>
-                    <span className="desk-mini-badge warning">WARNING</span>
+                    <span className={`desk-mini-badge ${isVibWarning ? 'warning' : hasTelemetry ? 'normal' : 'inactive'}`}>
+                      {isVibWarning ? 'WARNING' : hasTelemetry ? 'NORMAL' : 'WAITING'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -514,11 +521,11 @@ export function SmartMineControlDesk({
                   <div className="dht22-readout-col">
                     <div className="dht22-val-row">
                       <span className="dht22-icon">🌡️</span>
-                      <span className="dht22-val">{tempC.toFixed(1)}°C</span>
+                      <span className="dht22-val">{tempC !== null ? `${tempC.toFixed(1)}°C` : '---'}</span>
                     </div>
                     <div className="dht22-val-row">
                       <span className="dht22-icon">💧</span>
-                      <span className="dht22-val">{humidityRh.toFixed(0)}% RH</span>
+                      <span className="dht22-val">{humidityRh !== null ? `${humidityRh.toFixed(0)}% RH` : '---'}</span>
                     </div>
                   </div>
                 </div>
@@ -530,7 +537,7 @@ export function SmartMineControlDesk({
               <div className="desk-module-header">
                 <span className="mod-corner-hole" />
                 <span className="desk-module-label">FLEX · STRAIN</span>
-                <span className="mod-pwr-led green" />
+                <span className={`mod-pwr-led ${hasTelemetry ? 'green' : 'inactive'}`} />
               </div>
               <div className="desk-module-body flex-body">
                 <div className="flex-gold-ribbon">
@@ -541,11 +548,11 @@ export function SmartMineControlDesk({
                 <div className="desk-module-readout">
                   <div className="readout-primary">
                     <span className="readout-title">BEND</span>
-                    <span className="desk-readout-val">14.2°</span>
+                    <span className="desk-readout-val">{hasTelemetry ? '14.2°' : '---'}</span>
                   </div>
                   <div className="readout-sub-row">
-                    <span className="readout-meta">24.5 kΩ</span>
-                    <span className="desk-mini-badge normal">NORMAL</span>
+                    <span className="readout-meta">{hasTelemetry ? '24.5 kΩ' : 'NO TELEMETRY'}</span>
+                    <span className={`desk-mini-badge ${hasTelemetry ? 'normal' : 'inactive'}`}>{hasTelemetry ? 'NORMAL' : 'WAITING'}</span>
                   </div>
                 </div>
               </div>
@@ -556,7 +563,7 @@ export function SmartMineControlDesk({
               <div className="desk-module-header">
                 <span className="mod-corner-hole" />
                 <span className="desk-module-label">HC-SR04 · SUBSIDENCE</span>
-                <span className={`mod-pwr-led ${isDistWarning ? 'amber flash' : 'green'}`} />
+                <span className={`mod-pwr-led ${isDistWarning ? 'amber flash' : hasTelemetry ? 'green' : 'inactive'}`} />
               </div>
               <div className="desk-module-body hcsr04-body">
                 <div className="hcsr04-transducers-col">
@@ -572,12 +579,12 @@ export function SmartMineControlDesk({
                 <div className="desk-module-readout">
                   <div className="readout-primary">
                     <span className="readout-title">GAP</span>
-                    <span className="desk-readout-val">{distanceCm.toFixed(1)} cm</span>
+                    <span className="desk-readout-val">{distanceCm !== null ? `${distanceCm.toFixed(1)} cm` : '---'}</span>
                   </div>
                   <div className="readout-sub-row">
                     <span className="readout-meta">ROOF SUBS</span>
-                    <span className={`desk-mini-badge ${isDistWarning ? 'warning' : 'normal'}`}>
-                      {isDistWarning ? 'WARNING' : 'NORMAL'}
+                    <span className={`desk-mini-badge ${isDistWarning ? 'warning' : hasTelemetry ? 'normal' : 'inactive'}`}>
+                      {isDistWarning ? 'WARNING' : hasTelemetry ? 'NORMAL' : 'WAITING'}
                     </span>
                   </div>
                 </div>
@@ -604,7 +611,7 @@ export function SmartMineControlDesk({
               </div>
               <div className="desk-gauge-info">
                 <span className="gauge-name">GAS</span>
-                <span className="gauge-val">{gasPpm} ppm</span>
+                <span className="gauge-val">{gasPpm !== null ? `${gasPpm} ppm` : '---'}</span>
                 <span className="gauge-sub">AIR QUALITY</span>
               </div>
             </div>
@@ -618,7 +625,7 @@ export function SmartMineControlDesk({
               </div>
               <div className="desk-gauge-info">
                 <span className="gauge-name">TEMPERATURE</span>
-                <span className="gauge-val">{tempC.toFixed(1)}°C</span>
+                <span className="gauge-val">{tempC !== null ? `${tempC.toFixed(1)}°C` : '---'}</span>
                 <span className="gauge-sub">AMBIENT THERMAL</span>
               </div>
             </div>
@@ -632,7 +639,7 @@ export function SmartMineControlDesk({
               </div>
               <div className="desk-gauge-info">
                 <span className="gauge-name">VIBRATION</span>
-                <span className="gauge-val">{vibrationG.toFixed(2)} g</span>
+                <span className="gauge-val">{vibrationG !== null ? `${vibrationG.toFixed(2)} g` : '---'}</span>
                 <span className="gauge-sub">SEISMIC RMS</span>
               </div>
             </div>
@@ -646,7 +653,7 @@ export function SmartMineControlDesk({
               </div>
               <div className="desk-gauge-info">
                 <span className="gauge-name">HUMIDITY</span>
-                <span className="gauge-val">{humidityRh}%</span>
+                <span className="gauge-val">{humidityRh !== null ? `${humidityRh}%` : '---'}</span>
                 <span className="gauge-sub">RH LEVEL</span>
               </div>
             </div>
@@ -660,7 +667,7 @@ export function SmartMineControlDesk({
               </div>
               <div className="desk-gauge-info">
                 <span className="gauge-name">DISTANCE</span>
-                <span className="gauge-val">{distanceCm.toFixed(1)} cm</span>
+                <span className="gauge-val">{distanceCm !== null ? `${distanceCm.toFixed(1)} cm` : '---'}</span>
                 <span className="gauge-sub">SUBSIDENCE GAP</span>
               </div>
             </div>
@@ -674,7 +681,7 @@ export function SmartMineControlDesk({
               </div>
               <div className="desk-gauge-info">
                 <span className="gauge-name">BATTERY</span>
-                <span className="gauge-val">{batteryPct}%</span>
+                <span className="gauge-val">{batteryPct !== null ? `${batteryPct}%` : '---'}</span>
                 <span className="gauge-sub">3.7V / 4.08V</span>
               </div>
             </div>
@@ -817,51 +824,53 @@ export function SmartMineControlDesk({
             </div>
             <div className="ai-stat-chip">
               <span className="ai-stat-lbl">ANOMALY PROB</span>
-              <strong className="ai-stat-val warning">{riskScore > 50 ? '0.86 (HIGH)' : '0.14 (LOW)'}</strong>
+              <strong className={`ai-stat-val ${riskScore !== null && riskScore > 50 ? 'warning' : ''}`}>
+                {riskScore !== null ? (riskScore > 50 ? '0.86 (HIGH)' : '0.14 (LOW)') : '--- (NO DATA)'}
+              </strong>
             </div>
             <div className="ai-stat-chip">
               <span className="ai-stat-lbl">LATENCY</span>
-              <strong className="ai-stat-val">12 ms / EDGE</strong>
+              <strong className="ai-stat-val">{hasTelemetry ? '12 ms / EDGE' : '---'}</strong>
             </div>
             <div className="ai-stat-chip">
               <span className="ai-stat-lbl">SAMPLE RATE</span>
-              <strong className="ai-stat-val">50 Hz</strong>
+              <strong className="ai-stat-val">{hasTelemetry ? '50 Hz' : '0 Hz'}</strong>
             </div>
             <div className="ai-stat-chip">
               <span className="ai-stat-lbl">FEATURE VEC</span>
-              <strong className="ai-stat-val">7-DIM MATRIX</strong>
+              <strong className="ai-stat-val">{hasTelemetry ? '7-DIM MATRIX' : '---'}</strong>
             </div>
             <div className="ai-stat-chip">
               <span className="ai-stat-lbl">DRIFT</span>
-              <strong className="ai-stat-val">0.02 (NOMINAL)</strong>
+              <strong className="ai-stat-val">{hasTelemetry ? '0.02 (NOMINAL)' : '---'}</strong>
             </div>
           </div>
 
           {/* Real-time 7-Channel Feature Vector Bars */}
           <div className="ai-feature-vector-strip">
             <div className="feature-bar-item">
-              <div className="feature-bar-header"><span>TILT_X</span><strong>{tiltX.toFixed(1)}°</strong></div>
-              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${Math.min(100, (Math.abs(tiltX) / 10) * 100)}%` }} /></div>
+              <div className="feature-bar-header"><span>TILT_X</span><strong>{tiltX !== null ? `${tiltX.toFixed(1)}°` : '---'}</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${tiltX !== null ? Math.min(100, (Math.abs(tiltX) / 10) * 100) : 0}%` }} /></div>
             </div>
             <div className="feature-bar-item">
-              <div className="feature-bar-header"><span>VIB_RMS</span><strong>{vibrationG.toFixed(2)}g</strong></div>
-              <div className="feature-bar-track"><div className="feature-bar-fill warning" style={{ width: `${Math.min(100, (vibrationG / 2.5) * 100)}%` }} /></div>
+              <div className="feature-bar-header"><span>VIB_RMS</span><strong>{vibrationG !== null ? `${vibrationG.toFixed(2)}g` : '---'}</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill warning" style={{ width: `${vibrationG !== null ? Math.min(100, (vibrationG / 2.5) * 100) : 0}%` }} /></div>
             </div>
             <div className="feature-bar-item">
-              <div className="feature-bar-header"><span>GAS_MQ2</span><strong>{gasPpm}</strong></div>
-              <div className="feature-bar-track"><div className="feature-bar-fill danger" style={{ width: `${Math.min(100, (gasPpm / 800) * 100)}%` }} /></div>
+              <div className="feature-bar-header"><span>GAS_MQ2</span><strong>{gasPpm !== null ? `${gasPpm} ppm` : '---'}</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill danger" style={{ width: `${gasPpm !== null ? Math.min(100, (gasPpm / 800) * 100) : 0}%` }} /></div>
             </div>
             <div className="feature-bar-item">
-              <div className="feature-bar-header"><span>DIST_HC</span><strong>{distanceCm.toFixed(1)}cm</strong></div>
-              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${Math.min(100, (distanceCm / 60) * 100)}%` }} /></div>
+              <div className="feature-bar-header"><span>DIST_HC</span><strong>{distanceCm !== null ? `${distanceCm.toFixed(1)}cm` : '---'}</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${distanceCm !== null ? Math.min(100, (distanceCm / 60) * 100) : 0}%` }} /></div>
             </div>
             <div className="feature-bar-item">
-              <div className="feature-bar-header"><span>TEMP_C</span><strong>{tempC.toFixed(1)}°C</strong></div>
-              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${Math.min(100, (tempC / 50) * 100)}%` }} /></div>
+              <div className="feature-bar-header"><span>TEMP_C</span><strong>{tempC !== null ? `${tempC.toFixed(1)}°C` : '---'}</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${tempC !== null ? Math.min(100, (tempC / 50) * 100) : 0}%` }} /></div>
             </div>
             <div className="feature-bar-item">
-              <div className="feature-bar-header"><span>HUMID_RH</span><strong>{humidityRh}%</strong></div>
-              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${Math.min(100, humidityRh)}%` }} /></div>
+              <div className="feature-bar-header"><span>HUMID_RH</span><strong>{humidityRh !== null ? `${humidityRh}%` : '---'}</strong></div>
+              <div className="feature-bar-track"><div className="feature-bar-fill" style={{ width: `${humidityRh !== null ? Math.min(100, humidityRh) : 0}%` }} /></div>
             </div>
           </div>
 
@@ -889,11 +898,11 @@ export function SmartMineControlDesk({
 
             <div className="pipeline-result-box">
               <div className="result-label">04 FINAL RISK</div>
-              <div className={`result-score ${riskLevel.toLowerCase()}`}>
-                {riskScore} / 100
+              <div className={`result-score ${(riskLevel || 'UNKNOWN').toLowerCase()}`}>
+                {riskScore !== null ? `${riskScore} / 100` : '---'}
               </div>
-              <div className={`result-badge ${riskLevel.toLowerCase()}`}>
-                {riskLevel}
+              <div className={`result-badge ${(riskLevel || 'UNKNOWN').toLowerCase()}`}>
+                {riskLevel || 'UNKNOWN'}
               </div>
             </div>
           </div>
@@ -901,9 +910,11 @@ export function SmartMineControlDesk({
           <div className="ai-diagnostic-strip">
             <span className="diag-dot" />
             <span className="diag-text">
-              {riskScore > 50
-                ? 'SUBSIDENCE PATTERN DETECTED: ADXL345 RMS + HC-SR04 DISPLACEMENT RATE EXCEEDED THRESHOLD'
-                : 'SURFACE KINEMATICS NOMINAL: ALL SENSOR VECTORS WITHIN SAFE ENVELOPE'}
+              {riskScore !== null
+                ? (riskScore > 50
+                    ? 'SUBSIDENCE PATTERN DETECTED: ADXL345 RMS + HC-SR04 DISPLACEMENT RATE EXCEEDED THRESHOLD'
+                    : 'SURFACE KINEMATICS NOMINAL: ALL SENSOR VECTORS WITHIN SAFE ENVELOPE')
+                : 'WAITING FOR SENSOR TELEMETRY: REALTIME ML RISK PIPELINE IDLE'}
             </span>
           </div>
         </div>
@@ -918,7 +929,7 @@ export function SmartMineControlDesk({
           <div className="power-metrics-strip">
             <div className="power-metric-box">
               <span className="metric-lbl">BATTERY</span>
-              <span className="metric-val">{batteryPct}% (4.08V)</span>
+              <span className="metric-val">{batteryPct !== null ? `${batteryPct}% (4.08V)` : '---'}</span>
             </div>
             <div className="power-metric-box">
               <span className="metric-lbl">INPUT</span>
@@ -994,25 +1005,25 @@ export function SmartMineControlDesk({
             <div className={`annunciator-row ${isGasWarning ? 'active-critical' : ''}`}>
               <span className={`pilot-jewel red ${isGasWarning ? 'flash' : ''}`} />
               <span className="annunciator-text">CRITICAL GAS THRESHOLD EXCEEDED</span>
-              <span className="annunciator-tag">MQ-2 ({gasPpm} PPM)</span>
+              <span className="annunciator-tag">MQ-2 ({gasPpm !== null ? `${gasPpm} PPM` : 'NO DATA'})</span>
             </div>
 
             <div className={`annunciator-row ${isVibWarning ? 'active-warning' : ''}`}>
               <span className={`pilot-jewel amber ${isVibWarning ? 'glow' : ''}`} />
               <span className="annunciator-text">WARNING VIBRATION ABOVE LIMIT</span>
-              <span className="annunciator-tag">ADXL345 ({vibrationG.toFixed(2)}g)</span>
+              <span className="annunciator-tag">ADXL345 ({vibrationG !== null ? `${vibrationG.toFixed(2)}g` : 'NO DATA'})</span>
             </div>
 
             <div className={`annunciator-row ${isDistWarning ? 'active-warning' : ''}`}>
               <span className={`pilot-jewel amber ${isDistWarning ? 'glow' : ''}`} />
               <span className="annunciator-text">WARNING DISTANCE VARIATION</span>
-              <span className="annunciator-tag">HC-SR04 ({distanceCm.toFixed(1)}cm)</span>
+              <span className="annunciator-tag">HC-SR04 ({distanceCm !== null ? `${distanceCm.toFixed(1)}cm` : 'NO DATA'})</span>
             </div>
 
             <div className="annunciator-row active-normal">
               <span className="pilot-jewel green glow" />
               <span className="annunciator-text">TILT ENVELOPE STABLE WITHIN 5°</span>
-              <span className="annunciator-tag">MPU6050 ({tiltX.toFixed(1)}°)</span>
+              <span className="annunciator-tag">MPU6050 ({tiltX !== null ? `${tiltX.toFixed(1)}°` : 'NO DATA'})</span>
             </div>
 
             <div className={`annunciator-row ${isNormalTelemetry ? 'active-normal' : ''}`}>

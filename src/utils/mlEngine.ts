@@ -4,11 +4,11 @@
 // Executes real ensemble inference using the trained Random Forest model.
 // Falls back to deterministic threshold safety checks if weights are missing.
 
-import { SENSOR_THRESHOLDS } from '../config/thresholds';
-import type { SensorData, MLPrediction } from '../types';
-import type { RandomForestModelWeights } from '../../ml/model';
-import { THULIR_FEATURE_NAMES } from '../../ml/model';
-import embeddedModelWeights from '../../ml/models/model_weights.json';
+import { SENSOR_THRESHOLDS } from '../config/thresholds.ts';
+import type { SensorData, MLPrediction } from '../types/index.ts';
+import type { RandomForestModelWeights } from '../../ml/model.ts';
+import { THULIR_FEATURE_NAMES } from '../../ml/model.ts';
+import embeddedModelWeights from '../../ml/models/model_weights.json' with { type: 'json' };
 
 // Embedded synchronously available trained weights artifact
 let activeModelWeights: RandomForestModelWeights = embeddedModelWeights as unknown as RandomForestModelWeights;

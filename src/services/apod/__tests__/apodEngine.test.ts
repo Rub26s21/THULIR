@@ -13,6 +13,7 @@ describe('A-POD: Master Evidence Fusion Engine (16 Specification Edge Cases)', (
 
   const createBaseNode = (id: string, riskScore: number, isOnline = true): NodeRiskState => ({
     nodeId: id,
+    nodeState: isOnline ? 'REAL' : 'OFFLINE',
     timestamp: new Date().toISOString(),
     riskClass: riskScore >= 0.70 ? 'HIGH_RISK' : riskScore >= 0.35 ? 'MODERATE_RISK' : 'LOW_RISK',
     probabilities: {

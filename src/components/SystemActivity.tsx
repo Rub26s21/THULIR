@@ -1,6 +1,7 @@
 // ============================================================
 // THULIR AI — System Activity & Ingestion Stream
 // ============================================================
+// Clean, readable live event stream with warm-neutral thank-you aesthetic.
 
 import { Terminal, Activity, Zap, CheckCircle, Radio } from 'lucide-react';
 import type { SensorData, MLPrediction, RiskState } from '../types';
@@ -23,69 +24,73 @@ export function SystemActivity({ latestData, mlPrediction, risk, connectionType 
     {
       time: timeStr(0),
       tag: 'INGEST',
-      tagClass: 'tag-ingest',
+      tagClass: 'warm-tag-ingest',
       msg: latestData
         ? `Frame #${latestData.id || 'LIVE'} received: TiltX=${latestData.tilt_x !== null ? latestData.tilt_x.toFixed(1) : '—'}° Gas=${latestData.gas_raw ?? '—'} Vib=${latestData.vib_rms !== null ? latestData.vib_rms.toFixed(2) : '—'}`
         : 'Awaiting incoming ESP8266 telemetry frame...',
-      icon: <Activity size={12} color="#00d4ff" />
+      icon: <Activity size={12} strokeWidth={2.2} />
     },
     {
       time: timeStr(1),
       tag: 'AI_INFER',
-      tagClass: 'tag-ai',
+      tagClass: 'warm-tag-ai',
       msg: mlPrediction
         ? `RF-Classifier inference: ${mlPrediction.prediction} (${(mlPrediction.confidence * 100).toFixed(1)}% conf, ${mlPrediction.inference_time_ms}ms)`
         : 'Random Forest classifier listening for telemetry frame',
-      icon: <Zap size={12} color="#a855f7" />
+      icon: <Zap size={12} strokeWidth={2.2} />
     },
     {
       time: timeStr(2),
       tag: 'RISK_EVAL',
-      tagClass: 'tag-risk',
+      tagClass: 'warm-tag-risk',
       msg: `Integrity index computed: Score ${risk.score}/100 (${risk.level}) via ${risk.source}`,
-      icon: <CheckCircle size={12} color="#10b981" />
+      icon: <CheckCircle size={12} strokeWidth={2.2} />
     },
     {
       time: timeStr(4),
       tag: 'LINK_OK',
-      tagClass: 'tag-ingest',
+      tagClass: 'warm-tag-link',
       msg: `Channel link verified (${connectionType}) → SSL/TLS stream healthy`,
-      icon: <Radio size={12} color="#00d4ff" />
+      icon: <Radio size={12} strokeWidth={2.2} />
     },
   ];
 
   return (
-    <div className="clay-card" role="region" aria-label="System activity feed">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Terminal size={16} color="var(--brand-green)" strokeWidth={2} />
+    <div className="clay-card warm-activity-card" role="region" aria-label="System activity feed">
+      {/* Header */}
+      <div className="activity-card-header">
+        <div className="activity-title-group">
+          <div className="activity-icon-badge">
+            <Terminal size={16} strokeWidth={2.2} />
+          </div>
           <div>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>System Activity</div>
-            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>Live ingestion &amp; inference event stream</div>
+            <div className="activity-title-text">System Activity &amp; Ingestion Stream</div>
+            <div className="activity-sub-text">Continuous real-time edge processing and ML audit log</div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-          <span className="pulse-dot dot-cyan" />
-          <span style={{ fontSize: '0.66rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            STREAMING (TTY0)
-          </span>
+        <div className="activity-tty-badge">
+          <span className="pulse-dot-warm" />
+          <span>STREAMING (TTY0)</span>
         </div>
       </div>
 
-      <div className="activity-terminal-feed">
-        {activities.map((act, i) => (
-          <div key={i} className="terminal-line">
-            <span style={{ color: 'var(--text-dim)', fontSize: '0.66rem', flexShrink: 0 }}>
-              [{act.time}]
-            </span>
-            <span className={`terminal-tag ${act.tagClass}`}>
-              {act.tag}
-            </span>
-            <span style={{ color: 'var(--text-secondary)', wordBreak: 'break-all' }}>
-              {act.msg}
-            </span>
-          </div>
-        ))}
+      {/* Terminal Feed View */}
+      <div className="warm-terminal-container">
+        <div className="terminal-inner-scroll">
+          {activities.map((act, i) => (
+            <div key={i} className="warm-terminal-row">
+              <div className="terminal-meta-col">
+                <span className="terminal-time-stamp">[{act.time}]</span>
+                <span className={`terminal-chip ${act.tagClass}`}>
+                  {act.tag}
+                </span>
+              </div>
+              <div className="terminal-message-text">
+                {act.msg}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

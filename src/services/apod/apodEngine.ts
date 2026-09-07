@@ -76,6 +76,7 @@ export function runAPODEngine(input: APODEngineInput): APODResult {
       dataFreshness: n.dataFreshness,
       freshnessState: n.freshnessState,
       isOnline: n.isOnline,
+      nodeState: n.nodeState,
     });
 
     return {
@@ -85,13 +86,15 @@ export function runAPODEngine(input: APODEngineInput): APODResult {
     };
   });
 
-  const highRiskNodes = nodes.filter((n) => n.isOnline && (n.riskClass === 'HIGH_RISK' || n.riskScore >= 0.70)).map((n) => n.nodeId);
-  const moderateRiskNodes = nodes.filter((n) => n.isOnline && (n.riskClass === 'MODERATE_RISK' || (n.riskScore >= 0.35 && n.riskScore < 0.70))).map((n) => n.nodeId);
-  const normalNodes = nodes.filter((n) => n.isOnline && n.riskClass === 'LOW_RISK' && n.riskScore < 0.35).map((n) => n.nodeId);
-  const unknownNodes = nodes.filter((n) => !n.isOnline || n.freshnessState === 'OFFLINE' || n.freshnessState === 'STALE').map((n) => n.nodeId);
+  const isRealNode = (n: NodeRiskState) => n.nodeState === 'REAL' || (!n.nodeState && n.isOnline);
+
+  const highRiskNodes = nodes.filter((n) => isRealNode(n) && (n.riskClass === 'HIGH_RISK' || n.riskScore >= 0.70)).map((n) => n.nodeId);
+  const moderateRiskNodes = nodes.filter((n) => isRealNode(n) && (n.riskClass === 'MODERATE_RISK' || (n.riskScore >= 0.35 && n.riskScore < 0.70))).map((n) => n.nodeId);
+  const normalNodes = nodes.filter((n) => isRealNode(n) && n.riskClass === 'LOW_RISK' && n.riskScore < 0.35).map((n) => n.nodeId);
+  const unknownNodes = nodes.filter((n) => !isRealNode(n)).map((n) => n.nodeId);
 
   // Check for critical physical sensor overrides across nodes
-  const hasPhysicalCriticalOverride = nodes.some((n) => n.isOnline && n.hasPhysicalCriticalViolation);
+  const hasPhysicalCriticalOverride = nodes.some((n) => isRealNode(n) && n.hasPhysicalCriticalViolation);
 
   // 2. Step 1: Weighted Network Risk (R_network)
   const networkRiskResult = calculateNetworkRisk(nodeContributions);
@@ -101,7 +104,7 @@ export function runAPODEngine(input: APODEngineInput): APODResult {
   const spatialNodes: SpatialNodeInput[] = nodes.map((n) => ({
     nodeId: n.nodeId,
     riskScore: n.riskScore,
-    isOnline: n.isOnline,
+    isOnline: isRealNode(n),
     neighborNodeIds: n.neighborNodeIds,
     zoneId: n.zoneId,
   }));
@@ -116,7 +119,7 @@ export function runAPODEngine(input: APODEngineInput): APODResult {
   const t = temporalResult.temporalScore;
 
   // 5. Step 4: Multi-Sensor Agreement & Conflict Analysis (M)
-  const agreements = nodes.filter((n) => n.isOnline).map((n) => {
+  const agreements = nodes.filter(isRealNode).map((n) => {
     const rawData = latestSensorData[n.nodeId] ?? null;
     return calculateSensorAgreement(rawData, n.riskClass);
   });
@@ -220,6 +223,7 @@ export function runAPODEngine(input: APODEngineInput): APODResult {
     contradictingSignals: Array.from(contradictingSet),
     missingSignals: Array.from(missingSet),
     hasPhysicalCriticalOverride,
+    nodeRiskStates: nodes,
     explanation,
     recommendedAction,
   };

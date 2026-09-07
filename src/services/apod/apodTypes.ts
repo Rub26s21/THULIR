@@ -35,6 +35,7 @@ export interface SignalDetail {
  */
 export interface NodeRiskState {
   nodeId: string;
+  nodeState: 'REAL' | 'UNKNOWN' | 'OFFLINE' | 'STALE';
   timestamp: string;
   sequenceNumber?: number;
   riskClass: APODRiskClass;
@@ -97,6 +98,7 @@ export interface APODResult {
   contradictingSignals: string[];
   missingSignals: string[];
   hasPhysicalCriticalOverride: boolean;
+  nodeRiskStates?: NodeRiskState[];
   explanation: string;              // Deterministic explainability text (no LLM)
   recommendedAction: string;        // Safe operator procedure
 }

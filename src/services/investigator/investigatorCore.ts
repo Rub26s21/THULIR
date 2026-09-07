@@ -82,7 +82,6 @@ export async function executeGroundInvestigation(
         ],
         temperature: 0.15,
         max_tokens: 1200,
-        response_format: { type: 'json_object' },
       }),
       signal: controller.signal,
     });

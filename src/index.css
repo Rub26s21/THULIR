@@ -4783,42 +4783,485 @@ img, svg { display: block; }
 /* ============================================================
    20. SYSTEM ACTIVITY — COLLAPSIBLE
    ============================================================ */
-.activity-terminal-feed {
-  background: var(--bg-well);
-  border-radius: 12px;
-  border: 1px solid var(--border-well);
-  box-shadow: var(--shadow-well-inset);
-  padding: 12px 14px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  line-height: 1.7;
-  max-height: 180px;
-  overflow-y: auto;
+/* ============================================================
+   20. INTELLIGENCE PIPELINE & SYSTEM ACTIVITY — WARM THEME
+   ============================================================ */
+.topology-activity-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
 }
 
-.terminal-line {
+.topology-activity-grid > * {
+  min-width: 0;
+  height: 100%;
+}
+
+@media (max-width: 1024px) {
+  .topology-activity-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Warm Intelligence Pipeline Card ── */
+.warm-pipeline-card {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-well);
+  box-shadow: var(--shadow-card);
+  border-radius: 14px;
+}
+
+.pipeline-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pipeline-header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pipeline-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(68, 64, 60, 0.08);
+  color: var(--text-primary);
+  border: 1px solid rgba(68, 64, 60, 0.12);
+}
+
+.pipeline-title-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.pipeline-sub-text {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-family: var(--font-mono);
+}
+
+.pipeline-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: rgba(68, 64, 60, 0.06);
+  border: 1px solid rgba(68, 64, 60, 0.1);
+  font-size: 0.64rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.status-dot-subtle {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-dot-subtle.active {
+  background: #57534E;
+  box-shadow: 0 0 6px rgba(87, 83, 78, 0.4);
+}
+
+.status-dot-subtle.standby {
+  background: #A8A29E;
+}
+
+/* ── 3-Tier Flow Grid ── */
+.pipeline-stages-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pipeline-flow-grid {
+  display: grid;
+  grid-template-columns: 1fr 50px 1fr 50px 1fr;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 640px) {
+  .pipeline-flow-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .pipeline-connector-cell {
+    display: none;
+  }
+}
+
+.pipeline-node-box {
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: var(--shadow-well-inset);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pipeline-node-box:hover {
+  transform: translateY(-2px);
+  border-color: rgba(68, 64, 60, 0.2);
+}
+
+.node-box-header {
+  font-size: 0.74rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.node-box-sub {
+  font-size: 0.64rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.node-box-status {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.node-box-status.ready {
+  color: var(--text-secondary);
+}
+
+.node-box-status.standby {
+  color: var(--text-muted);
+}
+
+.node-mini-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pipeline-connector-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pipeline-connector-svg {
+  width: 100%;
+}
+
+/* ── Mesh Ribbon ── */
+.pipeline-mesh-bar {
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.66rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  flex-wrap: wrap;
   gap: 8px;
-  padding: 2px 0;
+}
+
+.mesh-info-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mesh-lbl {
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.mesh-val {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.mesh-info-right {
+  font-size: 0.62rem;
+  color: var(--text-dim);
+}
+
+/* ── Hardware Sensors Matrix ── */
+.pipeline-sensors-section {
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.sensors-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.sensors-section-title {
+  color: var(--text-secondary);
+}
+
+.sensors-section-count {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.sensors-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+@media (max-width: 640px) {
+  .sensors-chip-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.sensor-chip-card {
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 8px;
+  padding: 8px 4px;
+  text-align: center;
+  transition: transform 0.15s ease;
+}
+
+.sensor-chip-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(68, 64, 60, 0.22);
+}
+
+.chip-name {
+  font-size: 0.74rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.chip-role {
+  font-size: 0.60rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.chip-bus {
+  font-size: 0.58rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  margin-top: 4px;
+  background: rgba(68, 64, 60, 0.06);
+  border-radius: 4px;
+  padding: 2px 4px;
+  display: inline-block;
+}
+
+/* ── Warm System Activity Card ── */
+.warm-activity-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-well);
+  box-shadow: var(--shadow-card);
+  border-radius: 14px;
+}
+
+.activity-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.activity-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.activity-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(68, 64, 60, 0.08);
+  color: var(--text-primary);
+  border: 1px solid rgba(68, 64, 60, 0.12);
+}
+
+.activity-title-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.activity-sub-text {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-family: var(--font-mono);
+}
+
+.activity-tty-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: rgba(68, 64, 60, 0.06);
+  border: 1px solid rgba(68, 64, 60, 0.1);
+  font-size: 0.64rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.pulse-dot-warm {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #57534E;
+  box-shadow: 0 0 6px rgba(87, 83, 78, 0.4);
+}
+
+/* ── Warm Terminal Container & Readable Rows ── */
+.warm-terminal-container {
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 10px;
+  box-shadow: var(--shadow-well-inset);
+  padding: 14px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.terminal-inner-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.warm-terminal-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+  padding-bottom: 9px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.terminal-line:last-child { border-bottom: none; }
-
-.terminal-tag {
-  font-size: 0.58rem;
-  font-weight: 800;
-  padding: 1px 5px;
-  border-radius: 3px;
-  letter-spacing: 0.06em;
-  flex-shrink: 0;
-  margin-top: 1px;
+.warm-terminal-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
-.tag-ingest { background: var(--brand-blue-tint); color: var(--brand-blue); border: 1px solid var(--brand-blue-border); }
-.tag-ai     { background: rgba(124, 92, 255, 0.1); color: #7C3AED; border: 1px solid rgba(124, 92, 255, 0.2); }
-.tag-risk   { background: var(--status-normal-bg); color: var(--status-normal); border: 1px solid var(--status-normal-border); }
+.terminal-meta-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.terminal-time-stamp {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.terminal-chip {
+  font-family: var(--font-mono);
+  font-size: 0.60rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+
+.warm-tag-ingest {
+  background: rgba(68, 64, 60, 0.08);
+  color: var(--text-primary);
+  border: 1px solid rgba(68, 64, 60, 0.14);
+}
+
+.warm-tag-ai {
+  background: rgba(120, 113, 108, 0.12);
+  color: var(--text-primary);
+  border: 1px solid rgba(120, 113, 108, 0.2);
+}
+
+.warm-tag-risk {
+  background: rgba(87, 83, 78, 0.12);
+  color: var(--text-primary);
+  border: 1px solid rgba(87, 83, 78, 0.2);
+}
+
+.warm-tag-link {
+  background: rgba(68, 64, 60, 0.06);
+  color: var(--text-secondary);
+  border: 1px solid rgba(68, 64, 60, 0.1);
+}
+
+.terminal-message-text {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.5;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
 
 /* ============================================================
    21. SECTION WRAPPER (legacy compat)

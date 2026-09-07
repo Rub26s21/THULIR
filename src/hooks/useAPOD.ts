@@ -11,6 +11,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { runAPODEngine } from '../services/apod/apodEngine.ts';
 import { calculateNodeRiskScore } from '../services/apod/nodeRisk.ts';
 import { getFreshnessFactor } from '../services/apod/reliability.ts';
+import { calculateFreshness } from '../services/nodeService';
 import type {
   NodeRiskState,
   APODResult,
@@ -43,54 +44,49 @@ export function useAPOD({
   const nodeRiskStates: NodeRiskState[] = useMemo(() => {
     return nodes.map((node) => {
       const isSelected = node.node_id === selectedNodeId;
+      const rawTimestamp = isSelected && latestSensorData ? latestSensorData.created_at : node.last_seen;
+      const rawFreshness = calculateFreshness(rawTimestamp);
 
-      // 1. Freshness State
       let freshnessState: APODFreshnessState = 'OFFLINE';
-      let isOnline = false;
-
-      if (node.status === 'ONLINE' || node.status === 'DEGRADED') {
-        freshnessState = 'FRESH';
-        isOnline = true;
-      } else if (node.status === 'OFFLINE') {
-        freshnessState = 'OFFLINE';
-        isOnline = false;
-      }
-
-      // If this is the active node with live telemetry
-      if (isSelected && latestSensorData) {
-        freshnessState = 'FRESH';
-        isOnline = true;
-      }
+      if (rawFreshness === 'LIVE') freshnessState = 'FRESH';
+      else if (rawFreshness === 'RECENT') freshnessState = 'RECENT';
+      else if (rawFreshness === 'STALE') freshnessState = 'STALE';
+      else freshnessState = 'OFFLINE';
 
       const dataFreshness = getFreshnessFactor(freshnessState);
+      const isOnline = (freshnessState === 'FRESH' || freshnessState === 'RECENT') && Boolean(rawTimestamp);
+      const nodeHealth = isOnline ? (node.status === 'ONLINE' ? 1.0 : 0.65) : 0.0;
 
-      // 2. ML Probability & Risk Class
-      let probabilities = { low: 0.80, moderate: 0.15, high: 0.05 };
+      let nodeState: 'REAL' | 'UNKNOWN' | 'OFFLINE' | 'STALE' = 'UNKNOWN';
+      let probabilities = { low: 0, moderate: 0, high: 0 };
       let riskClass: APODRiskClass = 'LOW_RISK';
-      let mlConfidence = 0.90;
+      let mlConfidence = 0.0;
       let hasPhysicalCriticalViolation = false;
 
-      if (isSelected) {
-        if (activeMlPrediction?.probabilities) {
+      if (isSelected && latestSensorData && isOnline) {
+        if (activeMlPrediction && activeMlPrediction.prediction !== 'INSUFFICIENT_DATA' && activeMlPrediction.probabilities) {
+          nodeState = 'REAL';
           probabilities = {
-            low: activeMlPrediction.probabilities.LOW_RISK ?? 0.8,
-            moderate: activeMlPrediction.probabilities.MODERATE_RISK ?? 0.15,
-            high: activeMlPrediction.probabilities.HIGH_RISK ?? 0.05,
+            low: activeMlPrediction.probabilities.LOW_RISK ?? 0.0,
+            moderate: activeMlPrediction.probabilities.MODERATE_RISK ?? 0.0,
+            high: activeMlPrediction.probabilities.HIGH_RISK ?? 0.0,
           };
           riskClass = (activeMlPrediction.prediction as APODRiskClass) || 'LOW_RISK';
-          mlConfidence = activeMlPrediction.confidence || 0.85;
+          mlConfidence = activeMlPrediction.confidence || 0.0;
+        } else {
+          nodeState = 'UNKNOWN';
         }
 
         if (activeRisk?.level === 'CRITICAL') {
           hasPhysicalCriticalViolation = true;
         }
-      } else if (node.status === 'DEGRADED') {
-        probabilities = { low: 0.20, moderate: 0.50, high: 0.30 };
-        riskClass = 'MODERATE_RISK';
-        mlConfidence = 0.75;
+      } else if (!isOnline) {
+        nodeState = freshnessState === 'STALE' ? 'STALE' : 'OFFLINE';
+      } else {
+        nodeState = 'UNKNOWN';
       }
 
-      const riskScore = calculateNodeRiskScore(probabilities, riskClass);
+      const riskScore = nodeState === 'REAL' ? calculateNodeRiskScore(probabilities, riskClass) : 0.0;
 
       // 3. Neighbors from topology
       const neighbors = nodeLinks
@@ -99,12 +95,13 @@ export function useAPOD({
 
       return {
         nodeId: node.node_id,
-        timestamp: node.last_seen || new Date().toISOString(),
+        nodeState,
+        timestamp: rawTimestamp || new Date().toISOString(),
         riskClass,
         probabilities,
         riskScore,
         mlConfidence,
-        nodeHealth: node.status === 'ONLINE' ? 1.0 : node.status === 'DEGRADED' ? 0.65 : 0.0,
+        nodeHealth,
         sensorHealth: isOnline ? 1.0 : 0.0,
         dataFreshness,
         freshnessState,

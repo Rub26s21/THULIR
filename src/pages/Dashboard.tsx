@@ -295,9 +295,9 @@ export function Dashboard() {
             {/* ── SECTION 6: NETWORK + SYSTEM ACTIVITY ── */}
             <section id="section-system" className="page-section">
               <div className="section-header">
-                <Network size={14} color="var(--brand-green)" strokeWidth={2} />
-                <span className="section-eyebrow">Network</span>
-                <span className="section-title">Intelligence Pipeline & System Activity</span>
+                <Network size={15} color="var(--text-secondary)" strokeWidth={2.2} />
+                <span className="section-eyebrow">Distributed Pipeline</span>
+                <span className="section-title">Intelligence Pipeline &amp; System Activity</span>
               </div>
               <div className="topology-activity-grid">
                 <div className="reveal">

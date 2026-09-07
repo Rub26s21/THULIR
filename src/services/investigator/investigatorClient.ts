@@ -3,8 +3,8 @@
 // ============================================================
 // Prepares A-POD evidence packages and securely requests the backend endpoint.
 
-import type { Alert, NodeRecord } from '../../types/index.ts';
-import type { APODResult } from '../apod/apodTypes.ts';
+import type { Alert } from '../../types/index.ts';
+import type { APODResult, NodeRiskState } from '../apod/apodTypes.ts';
 import type {
   APODEvidencePackage,
   InvestigationResponse,
@@ -14,36 +14,35 @@ import type {
 const INVESTIGATOR_ENDPOINT = '/api/ground-event-investigator';
 
 /**
- * Builds a sanitized, summarized evidence package from the current A-POD state.
+ * Builds a sanitized, summarized evidence package directly from the authoritative A-POD state.
+ * Preserves exact node-level risk intelligence without downstream reconstruction or fabrication.
  */
 export function buildEvidencePackage(
   apod: APODResult,
-  nodes: NodeRecord[],
-  alerts: Alert[]
+  alerts: Alert[],
+  nodeRiskStates?: NodeRiskState[]
 ): APODEvidencePackage {
-  const nodeSummaries: NodeEvidenceSummary[] = nodes.map((n) => {
-    const isOnline = n.status === 'ONLINE';
-    return {
-      nodeId: n.node_id,
-      riskClass: isOnline ? 'LOW_RISK' : 'LOW_RISK',
-      riskScore: isOnline ? 0.15 : 0.0,
-      mlConfidence: 0.85,
-      mlProbabilities: { low: 0.85, moderate: 0.10, high: 0.05 },
-      nodeHealth: isOnline ? 0.95 : 0.0,
-      dataFreshness: isOnline ? 1.0 : 0.0,
-      freshnessState: isOnline ? 'FRESH' : 'OFFLINE',
-      isOnline,
-      hasPhysicalViolation: false,
-      zoneId: n.zone_id || 'ZONE-A',
-      location: {
-        latitude: n.latitude ?? null,
-        longitude: n.longitude ?? null,
-        altitude: n.altitude ?? null,
-      },
-    };
-  });
+  const sourceNodes: NodeRiskState[] = nodeRiskStates || apod.nodeRiskStates || [];
+  const nodeSummaries: NodeEvidenceSummary[] = sourceNodes.map((n: NodeRiskState) => ({
+    nodeId: n.nodeId,
+    riskClass: n.riskClass,
+    riskScore: n.riskScore,
+    mlConfidence: n.mlConfidence,
+    mlProbabilities: n.probabilities,
+    nodeHealth: n.nodeHealth,
+    dataFreshness: n.dataFreshness,
+    freshnessState: n.freshnessState,
+    isOnline: n.isOnline,
+    hasPhysicalViolation: Boolean(n.hasPhysicalCriticalViolation),
+    zoneId: n.zoneId || 'ZONE_A',
+    location: {
+      latitude: n.latitude ?? null,
+      longitude: n.longitude ?? null,
+      altitude: n.altitude ?? null,
+    },
+  }));
 
-  const activeAlerts = alerts
+  const activeAlerts = (alerts || [])
     .filter((a) => a.status === 'ACTIVE' || !a.acknowledged)
     .slice(0, 5)
     .map((a) => ({
@@ -54,8 +53,8 @@ export function buildEvidencePackage(
       nodeId: a.node_id,
     }));
 
-  const onlineCount = nodes.filter((n) => n.status === 'ONLINE').length;
-  const offlineNodeIds = nodes.filter((n) => n.status !== 'ONLINE').map((n) => n.node_id);
+  const onlineCount = sourceNodes.filter((n) => n.isOnline).length;
+  const offlineNodeIds = sourceNodes.filter((n) => !n.isOnline).map((n) => n.nodeId);
 
   return {
     eventId: `EVT-${apod.podId}-${Date.now().toString(36).toUpperCase()}`,
@@ -75,14 +74,14 @@ export function buildEvidencePackage(
     contradictingSignals: apod.contradictingSignals || [],
     missingSignals: apod.missingSignals || [],
     dataQuality: {
-      totalNodes: nodes.length,
+      totalNodes: sourceNodes.length,
       onlineNodes: onlineCount,
       staleOrOfflineNodes: offlineNodeIds,
       missingSignalCount: (apod.missingSignals || []).length,
     },
     zoneContext: {
-      zoneId: apod.zoneId || 'UNDERGROUND_SECTOR_4',
-      mineSector: 'Subsurface Seam Pit 2',
+      zoneId: apod.zoneId || 'NOT_AVAILABLE',
+      mineSector: 'NOT_AVAILABLE',
     },
   };
 }

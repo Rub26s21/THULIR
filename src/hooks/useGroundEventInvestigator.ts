@@ -37,16 +37,12 @@ export interface UseGroundEventInvestigatorOptions {
 
 export function useGroundEventInvestigator(
   optionsOrApod: UseGroundEventInvestigatorOptions | APODResult | null,
-  nodesParam?: NodeRecord[],
+  _nodesParam?: NodeRecord[],
   alertsParam?: Alert[]
 ): UseGroundEventInvestigatorResult {
   const apod = optionsOrApod && typeof optionsOrApod === 'object' && 'nodes' in optionsOrApod
     ? (optionsOrApod as UseGroundEventInvestigatorOptions).apod
     : (optionsOrApod as APODResult | null);
-
-  const nodes = optionsOrApod && typeof optionsOrApod === 'object' && 'nodes' in optionsOrApod
-    ? (optionsOrApod as UseGroundEventInvestigatorOptions).nodes
-    : (nodesParam || []);
 
   const alerts = optionsOrApod && typeof optionsOrApod === 'object' && 'alerts' in optionsOrApod
     ? (optionsOrApod as UseGroundEventInvestigatorOptions).alerts
@@ -81,7 +77,7 @@ export function useGroundEventInvestigator(
       if (isRequestingRef.current) return;
       if (!force && cooldownRemaining > 0) return;
 
-      const pkg = buildEvidencePackage(apod, nodes, alerts);
+      const pkg = buildEvidencePackage(apod, alerts, apod.nodeRiskStates);
       const currentFingerprint = createEvidenceFingerprint(pkg);
 
       if (!force && currentFingerprint === lastFingerprintRef.current && status === 'AI_AVAILABLE') {
@@ -113,13 +109,13 @@ export function useGroundEventInvestigator(
         isRequestingRef.current = false;
       }
     },
-    [apod, nodes, alerts, cooldownRemaining, status]
+    [apod, alerts, cooldownRemaining, status]
   );
 
   // Automated Event-Driven Trigger:
-  // Only fires when A-POD is not in quiet NORMAL or when an anomaly / override occurs
+  // Only fires when A-POD is not in quiet NORMAL or UNKNOWN, when an anomaly / override occurs
   useEffect(() => {
-    if (!apod) return;
+    if (!apod || apod.networkState === 'UNKNOWN') return;
 
     const isAbnormal =
       apod.networkState === 'WATCH' ||
@@ -130,14 +126,14 @@ export function useGroundEventInvestigator(
       alerts.some((a) => a.severity === 'CRITICAL' || a.severity === 'WATCH');
 
     if (isAbnormal) {
-      const pkg = buildEvidencePackage(apod, nodes, alerts);
+      const pkg = buildEvidencePackage(apod, alerts, apod.nodeRiskStates);
       const fp = createEvidenceFingerprint(pkg);
 
       if (fp !== lastFingerprintRef.current && !isRequestingRef.current && cooldownRemaining === 0) {
         executeInvestigation(false);
       }
     }
-  }, [apod, nodes, alerts, cooldownRemaining, executeInvestigation]);
+  }, [apod, alerts, cooldownRemaining, executeInvestigation]);
 
   const triggerManualInvestigation = useCallback(async () => {
     await executeInvestigation(true);
