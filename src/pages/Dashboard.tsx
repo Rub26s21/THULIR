@@ -7,12 +7,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Sidebar, CommandBar } from '../components/Header';
 import { NodeSelectorBar } from '../components/NodeSelectorBar';
-import { RiskPanel } from '../components/RiskPanel';
 import { APODPanel } from '../components/APODPanel.tsx';
 import { GPSCard } from '../components/GPSCard';
 import { AlertPanel } from '../components/AlertPanel';
 import { MLPanel } from '../components/MLPanel';
-import { NodeHealth } from '../components/NodeHealth';
 import { NetworkTopology } from '../components/NetworkTopology';
 import { SystemActivity } from '../components/SystemActivity';
 import { HistoricalCharts } from '../components/HistoricalCharts';
@@ -29,7 +27,7 @@ import { useAPOD } from '../hooks/useAPOD.ts';
 import { evaluateRisk } from '../utils/riskEngine';
 import { runMLInference } from '../utils/mlEngine';
 import { isSupabaseConfigured } from '../lib/supabase';
-import { Activity, Shield, Brain, Network, AlertCircle, Info, Sparkles, ArrowUpRight } from 'lucide-react';
+import { Activity, Brain, Network, AlertCircle, Info, Sparkles, ArrowUpRight } from 'lucide-react';
 
 // Scroll-reveal hook
 function useRevealObserver() {
@@ -325,20 +323,9 @@ export function Dashboard() {
               </div>
             )}
 
-            {/* ── SECTION 1: SYSTEM OVERVIEW ── */}
+            {/* ── SECTION 1: SYSTEM OVERVIEW & SPATIAL FLEET ── */}
             <section id="section-overview" className="page-section">
-              <div className="section-header">
-                <Shield size={14} color="var(--brand-green)" strokeWidth={2} />
-                <span className="section-eyebrow">System Overview</span>
-                <span className="section-title">Structural & Hardware Health</span>
-              </div>
-
-              <div className="hero-overview-grid reveal">
-                <RiskPanel risk={risk} />
-                <NodeHealth nodeStatus={nodeStatus} />
-              </div>
-
-              <div className="reveal reveal-delay-1" style={{ marginTop: 14 }}>
+              <div className="reveal">
                 <GPSCard
                   node={activeNode}
                   allNodes={allNodesWithStatus}
