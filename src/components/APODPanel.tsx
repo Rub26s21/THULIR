@@ -366,45 +366,54 @@ export function APODPanel({ apod, nodes, selectedNodeId, onSelectNode }: APODPan
         </div>
 
         {/* Bottom Section: Explainability & Guidance */}
-        <div className="apod-explain-strip">
-          <div className="explain-box-left">
+        <div className="apod-explain-grid">
+          {/* Card 1: Deterministic Evidence Reasoning */}
+          <div className="apod-explain-card reasoning-card">
             <div className="explain-header">
-              <Zap size={13} color="#F59E0B" />
+              <Zap size={14} color="#F59E0B" />
               <span>DETERMINISTIC EVIDENCE REASONING</span>
             </div>
             <p className="explain-text">{apod.explanation}</p>
-
-            {/* Signal Chips */}
-            <div className="explain-signals-row">
-              {apod.supportingSignals.slice(0, 3).map((sig, i) => (
-                <span key={`sup-${i}`} className="signal-chip supporting">
-                  <CheckCircle2 size={10} color="#10B981" />
-                  <span>{sig}</span>
-                </span>
-              ))}
-              {apod.contradictingSignals.slice(0, 2).map((sig, i) => (
-                <span key={`con-${i}`} className="signal-chip contradicting">
-                  <AlertTriangle size={10} color="#F59E0B" />
-                  <span>{sig}</span>
-                </span>
-              ))}
-              {apod.missingSignals.slice(0, 2).map((sig, i) => (
-                <span key={`mis-${i}`} className="signal-chip missing">
-                  <HelpCircle size={10} color="#94A3B8" />
-                  <span>{sig}</span>
-                </span>
-              ))}
-            </div>
           </div>
 
-          <div className="explain-box-right">
+          {/* Card 2: Recommended Operator Procedure */}
+          <div className="apod-explain-card action-card">
             <div className="action-header">
-              <ShieldCheck size={13} color="#10B981" />
+              <ShieldCheck size={14} color="#10B981" />
               <span>OPERATOR PROCEDURE</span>
             </div>
             <p className="action-text">{apod.recommendedAction}</p>
           </div>
         </div>
+
+        {/* Physical Multi-Sensor Consensus Channel Matrix */}
+        {(apod.supportingSignals.length > 0 || apod.contradictingSignals.length > 0 || apod.missingSignals.length > 0) && (
+          <div className="apod-signals-section">
+            <div className="signals-section-title">
+              <span>PHYSICAL SENSOR CONSENSUS CHANNELS</span>
+            </div>
+            <div className="explain-signals-matrix">
+              {apod.supportingSignals.map((sig, i) => (
+                <div key={`sup-${i}`} className="signal-chip supporting">
+                  <CheckCircle2 size={13} color="#10B981" className="signal-icon" />
+                  <span className="signal-text">{sig}</span>
+                </div>
+              ))}
+              {apod.contradictingSignals.map((sig, i) => (
+                <div key={`con-${i}`} className="signal-chip contradicting">
+                  <AlertTriangle size={13} color="#F59E0B" className="signal-icon" />
+                  <span className="signal-text">{sig}</span>
+                </div>
+              ))}
+              {apod.missingSignals.map((sig, i) => (
+                <div key={`mis-${i}`} className="signal-chip missing">
+                  <HelpCircle size={13} color="#94A3B8" className="signal-icon" />
+                  <span className="signal-text">{sig}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Card Footer */}

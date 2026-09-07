@@ -118,20 +118,22 @@ export function calculateSensorAgreement(
       }
     }
 
+    const formattedVal = Number.isInteger(numVal) ? numVal : Number(numVal.toFixed(2));
+
     // Correlate with ML prediction
     if (predictedRiskClass === 'HIGH_RISK' || predictedRiskClass === 'MODERATE_RISK') {
       if (isElevated) {
         supporting.push({
           sensor: ch.label,
           type: 'SUPPORTING',
-          message: `${ch.label} elevated (${numVal} ${ch.unit}) supporting ${predictedRiskClass}`,
+          message: `${ch.label} elevated (${formattedVal} ${ch.unit}) supporting ${predictedRiskClass}`,
           value: numVal,
         });
       } else {
         contradicting.push({
           sensor: ch.label,
           type: 'CONTRADICTING',
-          message: `${ch.label} nominal (${numVal} ${ch.unit}) while ML predicted ${predictedRiskClass}`,
+          message: `${ch.label} nominal (${formattedVal} ${ch.unit}) while ML predicted ${predictedRiskClass}`,
           value: numVal,
         });
       }
@@ -141,14 +143,14 @@ export function calculateSensorAgreement(
         supporting.push({
           sensor: ch.label,
           type: 'SUPPORTING',
-          message: `${ch.label} nominal (${numVal} ${ch.unit}) supporting LOW_RISK`,
+          message: `${ch.label} nominal (${formattedVal} ${ch.unit}) supporting LOW_RISK`,
           value: numVal,
         });
       } else {
         contradicting.push({
           sensor: ch.label,
           type: 'CONTRADICTING',
-          message: `${ch.label} elevated (${numVal} ${ch.unit}) contradicting ML LOW_RISK`,
+          message: `${ch.label} elevated (${formattedVal} ${ch.unit}) contradicting ML LOW_RISK`,
           value: numVal,
         });
       }
