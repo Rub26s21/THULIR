@@ -342,7 +342,6 @@ export function Dashboard() {
                 <GPSCard
                   node={activeNode}
                   allNodes={allNodesWithStatus}
-                  latestData={latestData}
                   selectedNodeId={selectedNodeId}
                   onSelectNode={setSelectedNodeId}
                 />
