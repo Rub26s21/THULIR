@@ -8,6 +8,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Sidebar, CommandBar } from '../components/Header';
 import { NodeSelectorBar } from '../components/NodeSelectorBar';
 import { RiskPanel } from '../components/RiskPanel';
+import { APODPanel } from '../components/APODPanel.tsx';
 import { GPSCard } from '../components/GPSCard';
 import { AlertPanel } from '../components/AlertPanel';
 import { MLPanel } from '../components/MLPanel';
@@ -24,6 +25,7 @@ import { useAlerts } from '../hooks/useAlerts';
 import { useNodeHealth } from '../hooks/useNodeHealth';
 import { useTheme } from '../hooks/useTheme';
 import { useMouseShine } from '../hooks/useMouseShine';
+import { useAPOD } from '../hooks/useAPOD.ts';
 import { evaluateRisk } from '../utils/riskEngine';
 import { runMLInference } from '../utils/mlEngine';
 import { isSupabaseConfigured } from '../lib/supabase';
@@ -84,6 +86,15 @@ export function Dashboard() {
   );
 
   const risk = useMemo(() => evaluateRisk(latestData, mlPrediction), [latestData, mlPrediction]);
+
+  const apod = useAPOD({
+    nodes: allNodesWithStatus,
+    nodeLinks,
+    selectedNodeId,
+    latestSensorData: latestData,
+    activeMlPrediction: mlPrediction,
+    activeRisk: risk,
+  });
 
   const { alerts, acknowledgeAlert } = useAlerts(latestData, mlPrediction);
   const activeAlertCount = alerts.filter(a => a.status === 'ACTIVE').length;
@@ -332,7 +343,17 @@ export function Dashboard() {
               </div>
             </section>
 
-            {/* ── SECTION 2: NODE SELECTOR ── */}
+            {/* ── SECTION 2: A-POD MULTI-NODE EVIDENCE FUSION ── */}
+            <section id="section-apod" className="page-section reveal">
+              <APODPanel
+                apod={apod}
+                nodes={allNodesWithStatus}
+                selectedNodeId={selectedNodeId}
+                onSelectNode={setSelectedNodeId}
+              />
+            </section>
+
+            {/* ── SECTION 3: NODE SELECTOR ── */}
             <section id="section-nodes" className="page-section reveal">
               <NodeSelectorBar
                 nodes={allNodesWithStatus}

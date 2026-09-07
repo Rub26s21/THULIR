@@ -4174,3 +4174,418 @@ img, svg { display: block; }
    ============================================================ */
 .alert-state-danger  { border-color: var(--status-critical-border) !important; }
 .alert-state-nominal { border-color: var(--status-normal-border) !important; }
+
+/* ============================================================
+   30. A-POD FUSION INSTRUMENT — 3D SKEUOMORPHIC & LIQUIDMORPHIC
+   ============================================================ */
+.apod-fusion-chassis {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.apod-fusion-grid {
+  display: grid;
+  grid-template-columns: 280px 300px 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 1100px) {
+  .apod-fusion-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.col-header-tag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.col-header-tag.center {
+  justify-content: center;
+  gap: 8px;
+}
+
+.col-sub {
+  font-size: 0.54rem;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+/* Node Inflow List */
+.apod-node-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.apod-node-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.apod-node-card:hover {
+  transform: translateX(3px);
+  border-color: rgba(2, 132, 199, 0.4);
+  background: var(--bg-card-raised);
+}
+
+.apod-node-card.is-selected {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.25);
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.06) 0%, var(--bg-card-raised) 100%);
+}
+
+.node-card-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.node-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.node-name-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.node-id-text {
+  font-size: 0.74rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.node-status-tag {
+  font-size: 0.56rem;
+  color: var(--text-muted);
+}
+
+.node-card-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.node-conf-tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+.node-conduit-beam {
+  width: 14px;
+  height: 2px;
+  background: var(--border-well);
+  border-radius: 1px;
+}
+
+.node-conduit-beam.beam-active {
+  background: linear-gradient(90deg, #0284C7 0%, #10B981 100%);
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+  animation: conduit-pulse 2s infinite ease-in-out;
+}
+
+@keyframes conduit-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Fusion Reactor Core */
+.apod-core-reactor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 16px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.apod-dial-gauge-wrapper {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin-bottom: 12px;
+}
+
+.apod-dial-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.apod-dial-track {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.08);
+  stroke-width: 8;
+}
+
+[data-theme='dark'] .apod-dial-track {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.apod-dial-fill {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 251.2;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease;
+}
+
+.apod-dial-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.apod-dial-score-num {
+  font-size: 2.1rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.apod-dial-score-denom {
+  font-size: 0.58rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+.apod-dial-score-label {
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.apod-core-annunciators {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.apod-state-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  border: 1px solid transparent;
+}
+
+.apod-scope-badge {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  background: var(--bg-card-raised);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.apod-trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+/* 4-Pillars Grid */
+.apod-pillars-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .apod-pillars-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pillar-well {
+  padding: 10px 12px;
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 12px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pillar-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pillar-label {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.pillar-weight-tag {
+  font-size: 0.52rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+.pillar-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.pillar-val {
+  font-size: 1.15rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+.pillar-sub {
+  font-size: 0.56rem;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+.pillar-track {
+  height: 5px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 2px 0;
+}
+
+[data-theme='dark'] .pillar-track {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.pillar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pillar-caption {
+  font-size: 0.52rem;
+  color: var(--text-dim);
+}
+
+/* Explainability Strip */
+.apod-explain-strip {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--bg-well);
+  border: 1px solid var(--border-well);
+  border-radius: 14px;
+}
+
+@media (max-width: 800px) {
+  .apod-explain-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+.explain-header,
+.action-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.explain-text,
+.action-text {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.explain-signals-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.signal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.56rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.signal-chip.supporting {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #10B981;
+}
+
+.signal-chip.contradicting {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #F59E0B;
+}
+
+.signal-chip.missing {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94A3B8;
+}
+

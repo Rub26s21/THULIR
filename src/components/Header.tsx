@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import {
-  LayoutDashboard, BarChart2, Brain, Bell,
+  LayoutDashboard, Layers, BarChart2, Brain, Bell,
   Network, Map, Settings, Play, Pause, Wifi, WifiOff, Radio, Palette, Menu,
   Sun, Moon
 } from 'lucide-react';
@@ -14,13 +14,14 @@ import type { VisualTheme, ColorMode } from '../hooks/useTheme';
 import { ThemeSelector } from './ThemeSelector';
 
 const NAV_ITEMS = [
-  { id: 'section-overview',  label: 'Overview',   icon: LayoutDashboard },
-  { id: 'section-analytics', label: 'Analytics',  icon: BarChart2 },
-  { id: 'section-ml',        label: 'AI / ML',    icon: Brain },
-  { id: 'section-alerts',    label: 'Alerts',     icon: Bell },
-  { id: 'section-system',    label: 'Network',    icon: Network },
-  { id: 'maps',              label: 'Maps',       icon: Map },
-  { id: 'system-settings',   label: 'System',     icon: Settings },
+  { id: 'section-overview',  label: 'Overview',      icon: LayoutDashboard },
+  { id: 'section-apod',      label: 'A-POD Fusion',  icon: Layers },
+  { id: 'section-analytics', label: 'Analytics',     icon: BarChart2 },
+  { id: 'section-ml',        label: 'AI / ML',       icon: Brain },
+  { id: 'section-alerts',    label: 'Alerts',        icon: Bell },
+  { id: 'section-system',    label: 'Network',       icon: Network },
+  { id: 'maps',              label: 'Maps',          icon: Map },
+  { id: 'system-settings',   label: 'System',        icon: Settings },
 ];
 
 // Neural-Leaf Logo SVG
