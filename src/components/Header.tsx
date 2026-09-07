@@ -5,13 +5,12 @@
 import { useState, useEffect } from 'react';
 import {
   LayoutDashboard, Layers, BarChart2, Brain, Bell,
-  Network, Map, Settings, Play, Pause, Wifi, WifiOff, Radio, Palette, Menu,
-  Sun, Moon
+  Network, Map, Settings, Play, Pause, Wifi, WifiOff, Radio, Menu,
+  Sun, Moon, ShieldCheck, AlertTriangle, Clock, Activity
 } from 'lucide-react';
 import { formatTimeAgo } from '../utils/timeUtils';
 import type { ConnectionType, FreshnessState } from '../types';
 import type { VisualTheme, ColorMode } from '../hooks/useTheme';
-import { ThemeSelector } from './ThemeSelector';
 
 const NAV_GROUPS = [
   {
@@ -232,163 +231,147 @@ export function CommandBar({
   lastTimestamp,
   demoMode,
   onToggleDemo,
-  theme,
   mode,
-  onSelectTheme,
   onSelectMode,
   alertCount = 0,
   onToggleSidebar,
 }: CommandBarProps) {
-  const [showThemeModal, setShowThemeModal] = useState(false);
   const formattedTime = lastTimestamp ? formatTimeAgo(lastTimestamp) : 'No data';
+  const [clockStr, setClockStr] = useState(() => {
+    const d = new Date();
+    return `${d.toTimeString().split(' ')[0]} IST · SHIFT 1`;
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const d = new Date();
+      setClockStr(`${d.toTimeString().split(' ')[0]} IST · SHIFT 1`);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <>
-      <header className="command-bar" role="banner">
-        {/* Mobile Hamburger */}
-        {onToggleSidebar && (
-          <button
-            className="cmd-btn"
-            onClick={onToggleSidebar}
-            id="mobile-nav-toggle"
-            aria-label="Toggle navigation"
-            style={{ display: 'none' }}
-          >
-            <Menu size={16} />
-          </button>
-        )}
+    <header className="command-bar" role="banner">
+      {/* Mobile Hamburger */}
+      {onToggleSidebar && (
+        <button
+          className="cmd-btn"
+          onClick={onToggleSidebar}
+          id="mobile-nav-toggle"
+          aria-label="Toggle navigation"
+          style={{ display: 'none' }}
+        >
+          <Menu size={16} />
+        </button>
+      )}
 
-        {/* Search */}
-        <div className="command-search" role="search">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
-          <span>Search nodes, alerts, or telemetry…</span>
-          <span className="command-kbd">⌘ K</span>
+      {/* Search */}
+      <div className="command-search" role="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <span>Search nodes, alerts, or telemetry…</span>
+        <span className="command-kbd">⌘ K</span>
+      </div>
+
+      {/* Right Controls */}
+      <div className="command-bar-right">
+        {/* Connection Status Pill */}
+        <div className="skeuo-pill" title="Telemetry channel">
+          {connectionType === 'REALTIME' && (
+            <>
+              <Wifi size={12} color="var(--status-normal)" />
+              <span style={{ color: 'var(--status-normal)', fontWeight: 700 }}>REALTIME</span>
+            </>
+          )}
+          {connectionType === 'POLLING' && (
+            <>
+              <Radio size={12} color="var(--status-watch)" />
+              <span style={{ color: 'var(--status-watch)', fontWeight: 700 }}>POLLING</span>
+            </>
+          )}
+          {connectionType === 'DISCONNECTED' && (
+            <>
+              <WifiOff size={12} color="var(--text-muted)" />
+              <span>DISCONNECTED</span>
+            </>
+          )}
         </div>
 
-        {/* Right Controls */}
-        <div className="command-bar-right">
-          {/* Connection Status Pill */}
-          <div className="skeuo-pill" title="Telemetry channel">
-            {connectionType === 'REALTIME' && (
-              <>
-                <Wifi size={12} color="var(--status-normal)" />
-                <span style={{ color: 'var(--status-normal)', fontWeight: 700 }}>REALTIME</span>
-              </>
-            )}
-            {connectionType === 'POLLING' && (
-              <>
-                <Radio size={12} color="var(--status-watch)" />
-                <span style={{ color: 'var(--status-watch)', fontWeight: 700 }}>POLLING</span>
-              </>
-            )}
-            {connectionType === 'DISCONNECTED' && (
-              <>
-                <WifiOff size={12} color="var(--text-muted)" />
-                <span>DISCONNECTED</span>
-              </>
-            )}
-          </div>
+        {/* Last Tx */}
+        <div className="skeuo-pill" title="Last transmission">
+          <span style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.68rem' }}>
+            Tx: <strong style={{ color: 'var(--text-primary)' }}>{formattedTime}</strong>
+          </span>
+        </div>
 
-          {/* Last Tx */}
-          <div className="skeuo-pill" title="Last transmission">
-            <span style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.68rem' }}>
-              Tx: <strong style={{ color: 'var(--text-primary)' }}>{formattedTime}</strong>
-            </span>
-          </div>
+        {/* 50Hz Hardware Sampling Metric */}
+        <div className="skeuo-pill cmd-metric-pill" title="Hardware sensor bus matrix sampling rate">
+          <Activity size={12} strokeWidth={2.2} />
+          <span className="sampling-pulse-dot" />
+          <span>50Hz FFT</span>
+        </div>
 
-          {/* Demo Toggle */}
+        {/* Demo Toggle */}
+        <button
+          className={`btn-tactile ${demoMode ? 'active-demo' : ''}`}
+          onClick={onToggleDemo}
+          title={demoMode ? 'Exit simulation — listen to live Supabase' : 'Simulate live sensor telemetry'}
+          aria-label="Toggle demo mode"
+        >
+          {demoMode ? <Pause size={11} /> : <Play size={11} />}
+          <span>{demoMode ? 'DEMO' : 'LIVE'}</span>
+        </button>
+
+        {/* One-Click Dark / Light Mode Switcher */}
+        <button
+          className="theme-quick-toggle-btn"
+          onClick={() => onSelectMode(mode === 'light' ? 'dark' : 'light')}
+          title={`Switch to ${mode === 'light' ? 'Dark' : 'Light'} Mode`}
+          aria-label="Toggle dark and light theme"
+        >
+          {mode === 'light' ? (
+            <>
+              <Sun size={14} className="theme-toggle-icon sun" />
+              <span className="theme-toggle-label">LIGHT</span>
+            </>
+          ) : (
+            <>
+              <Moon size={14} className="theme-toggle-icon moon" />
+              <span className="theme-toggle-label">DARK</span>
+            </>
+          )}
+        </button>
+
+        {/* Actionable Threat Status Indicator */}
+        {alertCount > 0 ? (
           <button
-            className={`btn-tactile ${demoMode ? 'active-demo' : ''}`}
-            onClick={onToggleDemo}
-            title={demoMode ? 'Exit simulation — listen to live Supabase' : 'Simulate live sensor telemetry'}
-            aria-label="Toggle demo mode"
-          >
-            {demoMode ? <Pause size={11} /> : <Play size={11} />}
-            <span>{demoMode ? 'DEMO' : 'LIVE'}</span>
-          </button>
-
-          {/* One-Click Dark / Light Mode Switcher */}
-          <button
-            className="theme-quick-toggle-btn"
-            onClick={() => onSelectMode(mode === 'light' ? 'dark' : 'light')}
-            title={`Switch to ${mode === 'light' ? 'Dark' : 'Light'} Mode`}
-            aria-label="Toggle dark and light theme"
-          >
-            {mode === 'light' ? (
-              <>
-                <Sun size={14} className="theme-toggle-icon sun" />
-                <span className="theme-toggle-label">LIGHT</span>
-              </>
-            ) : (
-              <>
-                <Moon size={14} className="theme-toggle-icon moon" />
-                <span className="theme-toggle-label">DARK</span>
-              </>
-            )}
-          </button>
-
-          {/* Detailed Theme Palette Modal Trigger */}
-          <button
-            className="cmd-btn"
-            onClick={() => setShowThemeModal(true)}
-            title="Custom theme appearances"
-            aria-label="Appearance settings"
-          >
-            <Palette size={15} />
-          </button>
-
-          {/* Alert bell */}
-          <button
-            className="cmd-btn"
-            aria-label="Notifications"
+            className="cmd-threat-badge warning pulse"
             onClick={() => {
               const alertEl = document.getElementById('section-alerts');
               if (alertEl) alertEl.scrollIntoView({ behavior: 'smooth' });
             }}
+            title={`${alertCount} active alerts. Click to view alert panel.`}
+            aria-label={`${alertCount} active alerts`}
           >
-            <Bell size={15} />
-            {alertCount > 0 && (
-              <span
-                style={{
-                  position: 'absolute',
-                  top: 4,
-                  right: 4,
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  background: 'var(--status-critical)',
-                  border: '1.5px solid var(--bg-app)',
-                  boxShadow: '0 0 8px var(--status-critical)',
-                }}
-              />
-            )}
+            <AlertTriangle size={13} strokeWidth={2.4} />
+            <span>{alertCount} THREAT{alertCount > 1 ? 'S' : ''} ACTIVE</span>
           </button>
-
-          {/* Operator Pill */}
-          <div className="operator-pill">
-            <div className="operator-avatar">NO</div>
-            <div>
-              <div style={{ fontSize: '0.76rem', fontWeight: 700 }}>Node_Operator</div>
-              <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)' }}>Mine Safety Team</div>
-            </div>
+        ) : (
+          <div className="cmd-threat-badge nominal" title="All mine sensor channels nominal">
+            <ShieldCheck size={13} strokeWidth={2.4} />
+            <span>0 THREATS · SECURE</span>
           </div>
-        </div>
-      </header>
+        )}
 
-      {/* Theme Modal */}
-      {showThemeModal && (
-        <ThemeSelector
-          currentTheme={theme}
-          currentMode={mode}
-          onSelectTheme={(t) => { onSelectTheme(t); }}
-          onSelectMode={(m) => { onSelectMode(m); }}
-          onClose={() => setShowThemeModal(false)}
-        />
-      )}
-    </>
+        {/* Live Synchronized Shift Clock */}
+        <div className="skeuo-pill cmd-clock-pill" title="Live synchronized SOC shift timestamp">
+          <Clock size={12} strokeWidth={2.2} />
+          <span className="soc-clock-text">{clockStr}</span>
+        </div>
+      </div>
+    </header>
   );
 }
 
