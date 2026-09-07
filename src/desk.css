@@ -193,8 +193,9 @@
 .desk-header-title {
   height: 38px;
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
+  gap: 16px;
   padding: 0 14px;
   background: rgba(186, 230, 253, 0.45);
   backdrop-filter: blur(16px);
@@ -223,34 +224,117 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  flex-shrink: 0;
 }
 
 .desk-header-center {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .desk-header-right {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
-.desk-header-text {
-  font-size: 0.95rem;
-  font-weight: 900;
-  letter-spacing: 2px;
-  color: #0369a1;
-  text-transform: uppercase;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+/* ── Seamless Marquee Running Banner (Right-to-Left Infinite Ticker) ── */
+.desk-header-center.desk-marquee-wrapper {
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent 0%, black 1.5%, black 98.5%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 1.5%, black 98.5%, transparent 100%);
+}
+
+.desk-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marqueeScrollLeft 32s linear infinite;
+}
+
+.desk-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marqueeScrollLeft {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.desk-marquee-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding-right: 14px;
   white-space: nowrap;
 }
 
-[data-theme="dark-apple"] .desk-header-text,
-[data-theme="dark-space"] .desk-header-text {
+.marquee-id-badge {
+  font-size: 0.65rem;
+  font-weight: 900;
+  font-family: var(--font-sans);
+  color: #000000;
+  background: rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+[data-theme="dark-apple"] .marquee-id-badge,
+[data-theme="dark-space"] .marquee-id-badge {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.marquee-title-text {
+  font-size: 0.74rem;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  color: #000000;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+[data-theme="dark-apple"] .marquee-title-text,
+[data-theme="dark-space"] .marquee-title-text {
+  color: #f8fafc;
+}
+
+.marquee-separator {
+  color: #0284c7;
+  font-size: 0.62rem;
+  opacity: 0.75;
+}
+
+.marquee-system-tag {
+  font-size: 0.68rem;
+  font-weight: 900;
+  font-family: var(--font-sans);
+  color: #000000;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+[data-theme="dark-apple"] .marquee-system-tag,
+[data-theme="dark-space"] .marquee-system-tag {
   color: #38bdf8;
-  text-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
 }
 
 .desk-header-badge {

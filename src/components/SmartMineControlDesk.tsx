@@ -125,8 +125,30 @@ export function SmartMineControlDesk({
           </div>
         </div>
 
-        <div className="desk-header-center">
-          <span className="desk-header-text">THULIR SMART MINE CONTROL DESK</span>
+        <div className="desk-header-center desk-marquee-wrapper">
+          <div className="desk-marquee-track">
+            <div className="desk-marquee-content">
+              <span className="marquee-id-badge">PROBLEM STATEMENT ID: 26025</span>
+              <span className="marquee-separator">✦</span>
+              <span className="marquee-title-text">
+                Development of an AI-enabled Low Cost Real Time Mine Subsidence Monitoring, Prediction and Early Warning System for Underground Coal Mines in India
+              </span>
+              <span className="marquee-separator">✦</span>
+              <span className="marquee-system-tag">THULIR AI SMART MINE SAFETY</span>
+              <span className="marquee-separator">✦</span>
+            </div>
+            {/* Seamless 100% infinite loop clone */}
+            <div className="desk-marquee-content" aria-hidden="true">
+              <span className="marquee-id-badge">PROBLEM STATEMENT ID: 26025</span>
+              <span className="marquee-separator">✦</span>
+              <span className="marquee-title-text">
+                Development of an AI-enabled Low Cost Real Time Mine Subsidence Monitoring, Prediction and Early Warning System for Underground Coal Mines in India
+              </span>
+              <span className="marquee-separator">✦</span>
+              <span className="marquee-system-tag">THULIR AI SMART MINE SAFETY</span>
+              <span className="marquee-separator">✦</span>
+            </div>
+          </div>
         </div>
 
         <div className="desk-header-right">
