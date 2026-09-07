@@ -9,7 +9,6 @@ import { Sidebar, CommandBar } from '../components/Header';
 import { NodeSelectorBar } from '../components/NodeSelectorBar';
 import { SensorGrid } from '../components/SensorGrid';
 import { RiskPanel } from '../components/RiskPanel';
-import { ZoneRiskPanel } from '../components/ZoneRiskPanel';
 import { GPSCard } from '../components/GPSCard';
 import { AlertPanel } from '../components/AlertPanel';
 import { MLPanel } from '../components/MLPanel';
@@ -28,8 +27,6 @@ import { useTheme } from '../hooks/useTheme';
 import { useMouseShine } from '../hooks/useMouseShine';
 import { evaluateRisk } from '../utils/riskEngine';
 import { runMLInference } from '../utils/mlEngine';
-import { calculateZoneRisk } from '../utils/zoneRiskEngine';
-import { KNOWN_ZONES } from '../config/thresholds';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { Activity, Shield, Brain, Network, AlertCircle, Info, Sparkles, ArrowUpRight } from 'lucide-react';
 
@@ -88,11 +85,6 @@ export function Dashboard() {
   );
 
   const risk = useMemo(() => evaluateRisk(latestData, mlPrediction), [latestData, mlPrediction]);
-
-  const zoneRisks = useMemo(() => {
-    const riskMap: Record<string, typeof risk> = { [selectedNodeId]: risk };
-    return KNOWN_ZONES.map((zone) => calculateZoneRisk(zone.id, allNodesWithStatus, riskMap));
-  }, [allNodesWithStatus, selectedNodeId, risk]);
 
   const { alerts, acknowledgeAlert } = useAlerts(latestData, mlPrediction);
   const activeAlertCount = alerts.filter(a => a.status === 'ACTIVE').length;
@@ -336,13 +328,8 @@ export function Dashboard() {
                 <NodeHealth nodeStatus={nodeStatus} />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 14 }}>
-                <div className="reveal reveal-delay-1">
-                  <ZoneRiskPanel zones={zoneRisks} />
-                </div>
-                <div className="reveal reveal-delay-2">
-                  <GPSCard node={activeNode} />
-                </div>
+              <div className="reveal reveal-delay-1" style={{ marginTop: 14 }}>
+                <GPSCard node={activeNode} />
               </div>
             </section>
 
