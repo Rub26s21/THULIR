@@ -1,5 +1,6 @@
 // ============================================================
-// THULIR AI — A-POD Configuration & Tunable Parameters
+// THULIR AI — A-POD (Adaptive Physical-Observation Distillation Engine)
+// Configuration & Tunable Parameters
 // ============================================================
 // Centralized parameters for multi-node risk weights, fusion weights,
 // evidence bands, and freshness policies.

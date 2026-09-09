@@ -1,8 +1,10 @@
-# Machine Learning System & Random Forest Architecture
+# THULIR AI — Machine Learning System & Random Forest Architecture
 
-## Overview
+## Overview & Distributed Node-Level Intelligence
 
-The THULIR Machine Learning layer features a real, trained **Random Forest Classifier** (`thulir-risk-rf-v1.0`) trained with scikit-learn on multi-sensor structural and environmental parameters, with an automatic deterministic safety fallback.
+THULIR uses a distributed node-level intelligence architecture. Each available node's telemetry is independently converted into the canonical 9-feature vector and passed through the trained 100-tree Random Forest model (`thulir-risk-rf-v1.0`). The resulting `NodeRiskState` represents that node's local intelligence and is then provided to A-POD for multi-node evidence fusion.
+
+The physical ESP8266 microcontroller firmware is responsible for physical sensor acquisition and transmission to Supabase, while the application ML runtime (`src/utils/mlEngine.ts`) independently executes node-level Random Forest inference across the 100-tree decision graph (`ml/models/model_weights.json`).
 
 ---
 
@@ -44,9 +46,11 @@ The THULIR Machine Learning layer features a real, trained **Random Forest Class
 
 ---
 
-## Runtime Inference & Safety Fallback
+## Runtime Node-Level Inference & Safety Fallback
 
-1. When telemetry arrives at the dashboard, `runMLInference(data)` is executed.
-2. The 9 sensor features are extracted and imputed against model medians.
-3. The 100 decision trees evaluate the feature vector and aggregate leaf class vote distributions.
-4. If model weights are missing or uninitialized, the system automatically falls back to the deterministic safety rule engine and labels `RULE-BASED FALLBACK`.
+1. When telemetry arrives at the dashboard for any node, `runMLInference(data)` is executed independently for that node.
+2. The 9 sensor features are extracted (`extractFeatures`) and imputed against model medians.
+3. The 100 decision trees evaluate the feature vector and aggregate leaf class vote distributions into class probabilities $[P_{\text{low}}, P_{\text{mod}}, P_{\text{high}}]$.
+4. The authoritative `NodeRiskState` is constructed and delivered to A-POD for multi-node evidence fusion.
+5. If model weights are missing or uninitialized, the system automatically falls back to the deterministic safety rule engine and labels `RULE-BASED FALLBACK`.
+

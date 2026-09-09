@@ -85,12 +85,12 @@
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background: #ebe2d5;
+  background: #11141c url('/background.jpg') center/cover no-repeat fixed;
 }
 
 [data-theme="dark-apple"] .desk-hero-landing-section,
 [data-theme="dark-space"] .desk-hero-landing-section {
-  background: #141720;
+  background: #0b0d13 url('/background.jpg') center/cover no-repeat fixed;
 }
 
 .desk-scroll-cue {
@@ -165,7 +165,8 @@
   width: 100vw;
   height: 100vh;
   position: relative;
-  background: #ebe2d5;
+  background: linear-gradient(135deg, rgba(235, 226, 213, 0.92) 0%, rgba(226, 216, 202, 0.88) 100%),
+              url('/background.jpg') center/cover no-repeat;
   padding: 8px 14px 10px 14px;
   box-shadow: none;
   border: none;
@@ -183,7 +184,8 @@
 /* Dark Theme Overrides for Workbench */
 [data-theme="dark-apple"] .desk-workbench,
 [data-theme="dark-space"] .desk-workbench {
-  background: #141720;
+  background: linear-gradient(135deg, rgba(16, 20, 28, 0.92) 0%, rgba(10, 13, 19, 0.88) 100%),
+              url('/background.jpg') center/cover no-repeat;
   box-shadow: none;
   border: none;
   color: #e2e8f0;

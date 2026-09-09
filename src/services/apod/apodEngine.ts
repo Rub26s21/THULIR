@@ -1,5 +1,6 @@
 // ============================================================
-// THULIR AI — A-POD Master Evidence Fusion Engine
+// THULIR AI — A-POD (Adaptive Physical-Observation Distillation Engine)
+// THULIR's Multi-Node Evidence Fusion Engine
 // ============================================================
 // Orchestrates multi-node evidence aggregation, reliability weighting,
 // spatial topology correlation, temporal persistence, and sensor agreement.

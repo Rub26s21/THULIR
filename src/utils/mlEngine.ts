@@ -1,7 +1,8 @@
 // ============================================================
-// THULIR - Real Machine Learning Engine (Random Forest)
+// THULIR AI — Node-Level Machine Learning Engine (Random Forest)
 // ============================================================
-// Executes real ensemble inference using the trained Random Forest model.
+// Executes independent node-level ensemble inference using the trained
+// 100-tree Random Forest model (thulir-risk-rf-v1.0).
 // Falls back to deterministic threshold safety checks if weights are missing.
 
 import { SENSOR_THRESHOLDS } from '../config/thresholds.ts';

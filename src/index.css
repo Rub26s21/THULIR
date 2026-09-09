@@ -242,11 +242,67 @@ img, svg { display: block; }
 /* ============================================================
    4. LAYOUT — SIDEBAR + MAIN CONTENT
    ============================================================ */
+.liquid-bg-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.subterranean-rock-backdrop {
+  position: absolute;
+  inset: 0;
+  background: url('/background.jpg') center/cover no-repeat fixed;
+  opacity: 0.12;
+  filter: contrast(1.1) brightness(0.95);
+  transition: opacity 0.3s ease;
+}
+
+[data-theme="dark-apple"] .subterranean-rock-backdrop,
+[data-theme="dark-space"] .subterranean-rock-backdrop {
+  opacity: 0.22;
+  filter: contrast(1.15) brightness(0.85);
+}
+
+.liquid-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.liquid-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, transparent 70%);
+  top: 10%;
+  left: 15%;
+}
+
+.liquid-orb-2 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, transparent 70%);
+  bottom: 20%;
+  right: 10%;
+}
+
+.liquid-orb-3 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, transparent 70%);
+  top: 50%;
+  left: 45%;
+}
+
 .app-layout {
   display: flex;
   min-height: 100vh;
   position: relative;
   width: 100%;
+  z-index: 1;
 }
 
 /* ── Sidebar (3D Liquidmorphic Command Chassis) ── */

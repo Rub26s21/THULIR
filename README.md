@@ -1,59 +1,56 @@
-# THULIR — IoT Structural & Environmental Monitoring Platform
+# THULIR AI — IoT Structural & Environmental Monitoring Platform
 
-**THULIR** is a full-scale IoT early-warning and continuous environmental/structural monitoring platform designed for real-time telemetry from physical sensor nodes (ESP8266 NodeMCU) with direct Supabase PostgreSQL ingestion and a live React/TypeScript dashboard.
+**THULIR** is a distributed IoT early-warning and continuous environmental/structural monitoring platform designed for real-time telemetry from physical sensor nodes (ESP8266 NodeMCU), node-level Random Forest machine learning inference, A-POD multi-node evidence fusion, and AI-driven Ground Event Investigation.
 
 ---
 
 ## Architecture Overview
 
-THULIR uses a direct IoT-to-cloud architecture.
+THULIR uses a distributed node-level intelligence architecture combined with multi-node evidence fusion and higher-level AI investigation.
 
-ESP8266 NODE_01 collects telemetry from six physical sensors and transmits the measurements directly to Supabase using HTTPS/PostgREST.
-
-Supabase PostgreSQL acts as the system's single source of truth.
-
-The React + TypeScript + Vite dashboard connects directly to Supabase using the public client credential and receives data through Supabase Realtime/Postgres Changes, with polling used as a fallback when realtime connectivity is unavailable.
-
-There is no Python backend or application proxy in the current architecture.
-
-```
-                 PHYSICAL SENSORS
-                       │
-       ┌───────────────┼────────────────┐
-       │               │                │
-    MPU6050         BMP280            DHT22
-   Tilt X/Y        Pressure       Temp/Humidity
-       │               │                │
-       ├───────────────┼────────────────┤
-       │               │                │
-      MQ-2          HC-SR04          ADXL345
-    Gas Raw        Distance          Vibration
-       │               │                │
-       └───────────────┼────────────────┘
-                       ▼
-               ESP8266 NODE_01
-                       │
-                  Wi-Fi / HTTPS
-                       │
-                       ▼
-                  SUPABASE
-                       │
-               ┌───────┴────────┐
-               ▼                ▼
-          PostgreSQL         Realtime
-          sensor_data           │
-               │                │
-               └───────┬────────┘
-                       ▼
-             THULIR WEB DASHBOARD
-                       │
-        ┌──────────────┼──────────────┐
-        ▼              ▼              ▼
-    Monitoring       Risk           Alerts
-     & Charts        Engine         System
-                       │
-                       ▼
-                ML / FALLBACK
+```text
+NODE 01 (Sensors)       NODE 02 (Sensors)       NODE N (Sensors)
+       │                       │                       │
+       ▼                       ▼                       ▼
+  ESP8266 Node            ESP8266 Node            ESP8266 Node
+       │                       │                       │
+       ▼ (HTTPS / PostgREST)   ▼ (HTTPS / PostgREST)   ▼ (HTTPS / PostgREST)
+ [ Supabase sensor_data ] [ Supabase sensor_data ] [ Supabase sensor_data ]
+       │                       │                       │
+       ▼                       ▼                       ▼
+Node-level Feature Ext.  Node-level Feature Ext.  Node-level Feature Ext.
+       │                       │                       │
+       ▼                       ▼                       ▼
+Node-level Random Forest Node-level Random Forest Node-level Random Forest
+       │                       │                       │
+       ▼                       ▼                       ▼
+Node 01 NodeRiskState    Node 02 NodeRiskState    Node N NodeRiskState
+       │                       │                       │
+       └───────────────────────┼───────────────────────┘
+                               │
+                               ▼
+                             A-POD
+          (Adaptive Physical-Observation Distillation Engine)
+              THULIR's Multi-Node Evidence Fusion Engine
+                               │
+                ┌──────────────┼──────────────┐
+                ▼              ▼              ▼
+           Spatial (S)   Temporal (T)    Sensors (M)
+                │              │              │
+                └──────────────┼──────────────┘
+                               ▼
+            Master Evidence Score (E) & Network State
+                               │
+                ┌──────────────┴──────────────┐
+                ▼                             ▼
+       THULIR WEB DASHBOARD        GROUND EVENT INVESTIGATOR
+     (SmartMineControlDesk,                   │
+      APODPanel, MLPanel)                     ▼
+                                   NVIDIA Nemotron 3 Ultra
+                                   (OpenRouter Geotechnical AI)
+                                              │
+                                              ▼
+                                 Human Operator Verification
 ```
 
 ---
