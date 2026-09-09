@@ -215,19 +215,7 @@ export function Dashboard() {
               </div>
             )}
 
-            {/* ── SECTION 1: SYSTEM OVERVIEW & SPATIAL FLEET ── */}
-            <section id="section-overview" className="page-section">
-              <div className="reveal">
-                <GPSCard
-                  node={activeNode}
-                  allNodes={allNodesWithStatus}
-                  selectedNodeId={selectedNodeId}
-                  onSelectNode={setSelectedNodeId}
-                />
-              </div>
-            </section>
-
-            {/* ── SECTION 2: A-POD MULTI-NODE EVIDENCE FUSION ── */}
+            {/* ── PRIORITY 1: A-POD MULTI-NODE EVIDENCE FUSION CENTER ── */}
             <section id="section-apod" className="page-section reveal">
               <APODPanel
                 apod={apod}
@@ -237,7 +225,7 @@ export function Dashboard() {
               />
             </section>
 
-            {/* ── SECTION 2B: THULIR AI GROUND EVENT INVESTIGATOR (NVIDIA NEMOTRON 3 ULTRA) ── */}
+            {/* ── PRIORITY 1B: THULIR AI GROUND EVENT INVESTIGATOR (NVIDIA NEMOTRON 3 ULTRA) ── */}
             <section id="section-investigator" className="page-section reveal">
               <GroundEventInvestigatorPanel
                 investigator={investigator}
@@ -245,7 +233,7 @@ export function Dashboard() {
               />
             </section>
 
-            {/* ── SECTION 3: NODE SELECTOR ── */}
+            {/* ── PRIORITY 2: MULTI-NODE SELECTOR BAR ── */}
             <section id="section-nodes" className="page-section reveal">
               <NodeSelectorBar
                 nodes={allNodesWithStatus}
@@ -255,24 +243,12 @@ export function Dashboard() {
               />
             </section>
 
-
-            {/* ── SECTION 4: ANALYTICS ── */}
-            <section id="section-analytics" className="page-section reveal">
-              <HistoricalCharts
-                history={history}
-                timeRange={timeRange}
-                onTimeRangeChange={setTimeRange}
-                loading={historyLoading}
-                error={historyError}
-              />
-            </section>
-
-            {/* ── SECTION 5: AI / ML + ALERTS (L-SHAPED HUD GRID) ── */}
+            {/* ── PRIORITY 2B: NODE-LEVEL AI / ML RISK & ALERTS CONSOLE (HUD GRID) ── */}
             <section id="section-ml" className="page-section">
               <div className="section-header">
                 <Brain size={14} color="var(--brand-green)" strokeWidth={2} />
-                <span className="section-eyebrow">AI Analysis</span>
-                <span className="section-title">Risk Intelligence & Alert Dispatch · {selectedNodeId}</span>
+                <span className="section-eyebrow">Node Intelligence</span>
+                <span className="section-title">Random Forest Risk Assessment & Alert Dispatch · {selectedNodeId}</span>
               </div>
               <div className="ml-alerts-l-grid">
                 {/* Top-Left: AI Hazard Intelligence Primary Hero Assessment */}
@@ -292,7 +268,30 @@ export function Dashboard() {
               </div>
             </section>
 
-            {/* ── SECTION 6: NETWORK + SYSTEM ACTIVITY ── */}
+            {/* ── PRIORITY 3: 7-CHANNEL HISTORICAL SENSOR TELEMETRY CHARTS ── */}
+            <section id="section-analytics" className="page-section reveal">
+              <HistoricalCharts
+                history={history}
+                timeRange={timeRange}
+                onTimeRangeChange={setTimeRange}
+                loading={historyLoading}
+                error={historyError}
+              />
+            </section>
+
+            {/* ── PRIORITY 3B: GEOSPATIAL POSITIONING & SATELLITE FLEET MAP ── */}
+            <section id="section-gps" className="page-section">
+              <div className="reveal">
+                <GPSCard
+                  node={activeNode}
+                  allNodes={allNodesWithStatus}
+                  selectedNodeId={selectedNodeId}
+                  onSelectNode={setSelectedNodeId}
+                />
+              </div>
+            </section>
+
+            {/* ── PRIORITY 4: DISTRIBUTED NETWORK TOPOLOGY & SYSTEM ACTIVITY AUDIT ── */}
             <section id="section-system" className="page-section">
               <div className="section-header">
                 <Network size={15} color="var(--text-secondary)" strokeWidth={2.2} />

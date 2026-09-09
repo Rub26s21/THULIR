@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import {
   LayoutDashboard, Layers, BarChart2, Brain, Bell,
-  Network, Map, Settings, Play, Pause, Wifi, WifiOff, Radio, Menu,
+  Network, Map, Play, Pause, Wifi, WifiOff, Radio, Menu,
   Sun, Moon
 } from 'lucide-react';
 import { formatTimeAgo } from '../utils/timeUtils';
@@ -16,19 +16,19 @@ const NAV_GROUPS = [
   {
     title: 'CORE INTELLIGENCE',
     items: [
-      { id: 'section-overview',  label: 'Overview',      icon: LayoutDashboard, tag: null },
-      { id: 'section-apod',      label: 'A-POD Fusion',  icon: Layers, tag: 'FUSION' },
-      { id: 'section-analytics', label: 'Analytics',     icon: BarChart2, tag: null },
-      { id: 'section-ml',        label: 'AI / ML',       icon: Brain, tag: 'ML' },
+      { id: 'section-desk',         label: 'Control Desk',  icon: LayoutDashboard, tag: 'HERO' },
+      { id: 'section-apod',         label: 'A-POD Fusion',  icon: Layers, tag: 'FUSION' },
+      { id: 'section-investigator', label: 'Investigator',  icon: Brain, tag: 'AI' },
+      { id: 'section-ml',           label: 'Node AI & Risk',icon: Brain, tag: 'ML' },
     ],
   },
   {
     title: 'OPERATIONS & SENSORS',
     items: [
-      { id: 'section-alerts',    label: 'Alerts',        icon: Bell, isAlerts: true },
-      { id: 'section-system',    label: 'Network',       icon: Network, tag: null },
-      { id: 'maps',              label: 'Maps',          icon: Map, tag: 'GPS' },
-      { id: 'system-settings',   label: 'System',        icon: Settings, tag: null },
+      { id: 'section-analytics',    label: 'Telemetry',     icon: BarChart2, tag: '7-CH' },
+      { id: 'section-gps',          label: 'GPS Fleet',     icon: Map, tag: 'GPS' },
+      { id: 'section-alerts',       label: 'Alerts',        icon: Bell, isAlerts: true },
+      { id: 'section-system',       label: 'Network Mesh',  icon: Network, tag: null },
     ],
   },
 ];
