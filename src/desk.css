@@ -85,16 +85,12 @@
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background: 
-    linear-gradient(180deg, rgba(8, 10, 15, 0.10) 0%, rgba(8, 10, 15, 0.10) 100%),
-    url('/background.jpg') center/cover no-repeat fixed;
+  background: #080a0f url('/background.jpg') center/cover no-repeat fixed;
 }
 
 [data-theme="dark-apple"] .desk-hero-landing-section,
 [data-theme="dark-space"] .desk-hero-landing-section {
-  background: 
-    linear-gradient(180deg, rgba(6, 8, 12, 0.12) 0%, rgba(6, 8, 12, 0.12) 100%),
-    url('/background.jpg') center/cover no-repeat fixed;
+  background: #080a0f url('/background.jpg') center/cover no-repeat fixed;
 }
 
 .desk-scroll-cue {
@@ -169,9 +165,7 @@
   width: 100vw;
   height: 100vh;
   position: relative;
-  background: 
-    radial-gradient(ellipse at center, rgba(14, 18, 26, 0.15) 0%, rgba(6, 8, 12, 0.25) 100%),
-    url('/background.jpg') center/cover no-repeat;
+  background: url('/background.jpg') center/cover no-repeat;
   padding: 8px 14px 10px 14px;
   box-shadow: none;
   border: none;
@@ -189,9 +183,7 @@
 /* Dark Theme Overrides for Workbench */
 [data-theme="dark-apple"] .desk-workbench,
 [data-theme="dark-space"] .desk-workbench {
-  background: 
-    radial-gradient(ellipse at center, rgba(10, 14, 22, 0.18) 0%, rgba(4, 6, 9, 0.28) 100%),
-    url('/background.jpg') center/cover no-repeat;
+  background: url('/background.jpg') center/cover no-repeat;
   box-shadow: none;
   border: none;
   color: #e2e8f0;

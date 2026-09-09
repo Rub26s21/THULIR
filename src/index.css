@@ -225,9 +225,7 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background: 
-    linear-gradient(180deg, rgba(8, 10, 15, 0.10) 0%, rgba(8, 10, 15, 0.10) 100%),
-    url('/background.jpg') center/cover no-repeat fixed;
+  background: url('/background.jpg') center/cover no-repeat fixed;
   background-color: #080a0f;
   color: var(--text-primary);
   line-height: 1.6;
@@ -255,21 +253,15 @@ img, svg { display: block; }
 .subterranean-rock-backdrop {
   position: absolute;
   inset: 0;
-  background: 
-    linear-gradient(180deg, rgba(8, 10, 15, 0.10) 0%, rgba(8, 10, 15, 0.10) 100%),
-    url('/background.jpg') center/cover no-repeat fixed;
-  opacity: 0.95;
-  filter: contrast(1.1) brightness(0.95);
+  background: url('/background.jpg') center/cover no-repeat fixed;
+  opacity: 1;
   transition: opacity 0.3s ease;
 }
 
 [data-theme="dark-apple"] .subterranean-rock-backdrop,
 [data-theme="dark-space"] .subterranean-rock-backdrop {
-  background: 
-    linear-gradient(180deg, rgba(6, 8, 12, 0.12) 0%, rgba(6, 8, 12, 0.12) 100%),
-    url('/background.jpg') center/cover no-repeat fixed;
-  opacity: 0.95;
-  filter: contrast(1.15) brightness(0.95);
+  background: url('/background.jpg') center/cover no-repeat fixed;
+  opacity: 1;
 }
 
 .liquid-orb {
